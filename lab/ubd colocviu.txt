@@ -1,0 +1,28 @@
+1. Aratati din dictionar care este structura tabelara a tabelei EMP din userul curent.
+
+SELECT table_name, column_name, data_type
+    FROM user_tab_columns
+    WHERE table_name='EMP';
+
+2. Creati o cheie unica pe tabela DEPT, apoi aratati din dictionar ca a fost creata constrangerea.
+
+    ALTER TABLE dept add constraint deptno_pk primary key(deptno);
+
+    SELECT constraint_name, constraint_type, table_name
+    FROM user_constraints
+    WHERE table_name='DEPT';
+
+3. Aratati din dictionar data cand a fost creata baza de date curenta si data cand au fost resetate fisierele de log
+(si cu ora minut secunda).
+
+    SELECT created, to_char(resetlogs_time, 'dd-mm-yyy hh:mm:ss')
+    FROM v$database;
+
+4. Faceti o inserare in tabela EMP, apoi faceti o lista cu adresa tranzactiei, segmentul de rollback pe care il foloseste,
+numarul de blocuri generate si numele fisierului de rollback utilizat.
+
+    INSERT INTO emp values (999,'testubd','tranz',1111,sysdate,100,0,10);
+
+    SELECT t.addr, t.xidusn, t.used_ublk, r.name, d.name
+    FROM v$transaction t, v$rollname r, v$datafile d
+    WHERE t.start_ubafil=r.usn AND r.usn=d.file#;

@@ -1,0 +1,87 @@
+1.
+
+CREATE TABLE ADV_DEPT
+(
+ID_DEPARTAMENT NUMBER(2),
+SALGRADE NUMBER(7,2),
+salmax NUMBER(7,2),
+salmin NUMBER(7,2),
+NR_ANG numBER(5),
+delta_ANG NUMBER(5),
+LUNA NUMBER(5),
+AN NUMBER(6)
+);
+
+ALTER TABLE ADV_DEPT
+ADD PRIMARY KEY (ID_DEPARTAMENT, LUNA, AN, SALGRADE);
+
+ALTER TABLE DEPT ADD PRIMARY KEY (DEPTNO);
+
+ALTER TABLE ADV_DEPT
+ADD CONSTRAINT fk_ADV_DEPT
+FOREIGN KEY (ID_DEPARTAMENT)
+REFERENCES DEPT(DEPTNO);
+
+ALTER TABLE salgrade ADD PRIMARY KEY (grade);
+
+ALTER TABLE ADV_DEPT
+ADD CONSTRAINT fk_SALGRADE
+FOREIGN KEY (SALGRADE)
+REFERENCES salgrade(grade);
+
+2.
+
+select tabel.*, tabel.nr_ang-nvl(tab2.nr_ang, 0) delta_ang
+from
+(
+select ang.deptno id_departament, salgrade.grade salgrade, max(ang.sal) salmax, min(ang.sal) salmin, count(ang.empno) nr_ang, EXTRACT(month FROM sysdate) luna, EXTRACT(year FROM sysdate) an
+from emp ang
+inner join salgrade
+on ang.sal >= salgrade.losal and ang.sal <= salgrade.hisal
+group by ang.deptno, salgrade.grade
+) tabel left outer join
+(select nr_ang, id_departament, salgrade from adv_dept where luna = EXTRACT(month FROM sysdate) - 1) tab2
+on tabel.id_departament=tab2.id_departament and tabel.salgrade=tab2.id_departament
+
+
+insert into adv_dept
+(id_departament, salgrade, salmax, salmin, nr_ang, luna, an, delta_ang)
+(
+select tabel.*, tabel.nr_ang-nvl(tab2.nr_ang, 0) delta_ang
+from
+(
+select ang.deptno id_departament, salgrade.grade salgrade, max(ang.sal) salmax, min(ang.sal) salmin, count(ang.empno) nr_ang, EXTRACT(month FROM sysdate) luna, EXTRACT(year FROM sysdate) an
+from emp ang
+inner join salgrade
+on ang.sal >= salgrade.losal and ang.sal <= salgrade.hisal
+where not exists
+(select * from emp where emp.mgr=ang.empno)
+or ang.hiredate >= add_months(sysdate,-12)
+group by ang.deptno, salgrade.grade
+) tabel left outer join
+(select nr_ang, id_departament, salgrade from adv_dept where luna = EXTRACT(month FROM sysdate) - 1) tab2
+on tabel.id_departament=tab2.id_departament and tabel.salgrade=tab2.id_departament
+);
+
+3.
+
+
+SET PAGES 30
+COL ID_DEPARTAMENT HEA 'DEPARTAMENT'
+COL NR_ANG FORMAT A15 HEA 'NR Angajati'
+COL SALMAX FORMAT 99,999 HEA 'SALARIU MAXIM'
+COL SALMIN FORMAT A10 HEA 'SALARIU MINIM'
+COL delta_ANG FORMAT A10 HEA 'Delta angajati'
+
+TTITLE LEFT 'PAG:' SQL.PNO RIGHT UNDERLINE 'STRUCTURA ORGANIZATORICA'
+
+BTITLE R 'Director Salarizare'
+
+BREAK ON A NODUP ON E NODUP ON REPORT
+COMP SUM OF D ON ID_DEPARTAMENT SKIP 1 REPORT
+select * from adv_dept
+/
+TTITLE OFF
+CLEAR COL
+
+

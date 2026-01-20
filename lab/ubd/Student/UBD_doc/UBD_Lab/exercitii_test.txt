@@ -1,0 +1,28 @@
+
+1. Sa se faca o lista cu numele tablespace=-ului , numele fisierelor de date si starea acestora.
+
+select tablespace_name, file_name, status from dba_data_files where tablespace_name = (select default_tablespace from user_users)
+
+2.Sa se faca o lista cu numele , tipul starea tuturor obiectellor create de userul curent
+
+select object_name, object_type, status from all_objects where owner = (select username from user_users)
+
+
+3.Sa se faca o lista cu numele , tipul si starea tablespace-ului alocat pentru segmentele temporare de sortare din sesiunea curenta , precum si nr max de blocuri se sortare alocate fiecarui segment temporar.
+
+select s.tablespace_name, t.status, t.contents,s.max_sort_blocks from dba_tablespaces t, v$sort_segment s where t.tablespace_name = s.tablespace_name
+/
+
+4.Sa se creeze si sa se monitorizeze indexul pk_emp1 creat pe tabela emp1, care este o copie a tabelei emp.Sa se arate din dictionar numele indexului , tabela pe care a fost creat, data si ora la care s-a inceput monitorizarea.(data si ora)
+
+create table emp1 as select * from emp;
+
+create index pk_emp1 on emp1(empno) pctfree 30 storage(initial 200k next  200k pctincrease 0
+maxextents 90) tablespace bd_data
+/
+
+alter index pk_emp1 monitoring usage;
+
+select index_name, table_name , start_monitoring from v$object_usage where index_name='PK_EMP1'
+/
+

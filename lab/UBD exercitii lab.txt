@@ -1,0 +1,893 @@
+	TESTE:
+
+LAB4
+
+--SELECT MEMBER FROM V$LOGFILE WHERE GROUP#=3;
+--SELECT GROUP#, MEMBERS FROM V$LOG;
+
+--SA SE ARATE DIN DICTIONAR GRUPURILE SI MEMBRI FISIERELOR DE LOG INACTIVE
+
+select group#, members, status from v$log WHERE 	STATUS='INACTIVE';
+
+--STAREA INSTANTEI CURENTE SI DATA (HH-MM-SS)ULTIMULUI CHECKPOINT
+
+select instance, STATUS ,CHECKPOINT_TIME, TO_CHAR			 	(CHECKPOINT_TIME,'HH-MM-SS')  from v$thread;
+
+--CARE SUNT TABELELE CREATE DE USERUL SCOTT?
+SELECT TABLE_NAME FROM ALL_ALL_TABLES WHERE OWNER='HR';
+
+--SA SE ARATE DIN DICTIONAR DATA CAND A FOST CREATA BD CURENTA SI DATA CAND AU FOST RESETATE FIS DE LOG
+
+--SELECT CREATED, RESETLOGS_TIME, NAME FROM V$DATABASE;
+
+-- 2. Arata-ti din dictionar numele, grupurile si membrii fisierelor de loc inactive.
+
+select v1.group#, members, v1.status, v2.member from v$log v1, v$logfile v2 where v1.group# = v2.group# and v1.status='INACTIVE';
+_____________________________________________________________
+
+
+LAB 5
+
+--SA SE CREEZE UN TABLESPACE DE UNDO CARE SA CONTINA UN FIS CU DIM DE 1M; UNDO14
+
+CREATE UNDO TABLESPACE UNDO DATAFILE 'C:\ORACLEXE\ORADATA\XE\UBD14.DBF' SIZE 1M; 
+DROP TABLESPACE UNDO2;
+
+--SA SE ADAUGE UN NOU FIS DE DATE CU DIM 1M IN TABLESPACEUL PERMANENT AFERENT USERULUI CURENT
+APOI SA SE VER FIN DIC DACA A FOST CREAT 
+
+
+SELECT DEFAULT_TABLESPACE FROM DBA_USERS WHERE USER ='HR';
+ALTER TABLESPACE SYSTEM ADD DATAFILE 'C:\ORACLEXE\ORADATA\XE\UBD1222.DBF' SIZE 1M;
+select file#, name, bytes from V$DATAFILE;
+
+
+--SA SE MAREASCA DIM FIS CREAT LA 2M APOI SA SE VERIFICE IN DIC --NOUA DIM
+alter database  datafile 'C:\ORACLEXE\ORADATA\XE\UBD1222.DBF' RESIZE 2M;
+SELECT * FROM DBA_DATA_FILES WHERE FILE# LIKE 'C:\ORACLEXE\ORADATA\XE\UBD1222.DBF';
+
+
+--SA SE ARATE DIN DICTIONAR NUMELE TABLESPACEURILOR PER SI TEMP SETATE CA DEFAULT
+select * from DATABASE_PROPERTIES where PROPERTY_NAME = 'DEFAULT_TEMP_TABLESPACE' or  PROPERTY_NAME='DEFAULT_PERMANENT_TABLESPACE';
+
+
+1. sa se creze un tablespace temporar UBDTEMP care sa iaba un fisier de date UBD1 cu dimensiunea de 2m, create in E:/STUDENT
+	CREATE TEMPORARY TABLESPACE UBDTEMP TEMPFILE 'C:\ORACLEXE\ORADATA\XE\UBD1.DBF' SIZE 2M;
+
+2. sa se arate din dictionar numele, fisierul si starea tabelspaceului permanent afertent userului curent
+ASA NU
+	SELECT DEFAULT_TABLESPACE FROM DBA_USERS WHERE USER='HR';
+ASA DA
+	SELECT username, DEFAULT_TABLESPACE, FILE_NAME 
+	FROM DBA_USERS, DBA_DATA_FILES 
+	WHERE DEFAULT_TABLESPACE = TABLESPACE_NAME AND USERNAME='UBD1'
+
+3. sa se adauge un nou fisier de date UBD12 cu dimensiunea de 1M la tablespaceul permanet curent si apoi sa se verifice in dictionar 
+daca a fost creat.
+	ALTER TABLESPACE SYSTEM ADD DATAFILE 'C:\ORACLEXE\ORADATA\XE\UBD122.DBF' SIZE 5M;
+	select file#, name, bytes from V$DATAFILE;
+
+4. sa se arate din dictionar numele tablespaceurilOR permanente si temporare setate ca default
+	select * from DATABASE_PROPERTIES where PROPERTY_NAME = 'DEFAULT_TEMP_TABLESPACE' or  PROPERTY_NAME='DEFAULT_PERMANENT_TABLESPACE';
+
+5. selecteze numele fis si starea tablespace-ului permanent curent
+	SELECT A.FILE_NAME, A.TABLESPACE_NAME, A.STATUS, B.CONTENTS FROM DBA_DATA_FILES A, DBA_TABLESPACES B WHERE
+	CONTENTS LIKE '%PERMANENT' AND A.TABLESPACE_NAME=B.TABLESPACE_NAME AND B.TABLESPACE_NAME LIKE '%USERS';
+
+____________________________________________________________
+
+
+LAB 6
+
+	--TABELA=SEGMENT CU SEGMENT_TYPE='TABLE'
+
+1--CARE ESTE SPATIUL LIBER CA NR DE BLOCURI IN TABLESPACEUL PERMANENT AFERENT USERULUI CURENT
+
+select * from DATABASE_PROPERTIES where PROPERTY_NAME = 'DEFAULT_PERMANENT_TABLESPACE';
+
+SELECT DEFAULT_TABLESPACE FROM DBA_USERS WHERE USER ='HR';
+--SYSTEM
+
+SELECT TABLESPACE_NAME, COUNT(*), MAX(BLOCKS), SUM(BLOCKS)
+FROM DBA_FREE_SPACE WHERE TABLESPACE_NAME='SYSTEM' AND OWNER='HR' GROUP BY TABLESPACE_NAME;
+
+
+2--SA SE CREEZE O COPIE A TABELEI EMP NUMITA EMP1_UBD APOI SA SE ARATE DIN DICTIONAR PROPRIETARUL, NUMELE, TIPUL, MARIMEA IN BLOCURI A ACESTEI TABELE;
+
+CREATE TABLE EMP2_UBD AS SELECT * FROM EMP;
+
+DESC EMP1_UBD
+SELECT * FROM EMP1_UBD;
+
+SELECT OWNER, SEGMENT_NAME, SEGMENT_TYPE,BLOCKS FROM DBA_SEGMENTS WHERE SEGMENT_NAME='EMP2_UBD';
+
+
+3--SA SE ARATE DIN DIC CARE SUNT TABELELE PARTITIONATE AFERENTE USERULUI SYSTEM
+
+SELECT DISTINCT SEGMENT_TYPE FROM DBA_SEGMENTS;
+
+SELECT OWNER, SEGMENT_NAME, SEGMENT_TYPE FROM DBA_SEGMENTS WHERE SEGMENT_TYPE='TABLE PARTITION' AND OWNER='SYSTEM';
+
+4--SA SE ARATE DIN DICTIONAR CEA MAI MARE EXTENSIE DE SEG DE ROLL BACK, NUMELE TABLESPACE IN CARE E CREAT SEG, DIM IN BYTES A EXTENSIEI
+???????????????????????????????????????????????????????
+
+SELECT DISTINCT A.EXTENT_ID, B.CEVA2, A.TABLESPACE_NAME, A.BYTES FROM DBA_EXTENTS A, (SELECT EXTENT_ID, MAX(CEVA) CEVA2 FROM (SELECT EXTENT_ID, COUNT(SEGMENT_NAME) CEVA FROM DBA_EXTENTS WHERE SEGMENT_TYPE='ROLLBACK' GROUP BY EXTENT_ID) GROUP BY EXTENT_ID) B
+WHERE A.EXTENT_ID=B.EXTENT_ID;
+
+
+SELECT A.EXTENT_ID, A.TABLESPACE_NAME, A.BYTES
+FROM DBA_EXTENTS A, (SELECT MAX(BYTES) CEVA FROM DBA_EXTENTS GROUP BY EXTENT_ID) B WHERE A.BYTES=B.CEVA;
+
+_____________________________________________________________
+
+LBA 7
+
+1--sa se faca o lista cu numele, marimea in bytes si starea seg de undo din ses curenta
+
+SELECT n.name, s.rssize, s.status
+	FROM v$rollname n, v$rollstat s
+	WHERE n.usn = s.usn;
+
+2--faceti o lista cu userul curent, id_ses_crt, starea ei, tablespaceul permanent ascociat.
+ 
+select a.username, a.SID, a.terminal, a.state, b.default_tablespace
+from v$session a, dba_users b where a.username=b.username;
+
+3--faceti o inserare in emp, apoi o lista cu adresa tranzactiei, segmentul de rollback folosit, nr_blocuri generate si nume fis rolback utilizat
+
+
+insert into emp values (999, 'TEST','TRANZACT',1111,sysdate, 100,0,10) 
+
+select a.addr, a.xidusn, a.used_ublk, b.file_name from v$transaction a, dba_data_files b where a.ubafil = b.file_id;
+
+
+4--aflati din dictionar care e numele si tipul tablespaceului folosit pentru seg temp de sortare alocat sesiunii curente precum si tipU seg
+
+select tablespace, contents, SEGTYPE from v$sort_usage where contents='TEMPORARY'; 
+
+______________________________________________________________
+
+LAB 8
+
+1--SA SE FACA O LISTA CU PROPRIETARUL, USER CURENT SI NUMELE TABELELOR AFERENTE
+
+SELECT A.OWNER, B.USERNAME, A.TABLE_NAME FROM DBA_TABLES A, DBA_USERS B WHERE A.TABLESPACE_NAME=B.DEFAULT_TABLESPACE
+and b.username='SYSDBA'; 
+
+
+
+2--SA SE FACA O LISTA CU NUMELE, TIPUL SI DATA CREARII TUTUROR TRIGERILOR CREATI IN BD IN ANUL 2002
+
+SELECT OBJECT_NAME, OBJECT_TYPE, CREATED FROM DBA_OBJECTS WHERE CREATED>'01-JAN-2002' AND CREATED<'30-DEC-2002' AND OBJECT_TYPE='TRIGGER';
+
+
+3--DEZACTIVATI COL: SAL SI COMM DIN TABELA EMP1 (COPIE A TABELEI EMP) SI VERIFICATI IN DICTIONAR CATE COL DEZACTIVATE AVETI IN EMP1.
+
+
+CREATE TABLE  EMP_TEST8
+as select * from HR.EMP;
+
+ALTER TABLE hr.EMP_TEST8
+SET UNUSED COLUMN comm CASCADE 
+CONSTRAINTS;
+
+ALTER TABLE hr.EMP_TEST8
+SET UNUSED COLUMN SAL CASCADE 
+CONSTRAINTS;
+
+SELECT * FROM DBA_UNUSED_COL_TABS WHERE TABLE_NAME='EMP_TEST8';
+
+
+
+4--FACETI O LISTA CU NUMELE INSTANTEI CURENTE, NUMELE TABLESPACEULUI AFERENT USERULUI CURENT, NUME TABELE SI DIM MAX A BLOCURILOR DE EXTENSIE ALOCATE TABLESPACEULUI EXPRIMATE IN MB
+
+
+
+SELECT C.INSTANCE_NAME, TABLESPACE_NAME, TABLE_NAME, MAX_EXTENTS/1024 FROM DBA_TABLES A, DBA_USERS B, V$INSTANCE C WHERE A.TABLESPACE_NAME=B.DEFAULT_TABLESPACE AND C.INSTANCE_NUMBER=A.INSTANCES;
+
+
+______________________________________________________________
+
+LAB 9
+
+1-- SA SE CREEZE O CPIE A TABELEI EMP NUMITE EMP6
+PE ACEASTA TABELA SA SE CREEZE UN INDEX EMP6_IDX ON(DEPTNO, EMPNO)
+SA SE VERIFICE DIN DIC PROPRIETAR, NUME TABELA, COLOANA
+
+CREATE TABLE EMP6 AS (SELECT * FROM EMP);
+
+CREATE INDEX hr.emp6_idx1 
+ON hr.emp6(empno, deptno);
+
+SELECT  index_name, table_owner, table_name, column_name  
+          from dba_ind_columns  
+          where index_name = 'EMP6_IDX1'
+
+2--AFLATI DIN DICTIONAR NUMELE INSTANTEI CURENTE, NUMELE INDEXILOR SI TABELELE AFERENTE 
+
+SELECT B.INSTANCE_NAME, INDEX_NAME, TABLE_NAME FROM DBA_INDEXES A LEFT JOIN V$INSTANCE B ON (A.INSTANCES = B.INSTANCE_NUMBER) WHERE TABLE_OWNER LIKE 'HR'; 
+
+________________________________________________________________
+
+
+c:\users\geo\desktop\ubd_laburi\lab 4 UBD.txt
+************************************************************************
+1) Sa se arate din dictionar grupurile, membrii, si starea fisierelor de log inactive
+
+select group#, members, status from v$log where status='INACTIVE';
+
+2) Sa se arate din dictionar numele instantei curente, hostul, data startarii si starea
+
+select instance_name, host_name, startup_time, status from v$instance;
+
+3) Aratati din dictionar numele tuturor tabelelor de sistem;
+
+select * from v$fixed_table where type='TABLE';
+
+4) Sa se arate din dictionar data cand a fost creata baza de date si data cand au fost restartate fisierele de log.
+Data = ora:minut:secunda
+
+select name, TO_CHAR(created,'DDTHMONTHYYYY,HH:MI:SS'), TO_CHAR(resetlogs_time,'DDTHMONTHYYYY,HH:MI:SS') from v$database;
+
+
+c:\users\geo\desktop\ubd_laburi\lab 5 UBD.txt
+************************************************************************
+1) sa se creeze un tablespace temporar ubdtemp care sa aiba un fisier de date ubd1 cu dimensiunea de 2 MB creat in 
+folderul student pe discul E
+
+create temporary tablespace ubdtemp tempfile 'E:/Student/ubd1.ddd' size 2M;
+
+2) sa se arate din dictionar numele fisierului si starea tablespace permanent aferent userului curent;
+
+select username,default_tablespace from dba_users where username like 'UBD1';
+select tablespace_name, file_name FROM dba_data_files where tablespace_name like 'BD_DATA';
+
+3) sa se adauge un nou fisier de date ubd12 cu dimensiunea de 1 M la tablespace permanent curent si apoi
+sa se verifice in dictionar daca a fost creat
+
+ alter tablespace BD_DATA add datafile 'E:\Student\udb12.file' size 1M
+ select tablespace_name, file_name FROM dba_data_files where tablespace_name like 'BD_DATA';
+
+4) sa se arate din dictionar numele tablespaceuri permanente si temporare setate ca default;
+select property_value from database_properties where property_name like '%DEFAULT%'
+UNION
+select default_tablespace from dba_users,dba_tablespaces where default_tablespace=tablespace_name and contents like '%PERMANENT';
+
+-----------------------------------------------------------------------------------------------------
+
+1. sa se creze un tablespace temporar UBDTEMP care sa iaba un fisier de date UBD1 cu dimensiunea de 2m, create in E:/STUDENT
+CREATE TEMPORARY TABLESPACE TEMP_UBD TEMPFILE 'E:/student/UBD' SIZE 2M;
+
+2. sa se arate din dictionar numele, fisierul si starea tabelspaceului permanent afertent userului curent
+select DEFAULT_TABLESPACE from dba_users where user = 'UBD1';
+
+3. sa se adauge un nou fisier de date UBD12 cu dimensiunea de 1M la tablespaceul permanet curentsi apoi sa se verifice in dictionar daca a fost creat.
+ALTER TABLESPACE BD_DATA ADD DATAFILE 'E:/student/ubd12' SIZE 5M;
+select file#, name, bytes from V$DATAFILE;
+
+4. sa se arate din dictionar numele tablespaceurile permanente si temporare setate ca default
+select *from DATABASE_PROPERTIES where PROPERTY_NAME = 'DEFAULT_TEMP_TABLESPACE' 
+or  PROPERTY_NAME='DEFAULT_PERMANENT_SPACE';
+
+-----------------------------------------------------------------------------------------------------------
+1. sa se creeze un tablespace de tip undo 'undo_ubd' cu un fis de date 'undo1' cu dim de 1M (pe e:/student)
+	CREATE UNDO TABLESPACE undo_ubd
+			DATAFILE 'E:/Student/undo1' SIZE 1M
+
+2. Sa se arate din dict numele, fisierul si starea tablespace-ului permanent curent aferent userului curent
+	select tablespace_name,file_name,status from DBA_DATA_FILES
+------------------------------------------------------------------------------------------------
+1 sa se creeze un tavblespace temp temp_ubd fisier date ubd1 cu dim de 2 m
+    create temporary tablespace temp_ubd tempfile 'E:/Student/ubd1' size 2M;
+
+2 sa se mareasca dim fis ubd1 la 4 M si apoi sa se verifice in dictionar noua dimensiune
+    alter database tempfile 'E:/Student/ubd1' resize 5M
+    select * from dba_temp_files where tablespace_name = 'TEMP_UBD';
+
+3 sa se afiseze din dictionar numele fis temporare aferente userului curent aflarunte in starea online , data cand au fost create si dimensiuneaa lor in blocuri
+    select name,creation_time, block_size from V$tempfile where status = 'ONLINE'
+
+4 aratati din dictionar care este cel mai mare fisier temporar ca numar de bytes aferent userului curent, data cand a fost crstatueat si starea lui
+    select name, creation_time, status, bytes from v$tempfile where bytes = (select max(bytes) from v$tempfile)
+
+
+c:\users\geo\desktop\ubd_laburi\lab 5ubd.txt
+************************************************************************
+1. Sa se creeze un tablespace temporar UBDTEMP, care sa aiba un fisier de date UBD1 cu dimensiunea de 2 MB, creat in folderul C:\Student
+
+REZOLVARE: create temporary tablespace UBDTEMP tempfile 'E:/Student/ubd.dbf' SIZE 2M;
+ast
+2. sa se arate din dictionar numele, fisierul si starea tablespaceu-lui permanent aferent userului curent.
+
+REZOLVARE: select file_name, status from DBA_DATA_FILES where tablespace_name in (select default_tablespace from DBA_USERS where username='SCOTT');
+
+--- la mine utilizatorul curent era SCOTT
+
+3. Sa se adauge un nou fisier de date UBD12 cu dimensiunea de 1 M la tablesapce_ul permanent curent si apoi sa se verifice in dictionar daca a fost creat.
+
+REZOLVARE: alter tablespace USERS add datafile 'UDB12.dbf' size 1M;
+
+select tablespace_name, file_name from DBA_DATA_FILES where tablespace_name
+='USERS';
+
+4. Sa se arate din dictionar numele tablespaces-urilor permanente si temporare setate ca default 
+
+select property_name,property_value from database_properties where property_name in ('DEFAULT_TEMP_TABLESPACE','DEFAULT_PERMANENT_TABLESPACE');
+
+
+c:\users\geo\desktop\ubd_laburi\lab 6 UBD.txt
+************************************************************************
+
+1 select segment_name,segment_type, tablespace_name, blocks
+          from dba_segments where owner='SCOTT'and segment_type='INDEX'
+/
+
+2 select tablespace_name, sum(blocks)  from dba_free_space 
+where tablespace_name='PBD_DATA'
+group by tablespace_name
+/
+
+3 create table emp_ubd as select * from emp;
+
+select owner,segment_name,segment_type, tablespace_name, blocks, extents
+          from dba_segments where segment_name='EMP_UBD' and segment_type='TABLE'
+/
+
+4.select tablespace_name,  sum(blocks) from dba_free_space where tablespace_name='PBD_DATA' 
+group by tablespace_name
+/
+drop table emp_ubd;
+
+select tablespace_name,  sum(blocks) from dba_free_space where tablespace_name='PBD_DATA' group by tablespace_name
+
+-------------------------------------------------------------------------------
+1.Care este spatiul liber ca numar de blocuri in tablespace-ul permanent afferent
+userului current.
+
+select tablespace_name, sum(blocks) from dba_free_space where
+tablespace_name='BD_DATA' group by tablespace_name;
+
+2.Sa se creeze o copie a tabelei emp numita emp1_ubd apoi sa se arate din dictionar
+proprietarul , numele, tipul si marimea in blocuri aacestei tabele;
+
+create table emp1_ubd as select * from emp;
+
+select owner, segment_name,segment_type, blocks from dba_segments where
+segment_name='EMP1_UBD’;
+
+3.care sunt tabelele partitionate aferente userului system;
+
+select owner, partition_name from dba_segments where segment_type='TABLE
+PARTITION' and owner='SYSTEM';
+
+4.sa se arate din dictionary cea mai mare extensie de segment de rollback, numele txt
+in care este creat segmental si dimensuinea in bytes a extensiei;
+
+select segment_name, tablespace_name, bytes from dba_segments
+where segment_type='ROLLBACK' and extents= (select max(extents) from
+dba_segments where segment_type='ROLLBACK' group by tablespace_name)
+-------------------------------------------------------------------------------
+1. sa se creeze o copie a tabelei emp emp12 si sa se arate din dictionar proprietarul, numele, 
+tipul si marimea in blocuri a acestei tabele:
+
+create table emp1_ubd as select * from emp;
+select owner, segment_name,segment_type, blocks from dba_segments where segment_name='EMP12';
+
+2. sa se arate din dictionar marimea in bytes si blocuri a tablespaceului temporar aferent userului curent 
+si in ce fisier este create spatiul respectiv:
+
+select * from dba_users where username = 'ubd1';
+select FILE_NAME, BYTES, BLOCKS from DBA_TEMP_FILES where TABLESPACE_NAME = 'BD_TEMP';
+
+3. sa se arate cea mai mare extensie de segmente rollback, numele tablespaceului pe care e vreat segmentul 
+si dimensiunea in bytes a extensiei:
+
+select segment_name, tablespace_name, bytes from dba_segments where segment_type='ROLLBACK' 
+and extents= (select max(extents) from dba_segments where segment_type='ROLLBACK' 
+group by tablespace_name)
+
+4.sa se arate din dictionar numele tablespaceului permanent afernt userului curent si care e extensia initiala a lui;
+select tablespace_name, initial_extent from DBA_TABLESPACES where tablespace_name = 'BD_DATA';
+
+
+
+c:\users\geo\desktop\ubd_laburi\lab 7 ubd.txt
+************************************************************************
+1. faceti o lista cu numele, marimea in B, nr de extensii si starea segm undo online din sesiunea curenta.
+
+select segment_name, 	block_id, initial_extent, status from dba_rollback_segs where status='ONLINE';
+
+2. sa se faca o inserare in tabela emp, apoi sa se faca o lista cu adr tranzactiei, data cand a fost initiata (ora-min-sec), starea ei 
+si numele segm de rollback pe care il foloseste.
+
+insert into emp values (123, 'vlad','stud',321,sysdate, 213,0,29);
+select addr,  start_time, status, rlb.name from v$transaction, v$rollname rlb where usn=XIDUSN;
+
+3. faceti o lista cu userul curent, adr sesiunii, adr tranzactiei si numele segm de rollback folosit in sesiunea curenta.
+
+select username, saddr, addr, rlb.name from v$session, v$rollname rlb, v$transaction where ses_addr=saddr and usn=XIDUSN;
+
+4. faceti o lista cu numele, tipul si starea tablespaceului alocat pt segm temp de sortare dim sesiunea curenta, precum si nr max de 
+blocuri de sortare alocate fiecarui segm temp
+
+select tablespace, contents, MAX_SORT_BLOCKS from v$sort_usage, v$sort_segment where tablespace=TABLESPACE_NAME;
+
+select tablespace, contents from v$sort_usage where tablespace=TABLESPACE_NAME;
+
+select a.tablespace_name, status, MAX_SORT_BLOCKS from v$sort_segment a, dba_temp_files b where a.tablespace_name = b.tablespace_name;
+
+
+
+
+
+
+c:\users\geo\desktop\ubd_laburi\lab 8 ubd v1.txt
+************************************************************************
+1. sa se faca o lista cu toate tabelele la care userul curent are acces
+
+SELECT owner, tablespace_name,table_name FROM dba_tables WHERE 
+tablespace_name = (select default_tablespace from dba_users where username = 'UBD1');
+
+2. faceti o copie a tab emp numita emp2, apoi dezactivati col salariu si comision din emp2. 
+Verif in dictionar cu cate col dezactivate figureaza tabela emp2.
+
+create table emp2 as (select * from emp);
+ALTER TABLE emp2
+SET UNUSED COLUMN sal
+CASCADE CONSTRAINTS;
+ALTER TABLE emp2
+SET UNUSED COLUMN comm
+CASCADE CONSTRAINTS;
+SELECT * FROM dba_unused_col_tabs;
+
+
+3. sa se faca o lista cu numele instantei curente, numele tablespace-ului permanent al userului curent, numele tabelelor si dim
+max a blocurilor de extensie alocate tablespaceului expr in MB.
+
+select instance_name,a.tablespace_name,b.table_name,a.max_extents/1048576
+from v$instance,dba_tablespaces a,dba_tables b
+WHERE 
+a.tablespace_name = (select default_tablespace from dba_users where username = 'UBD1')
+and a.tablespace_name=b.tablespace_name;
+
+4. sa se activeze din nou coloanele de salariu si comision dezactivate la pct2.
+
+ALTER TABLE emp2
+add sal number;
+ALTER TABLE emp2
+add comm number;
+
+
+
+
+
+
+c:\users\geo\desktop\ubd_laburi\lab 8 ubd v2.txt
+************************************************************************
+1. Sa se faca o lista cu tabelele create de userul curent, tablespace-ul in care sunt create si proprietarul (tot userul curent).
+select owner, tablespace_name, table_name, username from dba_tables,dba_users where owner='SCOTT' and username=owner;
+
+// scott e userul meu curent
+
+2. Sa se faca o lista cu numele, tipul si data crearii tutorilor trigerilor din baza de date care au fost creati in 2002.
+select object_name, object_type, created from dba_objects where object_type='TRIGGER' and to_char(created,'YYYY') = 2002;
+
+3. sa se creeze o copie a tabelei emp, numita emp12, apoi sa se dezactiveze coloanele salariu si comision. Aratati din dictionar cu cate coloane dezactivate figureaza tabela emp12.
+
+create table emp12 as select * from scott.emp;
+alter table emp12 set unused column sal;
+alter table emp12 set unused column comm;
+select table_name,count from dba_unused_col_tabs where table_name='EMP12';
+
+4. sa se activeze la loc coloanele dezactivate la punctul anterior
+
+alter table emp12 drop column sal;
+alter table emp12 drop column comm;
+alter table emp12 add column sal number(4);
+alter table emp12 add column comm number(4);
+
+
+c:\users\geo\desktop\ubd_laburi\lab 8 ubd v3.txt
+************************************************************************
+1.
+sa se faca o lista cu proprietarul,numele tablespace-ului si numele tabelei numai pentru tabelele din userul curent
+	select a.owner,a.table_name,a. tablespace_name from dba_tables a, dba_users b where a.owner='UBD1' AND a.tablespace_name = b.default_tablespace
+2. sa se faca o copie a tabelei emp numita emp10, apoi sa se dezactiveze coloanele de salarii si comision in tabela emp10
+verificati in dictionar cate coloane dezactivate figureaza tabela emp10
+
+create table emp10 as select * from emp;
+alter table emp10 set unused column comm cascade constraints;
+select table_name,count from dba_unused_col_tabs where table_name = 'EMP10'
+
+3. sa se faca o lista cu numele instantei curente, numele tablespaceului permanent , numele tabelelor si dimensiunea maxima a blocurilor de extensie alocate tablespaceului permanent exprimate in MB 
+
+select a.tablespace_name,(a.max_extents)/1024/1024,c.instance_name from dba_tablespaces a,dba_users b,v$instance c where a.tablespace_name = b.default_tablespace and b.username='UBD1'
+
+4. sa se activeze la loc coloanele dezactivate din emp10 si apoi sa se verifice in dictionar
+
+
+c:\users\geo\desktop\ubd_laburi\lab 8 ubd v4.txt
+************************************************************************
+1sa se faca o lista cu tabelele create de userul curent table spaceul in care sunt create si proprietar 
+select a.table_name,a.TABLESPACE_NAME,a.owner,b.username from  dba_tables a, v$session b 
+where a.owner='UBD1' and username='UBD1' ;
+2.sa se faca o lista cu numele ,tipul si data crearii tuturor triggerilor din baza de date care au fost creati in 
+anul 2002
+select object_name, object_type, created from dba_objects where object_type like 'TRIGGER' ;
+3 sa se creeze o copie a tabelei emp numita emp12 apoi sa se dezactiveze coloanele salariu si commision
+aratati in dictionar cu cate coloane dezactivate figureaza emp12
+create table emp122 as select * from emp;
+alter table emp122 set unused column comm cascade constraints;
+alter table emp122 set unused column sal cascade constraints;
+select table_name,count from dba_unused_col_tabs where table_name = 'EMP122'
+
+4 sa se activeze coloanele dezactivate in pctul anterior
+alter table emp122 add comm number ;
+
+
+c:\users\geo\desktop\ubd_laburi\lab 9 ubd.txt
+************************************************************************
+1. sa se creeze un index pe coloanele de id angajat si data angajarii din tabela emp.
+sa se porneasca apoi monitorizarea indexului si sa searate din dictionar numele indexului, tabela pec are este creat
+si data si ora la care a inceput monitorizarea.
+
+CREATE INDEX emp_name_idx
+ON emp(empno,hiredate)
+PCTFREE 30
+STORAGE(INITIAL 200K NEXT 200K
+PCTINCREASE 0 MAXEXTENTS 50)
+TABLESPACE bd_data;
+
+ALTER INDEX emp_name_idx
+MONITORING USAGE
+
+select index_name, table_name, start_monitoring from v$object_usage;
+
+2. afisati din dictionar numele instantei curente, numele indexilor si tabelele pe care sunt creati pentru userul curent.
+
+select i.instance_name, ind.index_name, ind.table_name from v$instance i, dba_indexes ind
+where i.instance_number=ind.instances and ind.owner='UBD1';
+
+
+c:\users\geo\desktop\ubd_laburi\lab5ubd.txt
+************************************************************************
+1. sa se creeze un tablespace de tip undo numit undo_ubd11 care sa aiba un fis de data undo11 cu dim de un 1M e:\\student
+CREATE UNDO TABLESPACE undo_ubd
+			DATAFILE 'E:/Student/undo1' SIZE 1M
+2. sa se arate din dcitionar numele fisierul si starea tablesaceului permanenet aferent userului curent
+select tablespace_name, status from dba_tablespaces where tablespace_name = 
+(select default_tablespace from dba_users where username = 'UBD1')
+/
+
+
+3 sa se arate din dictionar numele table_space permanenete si temporare setate ca default
+select property_value from database_properties where property_name like '%DEFAULT%'
+UNION
+select default_tablespace from dba_users,dba_tablespaces where default_tablespace=tablespace_name and contents like '%PERMANENT';
+
+4 .aratati din dictionar care e cel mai mare fis temp nr bytes aferent userului curent data creerii si starea lui
+ select name, creation_time, status, bytes from v$tempfile where bytes = (select max(bytes) from v$tempfile)
+
+
+
+c:\users\geo\desktop\ubd_laburi\lab6ubd.txt
+************************************************************************
+1. care sunt indecsii creati pe tabelele din userul scott, in ce tablespace sunt creati si cate blocuri au alocate?
+
+select segment_name,segment_type, tablespace_name, blocks
+from dba_segments where owner='SCOTT'and segment_type='INDEX';
+
+2. sa se creezae o copie a tabelei emp numita emp11 apoi sa se arate din dictionar proprietarul, numele, tipul si 
+marimea in blocuri a acestei tabele.
+
+create table emp11 as select * from emp;
+
+select owner, segment_name, segment_type, blocks
+from dba_segments where segment_name='EMP11';
+
+3. care sunt tabelele partitionate aferente userului system?
+
+select owner, segment_type, partition_name 
+from dba_segments where segment_type='TABLE PARTITION' and owner='SYSTEM';
+
+4. sa se arate din dictionar numele tablespaceului permanent aferent userului curent si extensia sa initala
+
+select tablespace_name, initial_extent from DBA_TABLESPACES where tablespace_name = (
+					select default_tablespace 
+					from dba_users where username='UBD1');
+
+
+c:\users\geo\desktop\ubd_laburi\lab7_old_UBD.txt
+************************************************************************
+1.Sa se faca o lista cu numele , marimea in bytes si starea segemntelor de undo din sesiunea curenta.
+
+select rn.usn, name, rssize, status from v$rollstat rs ,v$rollname rn 
+	where rs.usn=rn.usn;
+
+
+2.faceti o lista cu userul curent, id-ul sesiunii curente, starea si tablespace-ul permanent asociat
+
+select a.default_tablespace, b.username,b.sid, b.status from dba_users a, v$session b where a.username=b.username
+
+
+3. faceti o inserare in tabela emp apoi faceti o lista cu adresa tranzactiei segmentul de rollback pe care il foloseste
+numarul de blocuri generate si numele fisierului de rollback utilizat.
+
+insert into emp values(1,'nume','job',5,null,5,6,7);
+select t.addr, t.xidusn, rn.name, rs.rssize from v$transaction t, v$rollname rn, v$rollstat rs where rn.usn = t.xidusn and rn.usn=rs.usn;
+
+
+4. aflati din dictionar care este numele si tipul tablespace-ului folosit pentru segmentele temporare de sortare 
+alocat sesiunii curente precum si tipul segmentelor.
+
+select d.tablespace_name from dba_temp_files d, v$sort_segment ss where d.tablespace_name=ss.tablespace_name;
+select * from v$sort_segment;
+select * from dba_temp_files;
+desc  dba_temp_files;
+
+select d.tablespace_name, segment_file,segtype from dba_temp_files d, v$sort_segment ss , v$sort_usage su where d.tablespace_name=ss.tablespace_name and ss.tablespace_name= su.tablespace;
+select * from v$sort_segment;
+
+
+
+
+
+1. Faceti o lista cu numele, marimea in bytes, numarul de extensii si starea segmentelor undo aflate in starea ONLINE din sesiunea curenta
+
+select a.name, b.rssize, b.extents, b.status
+from v$rollstat b, v$rollname a 
+where status='ONLINE' and a.usn=b.usn;
+
+2. Faceti o inserare in tabela EMP apoi faceti o lista cu adresa tranzactiei, data cand a fost initiata (ORA-MINUT-SECUNDA), starea ei si numele
+segmentului de rollback pe care-l foloseste.
+
+insert into emp 
+values (999, 'TEST','TRANZACT',1111,sysdate, 100,0,10);
+
+select a.addr, a.start_time, a.status, b.name
+from v$transaction a, v$rollname b
+where a.xidusn = b.usn;
+
+3. O lista cu userul curent, adresa sesiunii curente, adresa tranzactiei si numarul segmentului de rollback folosit in sesiunea curenta
+
+select a.username, a.saddr, a.taddr , b.name
+from v$session a, v$rollname b
+where b.name = (select  x.name from v$rollname x, v$transaction y where x.usn=y.xidusn) and a.username='UBD1';
+
+4. O lista cu numele tablespace-ului alocat pt segm temporare de sortare din sesiunea curenta, numarul de extensii si blocuri libere
+precum si fisierul alocat
+
+select a.tablespace_name, a.free_extents, a.free_blocks, b.file_name
+from v$sort_segment a, dba_temp_files b
+where a.tablespace_name = b.tablespace_name;
+
+
+c:\users\geo\desktop\ubd_laburi\lab7_UBD.txt
+************************************************************************
+select table_name from dictionary where table_name like 'USER%';
+
+SELECT n.name, s.extents, s.rssize, s.hwmsize, s.xacts, s.status
+FROM v$rollname n, v$rollstat s
+WHERE n.usn = s.usn;
+
+SELECT s.username, t.xidusn, t.ubafil, t.ubablk, t.used_ublk
+FROM v$session s, v$transaction t
+WHERE s.saddr = t.ses_addr;
+
+
+1. sa se faca o lista cu userul curent, id sesiune, stare sesiune, si tablespace permanent asociat.
+select a.username, a.sid, status, b.default_tablespace
+from v$session a, dba_users b
+where a.username='UBD1' and b.username='UBD1';
+
+2. sa se faca o inserare in emp, apoi o lista cu adreasa transactiei, data cand a fost initiata (HH:MM:SS) starea ei, 
+si numele segmentului de rollback pe care il foloseste.
+insert into emp values (100, 'gigi', 'medic', 1111, sysdate, 100, 0, 10);
+select a.addr, a.start_time, a.status, b.name
+from v$transaction a, v$rollname b
+where a.xidusn = b.usn;
+
+3. Faceti o lista cu numele, tipul si starea tablespace alocat pt segmentele temporare de sortare din sesiunea curenta
+precum si numarul maxim de blocuri de sortare alocate fiecarui segment temporar.
+select a.tablespace_name, a.status, a.maxblocks, c.ALLOCATION_TYPE, c.contents
+from dba_temp_files a, v$sort_segment b, dba_tablespaces c
+where a.tablespace_name=b.tablespace_name and b.tablespace_name=c.tablespace_name;
+
+
+4. sa se faca o lista cu numele tablespace alocat pt segmente temporare de sortare din sesiunea curenta, numarul de 
+extensii si blocuri libere precum si fisierul alocat
+
+select a.tablespace_name, a.free_extents, a.free_blocks, b.file_name
+from v$sort_segment a, dba_temp_files b
+where a.tablespace_name = b.tablespace_name;
+
+
+
+1. SA SE ARATE NUMELE BAZEI DE DATE , DATA CAND A FOST CREATA, DATA CAND AU FOST RESETATE FISIERELE DE LOG
+
+SELECT NAME,TO_CHAR( CREATED, 'dd:mm:YY:HH:MM'),  CONTROLFILE_TIME FROM v$database;
+
+2. SA SE ARATE NUMELE INSTANTEI CURENTE SI GRUPURILE FISIERELOR DE LOGAFLATE IN STAREA OPEN
+
+SELECT INSTANCE,  GROUPS, STATUS FROM v$thread WHERE STATUS = 'OPEN';
+
+3. SA SE ARATE CARE E STRUCTURA TABELARA A TABELEI EMP DIN USERUL CURENT
+
+select table_name,column_name,data_type from user_tab_columns where table_name='EMP';
+
+4. CARE SUNT GRANTIFICARILE FACUTE DE USERUL SCOTT PENTRU USERUL CURENT; PE CE TABELE SI CE FEEDBACK GRANTIFICAT
+
+select grantee, privilege , grantor from user_tab_privs where owner='SCOTT';
+
+___________________________________________________________________
+
+1. sa se creze un tablespace temporar UBDTEMP care sa iaba un fisier de date UBD1 cu dimensiunea de 2m, create in E:/STUDENT
+
+CREATE TEMPORARY TABLESPACE TEMP_UBD TEMPFILE 'E:/student/UBD' SIZE 2M;
+
+2. sa se arate din dictionar numele, fisierul si starea tabelspaceului permanent afertent userului curent
+
+select DEFAULT_TABLESPACE from dba_users where user = 'UBD1';
+
+3. sa se adauge un nou fisier de date UBD12 cu dimensiunea de 1M la tablespaceul permanet curentsi apoi sa se verifice in dictionar daca a fost creat.
+
+ALTER TABLESPACE BD_DATA ADD DATAFILE 'E:/student/ubd12' SIZE 5M;
+
+select file#, name, bytes from V$DATAFILE;
+
+4. sa se arate din dictionar numele tablespaceurile permanente si temporare setate ca default
+
+select *from DATABASE_PROPERTIES where PROPERTY_NAME = 'DEFAULT_TEMP_TABLESPACE' or  PROPERTY_NAME='DEFAULT_PERMANENT_SPACE';
+
+___________________________________________________________________
+
+1. sa se creeze o copie a tabeei emp emp12 si sa se arate din dictionar proprietarul, numele, tipul si marimea in blocuri a acestei tabele
+
+create table emp1_ubd as select * from emp;
+select owner, segment_name,segment_type, blocks from dba_segments where segment_name='EMP12';
+
+2. sa se arate din dictionar marimea in bytes si blocuri a tablespaceului temporar aferent userului curent si in ce fisier este create spatiul respectiv
+
+select * from dba_users where username = 'ubd1';
+select FILE_NAME, BYTES, BLOCKS from DBA_TEMP_FILES where TABLESPACE_NAME = 'BD_TEMP';
+
+3. sa se arate cea mai mare extensie de segmente rollback, numele tablespaceului pe care e vreat segmentul si dimensiunea in bytes a extensiei
+
+select segment_name, tablespace_name, bytes from dba_segments where segment_type='ROLLBACK' and extents= (select max(extents) from dba_segments where segment_type='ROLLBACK' group by tablespace_name)
+
+4.sa se arate din dictionar numele tablespaceului permanent afernt userului curent si care e extensia initiala a lui;
+
+select tablespace_name, initial_extent from DBA_TABLESPACES where tablespace_name = 'BD_DATA';
+
+___________________________________________________________________
+
+1.sa se faca o lista cu userul curent, idul sesiunii curente, starea ei si tablespaceul permanent asociat
+
+SELECT n.name, s.extents, s.rssize,s.hwmsize,
+2 s.xacts, s.status
+3 FROM v$rollname n, v$rollstat s
+4 WHERE n.usn = s.usn;
+select SID, a.USERNAME, DEFAULT_TABLESPACE from v$session a, dba_users b where a.username = b.username;
+
+2.sa se insereze in EMP apoi sa se faca o lista cu adresa tranzactiei, fdata cand a fost initiata[ora:minut:secunda], starea ei, numele segmentului de rollback pe care il foloseste
+
+insert into emp values (11, 'UBD','TRANZ',22,sysdate, 33,44,55);
+select a.addr, a.start_time, a.status, b.name from v$transaction a, v$rollname b where a.xidusn = b.usn;
+
+3. faceti o lista cu numele, tipul si starea tablespaceului alocat pentru segmentele temporare de sortare din sesiunea curenta precum si
+numarul maxim de blocuri de sortare alocate fiecari segment temporar
+
+select a.TABLESPACE_NAME, a.contents, a.status, b.MAX_BLOCKS from dba_tablespaces a, v$sort_segment b where b.TABLESPACE_NAME = a.TABLESPACE_NAME;
+
+4. sa se faca o lista cu numele tablespaceului alocat pentru segmentele temporare de sortare din sessiunea curenta,
+numarul de extensii si blocuril libere precum si fisierul alocat
+
+select a.tablespace_name, a.free_extents, a.free_blocks, b.file_name from v$sort_segment a, dba_temp_files b where a.tablespace_name = b.tablespace_name;
+
+___________________________________________________________________
+
+1. sa se faca o lista cu tabelele create de usrul curent tablespaceul in care sunt create si proprietarul
+
+SELECT a.owner, a.tablespace_name,a.table_name, b.USERNAME FROM dba_tables  a , dba_users b WHERE owner = 'UBD1' and a.owner = b.username;
+
+2. sa se faca o lista cu numele, tipul, si data crearii tuturor triggerilor din baza de date care au fost creati in anul 2002
+
+select OBJECT_TYPE, OBJECT_NAME, CREATED from dba_objects where OBJECT_TYPE = 'TRIGGER' and to_char(CREATED,'YYYY')='2002';
+
+3. sa se creeze o cpoie a tabelei emp, emp12, apoi sa se dezactiveze colonale salraiu si comision; aratati din dictionar cu cate coloane dezactivate figureaza tabela emp12
+
+select * from emp as emp12;
+CREATE TABLE emp12 AS SELECT * FROM emp;
+ALTER TABLE emp12 SET UNUSED COLUMN SAL CASCADE CONSTRAINTS;
+ALTER TABLE emp12 SET UNUSED COLUMN COMM CASCADE CONSTRAINTS;
+select * from dba_unused_col_tabs where TABLE_NAME = 'EMP12';
+
+4. sa se activeze la loc coloanele deszactivate la pct anterior
+
+alter table emp12 add SAL number(7,2);
+alter table emp12 add COMM number(7,2);
+
+___________________________________________________________________
+
+1. sa se faca o copie a tabelei emp , emp8. sa se creze pe aceasta tabela indexul imp8idx pe coloanele id_ang si id_departament.
+sa se verifice din dictionar componenta indexului. lista contine propretarul, numel tabelei si coloanele aferente.
+
+create table emp8 AS select  * from emp;
+CREATE INDEX ubd1.emp8idx ON ubd1.emp8(empno,deptno);
+select a.owner, a.table_name, b.column_name from dba_indexes a , dba_ind_columns b
+where a.INDEX_NAME = 'EMP8IDX' and a.INDEX_NAME = b.INDEX_NAME;
+
+2. verificati din dictionar numarul de blocuri alocate indexului si care procentul utilzat din spatiul alocat
+ANALYZE INDEX emp8idx VALIDATE STRUCTURE;
+select NAME, BLOCKS, PCT_USED from index_stats;
+
+
+TEST LUNI
+************************************************************************
+Probleme test
+1. Sa se creeze o cheie externa pe tabela emp ca fiind o relatie pe coloana deptno din tabela dept si sa se verifice in dictionar daca a fost creeata constrangerea prin vizualizarea numelui tabela pe care a fost creeata si proprietarul
+2. Faceti o lista cu numele tblspace permanent al userului curent fisierele atasate si starea lor
+3. Faceti o lista cu proprietarul nume segment nume tbspace permanent si numarul de bytes alocat segmentelor din userul curent
+4. Sa se creeze un index emp_idx1 pe col de nume si salariu din tabela emp. Sa se creeze apoi un fisier de data ubd_idx1 cu marimea de 1 mega iar in aces fisier sa se faca o extensie de 100 k pentru indexul emp_idx1
+
+1.
+alter table dept add constraint deptno_pk primary key (deptno);
+alter table emp add constraint emp_fk foreign key (deptno) references dept(deptno);
+select a.object_name, b.owner, b.table_name from user_objects a, user_constraints b where a.object_name=b.constraint_name
+
+2.???
+select default_tablespace, username from dba_users where username='UBD1'
+
+3.
+select owner,segment_name,tablespace_name,bytes from dba_segments where owner='UBD1'
+
+4.
+create index emp_idx1
+on emp(ename,sal)
+pctfree 30
+storage(initial 200k next 200k
+pctincrease 0 maxextents 50)
+tablespace bd_data
+
+alter tablespace bd_data add datafile 'E:\Student\ubd_idx1.dbf' size 1M
+
+alter index emp_idx1
+allocate extent(size 100k
+datafile E:\Student\ubd_idx1.dbf')
+
+
+
+
+1)
+sa se faca o lista cu toti userii creati in baza de date curenta,in ce tablespaceuri sunt creati si data cand au fost creati
+
+select a.username,a.created,b.tablespace_name from dba_users a, dba_tablespaces b,v$database c
+where b.tablespace_name=a.default_tablespace and c.name='BD'
+
+2)
+sa se faca o lista cu numele tablaspaceurilor din baza de date si nr total de blocuri libere aferente fiecaruiu tablespace
+
+select a.tablespace_name,max(b.blocks) nr_blocuri_libere from dba_tablespaces a,dba_free_space b where
+a.tablespace_name=b.tablespace_name
+group by a.tablespace_name
+
+3)
+sa se faca o lista cu numele ,marimea in bytes,nr de extensii,si starea segm de rollback aflate in starea online din sesiunea
+curenta
+
+select n.name,s.rssize,s.extents,s.status from v$rollname n,v$rollstat s
+where n.usn=s.usn and s.status='ONLINE'
+
+4)
+faceti o copie a tabelei emp=emp10.dezactivati col salariu si cominion pe emp10 si verficati in dictionar cate col dezactivate 
+figureaza in tabela
+create table emp10 as select * from emp;
+alter table emp10
+set unused COLUMN sal
+cascade constraints
+
+alter table emp10
+set unused COLUMN comm
+cascade constraints
+
+select * from dba_unused_col_tabs where table_name='EMP10'

@@ -1,0 +1,45 @@
+
+
+1. Sa se creeze un index pe tabela emp, apoi sa se arate din dictionar
+tabelele si
+coloanele din tabele pentru fiecare index.
+	CREATE INDEX scott.emp_name_idx2
+	ON scott.emp(job)
+	PCTFREE 30
+	STORAGE(INITIAL 200K NEXT 200K PCTINCREASE 0 MAXEXTENTS 50)
+	TABLESPACE bd_data;
+
+	SELECT index_name, table_name, column_name
+	FROM dba_ind_columns
+	WHERE index_owner='SCOTT' AND index_name='EMP_NAME_IDX2';
+
+2. Sa se creeze un nou fisier de date cu dimensiunea de 1M, iar in
+acest fisier sa se
+faca o extensie de 100K pentru indexul creat.
+	ALTER TABLESPACE (SELECT tablespace_name FROM dba_indexes WHERE
+
+index_name='emp_name_idx2');
+	ADD DATAFILE 'e:/student/indx01.dbf' SIZE 1M;
+
+	ALTER INDEX emp_name_idx2
+	ALLOCATE EXTENT (SIZE 100K DATAFILE 'e:/student/indx01.dbf';
+
+3. Aratati din dictionar numele instantei curente, numele indecsilor
+si tabelele aferente.
+	SELECT instance_number
+	FROM v$instance;
+
+	SELECT a.index_name, a.table_name, a.instances
+	FROM dba_indexes a, v$instance b
+	WHERE a.instances = b.instance_number;
+
+4. Monitorizati indexul creat, apoi verificati in dictionar data si
+ora cand a inceput
+monitorizarea.
+	ALTER INDEX emp_name_idx2
+	MONITORING USAGE;
+
+	SELECT index_name, start_monitoring
+	FROM v$object_usage
+	WHERE index_name='EMP_NAME_IDX2';
+

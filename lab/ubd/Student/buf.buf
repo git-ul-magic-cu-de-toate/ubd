@@ -1,0 +1,5 @@
+select ename from emp
+ where hiredate <
+  (select to_char(hiredate, 'YYYY') from emp where
+   hiredate = max(hiredate) and job=upper('analyst'))
+/

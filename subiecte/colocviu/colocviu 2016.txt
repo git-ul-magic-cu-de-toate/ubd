@@ -1,0 +1,44 @@
+5.01.2016
+Subiecte 14-16
+1. Sa se creeze un tablespace temporar temptest, intr-un fiser test cu dimensiunea de 5 MB. Parametrii sunt alesi ori implicit, ori din specificatii. Aratati apoi din dictionary ca a fost creat tablespace-ul.
+2. Faceti o lista cu numele, tipul si starea tuturor obiectelor create de userul curent.
+3. Sa se creeze o copie a tabelei EMP, apoi pe aceasta copies a se creeze un index de tip arbore. Verificati apoi in dictionary numarul de blocuri allocate indexului si care este procentul tuilizat din spatial alocat.
+4. Faceti o lista cu numele instantei curente, numele tablespaceului permanent userului current, nemele tabelelor si numarul maxim de extensii premise pe fiecare tabela.
+
+Subiecte 16-18
+
+1. Sa se faca o lista cu toti userii creati pe baza de date, pe ce tablespace-uri permenente lucreaza si data cand au fost creati userii.
+2. Faceti o lista cu numele tablespace-urilor si numarul total de blocuri libere pentru fiecare tablespace.
+3. Faceti o lista cu numele, marimea in bytes, numarul de extensii si starea segmentelor de rollback in starea ONLINE din sesiunea curenta.
+4. Faceti o copie a tabelei EMP si dezactivati 2 coloane din tabela copie. Aratati apoi din dictionar cu cate coloane dezactivate figureaza tabela copie.
+
+
+6.02.2016
+1) Sa se faca o lista cu toti userii creati in baza de date curenta, cu ce tablespace permanent lucreaza si data cand au fost creati.
+select username, default_tablespace, created from dba_users;
+2) Creati un nou fisier de date cu dimensiunea de 1M si alocati fisierul la tablespace-ul permanent asociat userului curent.
+Verificati apoi in dictionar, daca a fost creat.
+//select tablespace_name from user_tablespaces where contents='PERMANENT';
+select tablespace_name from dba_users where username='C##UBD1';
+alter tablespace BD_DATA
+add datafile 'E:\UBD_lab\UBD1.txt'
+size 1M;
+select file_name, tablespace_name from dba_data_files where tablespace_name='BD_DATA';
+3) Faceti o inserare in tabela EMP1 (o copie a tabelei EMP), apoi verificati in dictionar adresa sesiunii, nr segmentului de rollback si numarul de blocuri de undo generate de tranzactie.
+create table EMP1 as select * from EMP;
+insert into EMP1 values (1, 'TEST', 'TEST', 2, SYSDATE, 1200, 0, 12);
+select ses_addr, xidusn, used_ublk from v$transaction;
+4) Creati un index de tip arbore pe tabela EMP1, apoi aratati din dictionar numarul de blocuri alocate indexului 
+si care este procentul utilizat din spatiul alocat.
+create index EMP_IDX on EMP1(ename)
+pctfree 30
+storage (
+initial 200k
+next 200k
+pctincrease 0
+maxextents 50
+)
+tablespace BD_DATA;
+analyze index EMP_IDX validate structure;
+select blocks, pct_used, used_space from index_stats;
+// select index_name, max_extents, ... from dba_indexes

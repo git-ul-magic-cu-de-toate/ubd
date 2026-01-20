@@ -1,0 +1,4 @@
+select a.med
+from (select ceil(avg(months_between(sysdate,hiredate))) med from emp
+ group by deptno) a
+/

@@ -1,0 +1,30 @@
+1. Folosind dictionarul faceti o lista cu toate tabelele din userul curent, tablespaceul in care sunt create si proprietarul.
+    SELECT user FROM dual;
+
+    SELECT table_name, tablespace_name, owner
+    FROM dba_tables
+        WHERE owner='UBD1';
+2. Faceti o copie a tabelei dept numita deptnew, apoi dezactivati coloana de localitate si verificati in dictionar cu cate
+coloane dezactivate figureaza tabela.
+    CREATE TABLE deptnew AS SELECT * FROM UBD1.dept;
+   
+    ALTER TABLE UBD1.deptnew
+    SET UNUSED COLUMN loc
+    CASCADE CONSTRAINTS;
+
+    SELECT * FROM dba_unused_col_tabs WHERE table_name='DEPTNEW';
+3. Activati din nou coloana pentru localitate si populati-o cu date (inclusiv datele).
+    ALTER TABLE UBD1.deptnew
+    ADD (loc varchar(13));
+
+    UPDATE UBD1.deptnew a SET a.loc = (SELECT b.loc FROM dept b WHERE a.deptno=b.deptno);
+4. Alocati tabelei deptnew o extensie de 100K in fisierul E:\student\dept1ext.dbf creat in tablespace curent permanent
+aferent userului curent.
+    select DEFAULT_TABLESPACE
+        from DBA_USERS
+        where USERNAME='UBD1';
+
+    ALTER TABLESPACE BD_DATA
+    ADD DATAFILE 'E:\student\dept1ext.dbf' SIZE 1M;
+
+    ALTER TABLE UBD1.deptnew ALLOCATE EXTENT(SIZE 100K DATAFILE 'E:\student\dept1ext.dbf');

@@ -1,0 +1,13 @@
+SQL> set lines 200
+SQL> set pages 100
+SQL> select to_char(sysdate, 'dd-mm-yyyy hh:mi:ss') from dual;
+
+TO_CHAR(SYSDATE,'DD                                                                                                                                                                                     
+-------------------                                                                                                                                                                                     
+25-11-2020 05:05:09                                                                                                                                                                                     
+
+SQL> insert into login_lab_ubd values( 'Coman_DianaStefania', '343C5', 'Lab8', user, sysdate, null, null);
+
+1 row created.
+
+SQL> spool off

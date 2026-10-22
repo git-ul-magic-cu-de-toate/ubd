@@ -1,0 +1,1272 @@
+SQL> set lines 200
+SQL> set pages 100
+SQL> select to_char(sysdate, 'dd-mm-yyyy hh:mi:ss') from dual;
+
+TO_CHAR(SYSDATE,'DD                                                                                                                                                                                     
+-------------------                                                                                                                                                                                     
+08-12-2020 08:17:37                                                                                                                                                                                     
+
+SQL> insert into login_lab_ubd values( 'Coman_DianaStefania', '343C5', 'Lab9', user, sysdate, null, null);
+
+1 row created.
+
+SQL> select * from login_lab_ubd;
+
+NUME_STUD                      GRUPA      LABORATOR  NUME_USER  DATA_IN   DATA_SF       DURATA                                                                                                          
+------------------------------ ---------- ---------- ---------- --------- --------- ----------                                                                                                          
+Coman_DianaStefania            343C5      Lab8       ABD1       25-NOV-20 25-NOV-20         26                                                                                                          
+Coman_DianaStefania            343C5      Lab5       ABD1       04-NOV-20 04-NOV-20         32                                                                                                          
+Coman_DianaStefania            343C5      Lab3       ABD1       21-OCT-20                                                                                                                               
+Coman_DianaStefania            343C5      Lab9       ABD1       08-DEC-20                                                                                                                               
+Coman_DianaStefania            343C5      Lab7       ABD1       17-NOV-20 17-NOV-20         22                                                                                                          
+Coman_DianaStefania            343C5      Lab4       ABD1       04-NOV-20 04-NOV-20         15                                                                                                          
+Coman_DianaStefania            343C5      Lab6       ABD1       17-NOV-20 17-NOV-20         32                                                                                                          
+
+7 rows selected.
+
+SQL>  CREATE TABLE studenti
+  2  (facultate char(30) DEFAULT 'Automatica si Calculatoare',
+  3  catedra char(20),
+  4  cnp number(13),
+  5  nume varchar2(30),
+  6  data_nastere date,
+  7  an_univ number(4) DEFAULT 2006,
+  8  media_admitere number(5,2) ,
+  9  discip_oblig varchar2(20) DEFAULT 'Matematica',
+ 10  discip_opt varchar2(20) DEFAULT 'Fizica' ,
+ 11  operator varchar2(20) DEFAULT user,
+ 12  data_op date DEFAULT sysdate )
+ 13  TABLESPACE ubd_data,
+ 14   STORAGE (initial 8M),
+ 15   PCTUSED 30,
+ 16   PCTFREE 20,
+ 17  NOLOGGING;
+TABLESPACE ubd_data,
+           *
+ERROR at line 13:
+ORA-00959: tablespace 'UBD_DATA' does not exist 
+
+
+SQL>  CREATE TABLE studenti
+  2  (facultate char(30) DEFAULT 'Automatica si Calculatoare',
+  3  catedra char(20),
+  4  cnp number(13),
+  5  nume varchar2(30),
+  6  data_nastere date,
+  7  an_univ number(4) DEFAULT 2006,
+  8  media_admitere number(5,2) ,
+  9  discip_oblig varchar2(20) DEFAULT 'Matematica',
+ 10  discip_opt varchar2(20) DEFAULT 'Fizica' ,
+ 11  operator varchar2(20) DEFAULT user,
+ 12  data_op date DEFAULT sysdate )
+ 13  TABLESPACE ubd_data,
+ 14   STORAGE (initial 8M),
+ 15   PCTUSED 30,
+ 16   PCTFREE 20,
+ 17  NOLOGGING;
+TABLESPACE ubd_data,
+           *
+ERROR at line 13:
+ORA-00959: tablespace 'UBD_DATA' does not exist 
+
+
+SQL>  CREATE TABLE studenti
+  2  (facultate char(30) DEFAULT 'Automatica si Calculatoare',
+  3  catedra char(20),
+  4  cnp number(13),
+  5  nume varchar2(30),
+  6  data_nastere date,
+  7  an_univ number(4) DEFAULT 2006,
+  8  media_admitere number(5,2) ,
+  9  discip_oblig varchar2(20) DEFAULT 'Matematica',
+ 10  discip_opt varchar2(20) DEFAULT 'Fizica' ,
+ 11  operator varchar2(20) DEFAULT user,
+ 12  data_op date DEFAULT sysdate )
+ 13  TABLESPACE bd_data,
+ 14  STORAGE (initial 8M),
+ 15   PCTUSED 30,
+ 16   PCTFREE 20,
+ 17  NOLOGGING;
+
+Table created.
+
+SQL> 
+SQL> CREATE TABLE angajati_dep
+  2  (
+  3   depart number(2),
+  4   ecuson number(5),
+  5  nume varchar2(30),
+  6   job varchar2(20),
+  7   data_ang date,
+  8   salariu number(6)
+  9   )
+ 10  PARTITION BY LIST (depart)
+ 11  (
+ 12  PARTITION Dep10 VALUES (10),
+ 13  PARTITION Dep20 VALUES (20),
+ 14  PARTITION Dep30 VALUES (30)
+ 15  );
+
+Table created.
+
+SQL>  insert into angajati_dep select deptno, empno, ename, job, hiredate, sal from emp;
+
+15 rows created.
+
+SQL>  select * from angajati_dep partition (dep10);
+
+    DEPART     ECUSON NUME                           JOB                  DATA_ANG     SALARIU                                                                                                          
+---------- ---------- ------------------------------ -------------------- --------- ----------                                                                                                          
+        10        999 TEST                           TRANZACT             25-NOV-20        100                                                                                                          
+        10       7782 CLARK                          MANAGER              09-JUN-81       2450                                                                                                          
+        10       7839 KING                           PRESIDENT            17-NOV-81       5000                                                                                                          
+        10       7934 MILLER                         CLERK                23-JAN-82       1300                                                                                                          
+
+SQL>  create global temporary table emp_temp on commit delete rows as
+  2   select * from emp;
+
+Table created.
+
+SQL> select * from emp_temp;
+
+no rows selected
+
+SQL> insert into emp_temp select * from emp;
+
+15 rows created.
+
+SQL> drop table emp_temp;
+
+Table dropped.
+
+SQL> create global temporary table emp_temp on commit preserve rows as
+  2   select * from emp;
+
+Table created.
+
+SQL> 
+SQL>  select count(*) from emp_temp;
+
+  COUNT(*)                                                                                                                                                                                              
+----------                                                                                                                                                                                              
+        15                                                                                                                                                                                              
+
+SQL> drop table emp_temp;
+drop table emp_temp
+           *
+ERROR at line 1:
+ORA-14452: attempt to create, alter or drop an index on temporary table already in use 
+
+
+SQL> create table emp_copy as select * from abd1.emp;
+
+Table created.
+
+SQL> select rowid, empno, ename from emp_copy;
+
+ROWID                   EMPNO ENAME                                                                                                                                                                     
+------------------ ---------- ----------                                                                                                                                                                
+AAATWuAAMAAAAE7AAA        999 TEST                                                                                                                                                                      
+AAATWuAAMAAAAE7AAB       7369 SMITH                                                                                                                                                                     
+AAATWuAAMAAAAE7AAC       7499 ALLEN                                                                                                                                                                     
+AAATWuAAMAAAAE7AAD       7521 WARD                                                                                                                                                                      
+AAATWuAAMAAAAE7AAE       7566 JONES                                                                                                                                                                     
+AAATWuAAMAAAAE7AAF       7654 MARTIN                                                                                                                                                                    
+AAATWuAAMAAAAE7AAG       7698 BLAKE                                                                                                                                                                     
+AAATWuAAMAAAAE7AAH       7782 CLARK                                                                                                                                                                     
+AAATWuAAMAAAAE7AAI       7788 SCOTT                                                                                                                                                                     
+AAATWuAAMAAAAE7AAJ       7839 KING                                                                                                                                                                      
+AAATWuAAMAAAAE7AAK       7844 TURNER                                                                                                                                                                    
+AAATWuAAMAAAAE7AAL       7876 ADAMS                                                                                                                                                                     
+AAATWuAAMAAAAE7AAM       7900 JAMES                                                                                                                                                                     
+AAATWuAAMAAAAE7AAN       7902 FORD                                                                                                                                                                      
+AAATWuAAMAAAAE7AAO       7934 MILLER                                                                                                                                                                    
+
+15 rows selected.
+
+SQL> select rownum, empno, ename from emp_copy where rownum<10;
+
+    ROWNUM      EMPNO ENAME                                                                                                                                                                             
+---------- ---------- ----------                                                                                                                                                                        
+         1        999 TEST                                                                                                                                                                              
+         2       7369 SMITH                                                                                                                                                                             
+         3       7499 ALLEN                                                                                                                                                                             
+         4       7521 WARD                                                                                                                                                                              
+         5       7566 JONES                                                                                                                                                                             
+         6       7654 MARTIN                                                                                                                                                                            
+         7       7698 BLAKE                                                                                                                                                                             
+         8       7782 CLARK                                                                                                                                                                             
+         9       7788 SCOTT                                                                                                                                                                             
+
+9 rows selected.
+
+SQL>  alter tablespace users
+  2   add datafile 'e:/ubd_data1.dbf' size 10M;
+ alter tablespace users
+*
+ERROR at line 1:
+ORA-01119: error in creating database file 'e:/ubd_data1.dbf' 
+ORA-27040: file create error, unable to create file 
+OSD-04002: unable to open file 
+O/S-Error: (OS 3) The system cannot find the path specified. 
+
+
+SQL>  alter tablespace users
+  2   add datafile 'd:/ubd_data1.dbf' size 10M;
+
+Tablespace altered.
+
+SQL> alter table emp_copy
+  2  allocate extent(size 500k datafile 'e:/temp/ubd_data1.dbf');
+alter table emp_copy
+*
+ERROR at line 1:
+ORA-03283: specified datafile e:/temp/ubd_data1.dbf does not exist 
+
+
+SQL> alter table emp_copy
+  2  allocate extent(size 500k datafile 'e:/temp/ubd_data1.dbf');
+alter table emp_copy
+*
+ERROR at line 1:
+ORA-03283: specified datafile e:/temp/ubd_data1.dbf does not exist 
+
+
+SQL> alter table emp_copy
+  2  allocate extent(size 500k datafile 'd:/ubd_data1.dbf');
+alter table emp_copy
+*
+ERROR at line 1:
+ORA-03284: datafile or tempfile d:/ubd_data1.dbf is not a member of tablespace BD_DATA 
+
+
+SQL>  alter tablespace users
+  2   add datafile 'd:/ubd_data33.dbf' size 10M;
+
+Tablespace altered.
+
+SQL> alter table emp_copy
+  2  allocate extent(size 500k datafile 'd:/ubd_data33.dbf');
+alter table emp_copy
+*
+ERROR at line 1:
+ORA-03284: datafile or tempfile d:/ubd_data33.dbf is not a member of tablespace BD_DATA 
+
+
+SQL> select name from v$datafile;
+
+NAME                                                                                                                                                                                                    
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+D:\APP\DIANA_ORA\ORADATA\ORACLE\SYSTEM01.DBF                                                                                                                                                            
+D:\APP\DIANA_ORA\ORADATA\ORACLE\SYSAUX01.DBF                                                                                                                                                            
+D:\APP\DIANA_ORA\ORADATA\ORACLE\UNDOTBS01.DBF                                                                                                                                                           
+D:\APP\DIANA_ORA\ORADATA\ORACLE\USERS01.DBF                                                                                                                                                             
+D:\APP\DIANA_ORA\ORADATA\BD\BD_DATA.DBF                                                                                                                                                                 
+D:\UBD_DATA2.DBF                                                                                                                                                                                        
+D:\UBD_UNDO1.DBF                                                                                                                                                                                        
+D:\UBD_DATAA1.DBF                                                                                                                                                                                       
+D:\UNDO_DB02.DBF                                                                                                                                                                                        
+D:\UBD_DATA1.DBF                                                                                                                                                                                        
+D:\UBD_DATA33.DBF                                                                                                                                                                                       
+
+11 rows selected.
+
+SQL> select * from v$datafile;
+
+     FILE# CREATION_CHANGE# CREATION_        TS#     RFILE# STATUS  ENABLED    CHECKPOINT_CHANGE# CHECKPOIN UNRECOVERABLE_CHANGE# UNRECOVER LAST_CHANGE# LAST_TIME OFFLINE_CHANGE# ONLINE_CHANGE#       
+---------- ---------------- --------- ---------- ---------- ------- ---------- ------------------ --------- --------------------- --------- ------------ --------- --------------- --------------       
+ONLINE_TI      BYTES     BLOCKS CREATE_BYTES BLOCK_SIZE                                                                                                                                                 
+--------- ---------- ---------- ------------ ----------                                                                                                                                                 
+NAME                                                                                                                                                                                                    
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+PLUGGED_IN BLOCK1_OFFSET                                                                                                                                                                                
+---------- -------------                                                                                                                                                                                
+AUX_NAME                                                                                                                                                                                                
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+FIRST_NONLOGGED_SCN FIRST_NON FOREIGN_DBID FOREIGN_CREATION_CHANGE# FOREIGN_C PLU PLUGIN_CHANGE# PLUGIN_RESETLOGS_CHANGE# PLUGIN_RE     CON_ID                                                          
+------------------- --------- ------------ ------------------------ --------- --- -------------- ------------------------ --------- ----------                                                          
+         1                7 08-MAR-17          0          1 SYSTEM  READ WRITE            5298755 06-DEC-20                     0                                          1490581        1490582       
+15-OCT-20  870318080     106240            0       8192                                                                                                                                                 
+D:\APP\DIANA_ORA\ORADATA\ORACLE\SYSTEM01.DBF                                                                                                                                                            
+         0          8192                                                                                                                                                                                
+NONE                                                                                                                                                                                                    
+                  0                      0                        0           NO               0                        0                    1                                                          
+                                                                                                                                                                                                        
+         3             4883 08-MAR-17          1          3 ONLINE  READ WRITE            5298755 06-DEC-20                     0                                          1490581        1490582       
+15-OCT-20 1006632960     122880            0       8192                                                                                                                                                 
+D:\APP\DIANA_ORA\ORADATA\ORACLE\SYSAUX01.DBF                                                                                                                                                            
+         0          8192                                                                                                                                                                                
+NONE                                                                                                                                                                                                    
+                  0                      0                        0           NO               0                        0                    1                                                          
+                                                                                                                                                                                                        
+         5             6232 08-MAR-17          2          5 ONLINE  READ WRITE            5298755 06-DEC-20                     0                                          1490581        1490582       
+15-OCT-20  560988160      68480            0       8192                                                                                                                                                 
+D:\APP\DIANA_ORA\ORADATA\ORACLE\UNDOTBS01.DBF                                                                                                                                                           
+         0          8192                                                                                                                                                                                
+NONE                                                                                                                                                                                                    
+                  0                      0                        0           NO               0                        0                    1                                                          
+                                                                                                                                                                                                        
+         7            29665 08-MAR-17          4          7 ONLINE  READ WRITE            5298755 06-DEC-20                     0                                          1490581        1490582       
+15-OCT-20    5242880        640            0       8192                                                                                                                                                 
+D:\APP\DIANA_ORA\ORADATA\ORACLE\USERS01.DBF                                                                                                                                                             
+         0          8192                                                                                                                                                                                
+NONE                                                                                                                                                                                                    
+                  0                      0                        0           NO               0                        0                    1                                                          
+                                                                                                                                                                                                        
+        12          1746342 20-OCT-20          5         12 ONLINE  READ WRITE            5298755 06-DEC-20                     0                                                0              0       
+            52428800       6400     52428800       8192                                                                                                                                                 
+D:\APP\DIANA_ORA\ORADATA\BD\BD_DATA.DBF                                                                                                                                                                 
+         0          8192                                                                                                                                                                                
+NONE                                                                                                                                                                                                    
+                  0                      0                        0           NO               0                        0                    1                                                          
+                                                                                                                                                                                                        
+        14          3819286 17-NOV-20          9         14 ONLINE  READ WRITE            5298755 06-DEC-20                     0                                                0              0       
+            10485760       1280     10485760       8192                                                                                                                                                 
+D:\UBD_DATA2.DBF                                                                                                                                                                                        
+         0          8192                                                                                                                                                                                
+NONE                                                                                                                                                                                                    
+                  0                      0                        0           NO               0                        0                    1                                                          
+                                                                                                                                                                                                        
+        16          3820287 17-NOV-20         10         16 ONLINE  READ WRITE            5298755 06-DEC-20                     0                                                0              0       
+            10485760       1280     10485760       8192                                                                                                                                                 
+D:\UBD_UNDO1.DBF                                                                                                                                                                                        
+         0          8192                                                                                                                                                                                
+NONE                                                                                                                                                                                                    
+                  0                      0                        0           NO               0                        0                    1                                                          
+                                                                                                                                                                                                        
+        17          3820721 17-NOV-20          5         17 ONLINE  READ WRITE            5298755 06-DEC-20                     0                                                0              0       
+             2097152        256      2097152       8192                                                                                                                                                 
+D:\UBD_DATAA1.DBF                                                                                                                                                                                       
+         0          8192                                                                                                                                                                                
+NONE                                                                                                                                                                                                    
+                  0                      0                        0           NO               0                        0                    1                                                          
+                                                                                                                                                                                                        
+        19          4361591 25-NOV-20         12         19 ONLINE  READ WRITE            5298755 06-DEC-20                     0                                                0              0       
+             2097152        256      2097152       8192                                                                                                                                                 
+D:\UNDO_DB02.DBF                                                                                                                                                                                        
+         0          8192                                                                                                                                                                                
+NONE                                                                                                                                                                                                    
+                  0                      0                        0           NO               0                        0                    1                                                          
+                                                                                                                                                                                                        
+        20          5368506 08-DEC-20          4         20 ONLINE  READ WRITE            5368507 08-DEC-20                     0                                                0              0       
+            10485760       1280     10485760       8192                                                                                                                                                 
+D:\UBD_DATA1.DBF                                                                                                                                                                                        
+         0          8192                                                                                                                                                                                
+NONE                                                                                                                                                                                                    
+                  0                      0                        0           NO               0                        0                    1                                                          
+                                                                                                                                                                                                        
+        21          5368559 08-DEC-20          4         21 ONLINE  READ WRITE            5368560 08-DEC-20                     0                                                0              0       
+            10485760       1280     10485760       8192                                                                                                                                                 
+D:\UBD_DATA33.DBF                                                                                                                                                                                       
+         0          8192                                                                                                                                                                                
+NONE                                                                                                                                                                                                    
+                  0                      0                        0           NO               0                        0                    1                                                          
+                                                                                                                                                                                                        
+
+11 rows selected.
+
+SQL> select name from v$datafile;
+
+NAME                                                                                                                                                                                                    
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+D:\APP\DIANA_ORA\ORADATA\ORACLE\SYSTEM01.DBF                                                                                                                                                            
+D:\APP\DIANA_ORA\ORADATA\ORACLE\SYSAUX01.DBF                                                                                                                                                            
+D:\APP\DIANA_ORA\ORADATA\ORACLE\UNDOTBS01.DBF                                                                                                                                                           
+D:\APP\DIANA_ORA\ORADATA\ORACLE\USERS01.DBF                                                                                                                                                             
+D:\APP\DIANA_ORA\ORADATA\BD\BD_DATA.DBF                                                                                                                                                                 
+D:\UBD_DATA2.DBF                                                                                                                                                                                        
+D:\UBD_UNDO1.DBF                                                                                                                                                                                        
+D:\UBD_DATAA1.DBF                                                                                                                                                                                       
+D:\UNDO_DB02.DBF                                                                                                                                                                                        
+D:\UBD_DATA1.DBF                                                                                                                                                                                        
+D:\UBD_DATA33.DBF                                                                                                                                                                                       
+
+11 rows selected.
+
+SQL> select file_name,tablespace_name from dba_data_files where tablespace_nam='&tbs';
+Enter value for tbs: BD_DATA
+old   1: select file_name,tablespace_name from dba_data_files where tablespace_nam='&tbs'
+new   1: select file_name,tablespace_name from dba_data_files where tablespace_nam='BD_DATA'
+select file_name,tablespace_name from dba_data_files where tablespace_nam='BD_DATA'
+                                                           *
+ERROR at line 1:
+ORA-00904: "TABLESPACE_NAM": invalid identifier 
+
+
+SQL> select file_name,tablespace_name from dba_data_files where tablespace_name='BD_DATA';
+
+FILE_NAME                                                                                                                                                                                               
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+TABLESPACE_NAME                                                                                                                                                                                         
+------------------------------                                                                                                                                                                          
+D:\APP\DIANA_ORA\ORADATA\BD\BD_DATA.DBF                                                                                                                                                                 
+BD_DATA                                                                                                                                                                                                 
+                                                                                                                                                                                                        
+D:\UBD_DATAA1.DBF                                                                                                                                                                                       
+BD_DATA                                                                                                                                                                                                 
+                                                                                                                                                                                                        
+
+SQL> alter table emp_copy
+  2  allocate extent(size 500k datafile 'd:/ubd_dataa1.dbf');
+
+Table altered.
+
+SQL> alter table emp_copy
+  2  drop column comm
+  3  cascade constraints checkpoint 1000;
+
+Table altered.
+
+SQL> alter table emp_copy
+  2  rename column sal to salary;
+
+Table altered.
+
+SQL>  alter table emp_copy
+  2  set unused column sal
+  3  cascade constraints;
+set unused column sal
+                  *
+ERROR at line 2:
+ORA-00904: "SAL": invalid identifier 
+
+
+SQL> alter table emp_copy
+  2  set unused column salary
+  3  cascade constraints;
+
+Table altered.
+
+SQL>  desc dba_unused_col_tabs;
+ Name                                                                                                              Null?    Type
+ ----------------------------------------------------------------------------------------------------------------- -------- ----------------------------------------------------------------------------
+ OWNER                                                                                                             NOT NULL VARCHAR2(128)
+ TABLE_NAME                                                                                                        NOT NULL VARCHAR2(128)
+ COUNT                                                                                                                      NUMBER
+
+SQL>  select * from dba_unused_col_tabs;
+
+OWNER                                                                                                                                                                                                   
+--------------------------------------------------------------------------------------------------------------------------------                                                                        
+TABLE_NAME                                                                                                                            COUNT                                                             
+-------------------------------------------------------------------------------------------------------------------------------- ----------                                                             
+ABD1                                                                                                                                                                                                    
+EMP_COPY                                                                                                                                  1                                                             
+                                                                                                                                                                                                        
+
+SQL> alter table emp_copy
+  2  drop unused columns checkpoint 1000;
+
+Table altered.
+
+SQL>  select * from dba_unused_col_tabs;
+
+no rows selected
+
+SQL> desc dba_tables
+ Name                                                                                                              Null?    Type
+ ----------------------------------------------------------------------------------------------------------------- -------- ----------------------------------------------------------------------------
+ OWNER                                                                                                             NOT NULL VARCHAR2(128)
+ TABLE_NAME                                                                                                        NOT NULL VARCHAR2(128)
+ TABLESPACE_NAME                                                                                                            VARCHAR2(30)
+ CLUSTER_NAME                                                                                                               VARCHAR2(128)
+ IOT_NAME                                                                                                                   VARCHAR2(128)
+ STATUS                                                                                                                     VARCHAR2(8)
+ PCT_FREE                                                                                                                   NUMBER
+ PCT_USED                                                                                                                   NUMBER
+ INI_TRANS                                                                                                                  NUMBER
+ MAX_TRANS                                                                                                                  NUMBER
+ INITIAL_EXTENT                                                                                                             NUMBER
+ NEXT_EXTENT                                                                                                                NUMBER
+ MIN_EXTENTS                                                                                                                NUMBER
+ MAX_EXTENTS                                                                                                                NUMBER
+ PCT_INCREASE                                                                                                               NUMBER
+ FREELISTS                                                                                                                  NUMBER
+ FREELIST_GROUPS                                                                                                            NUMBER
+ LOGGING                                                                                                                    VARCHAR2(3)
+ BACKED_UP                                                                                                                  VARCHAR2(1)
+ NUM_ROWS                                                                                                                   NUMBER
+ BLOCKS                                                                                                                     NUMBER
+ EMPTY_BLOCKS                                                                                                               NUMBER
+ AVG_SPACE                                                                                                                  NUMBER
+ CHAIN_CNT                                                                                                                  NUMBER
+ AVG_ROW_LEN                                                                                                                NUMBER
+ AVG_SPACE_FREELIST_BLOCKS                                                                                                  NUMBER
+ NUM_FREELIST_BLOCKS                                                                                                        NUMBER
+ DEGREE                                                                                                                     VARCHAR2(10)
+ INSTANCES                                                                                                                  VARCHAR2(10)
+ CACHE                                                                                                                      VARCHAR2(5)
+ TABLE_LOCK                                                                                                                 VARCHAR2(8)
+ SAMPLE_SIZE                                                                                                                NUMBER
+ LAST_ANALYZED                                                                                                              DATE
+ PARTITIONED                                                                                                                VARCHAR2(3)
+ IOT_TYPE                                                                                                                   VARCHAR2(12)
+ TEMPORARY                                                                                                                  VARCHAR2(1)
+ SECONDARY                                                                                                                  VARCHAR2(1)
+ NESTED                                                                                                                     VARCHAR2(3)
+ BUFFER_POOL                                                                                                                VARCHAR2(7)
+ FLASH_CACHE                                                                                                                VARCHAR2(7)
+ CELL_FLASH_CACHE                                                                                                           VARCHAR2(7)
+ ROW_MOVEMENT                                                                                                               VARCHAR2(8)
+ GLOBAL_STATS                                                                                                               VARCHAR2(3)
+ USER_STATS                                                                                                                 VARCHAR2(3)
+ DURATION                                                                                                                   VARCHAR2(15)
+ SKIP_CORRUPT                                                                                                               VARCHAR2(8)
+ MONITORING                                                                                                                 VARCHAR2(3)
+ CLUSTER_OWNER                                                                                                              VARCHAR2(128)
+ DEPENDENCIES                                                                                                               VARCHAR2(8)
+ COMPRESSION                                                                                                                VARCHAR2(8)
+ COMPRESS_FOR                                                                                                               VARCHAR2(30)
+ DROPPED                                                                                                                    VARCHAR2(3)
+ READ_ONLY                                                                                                                  VARCHAR2(3)
+ SEGMENT_CREATED                                                                                                            VARCHAR2(3)
+ RESULT_CACHE                                                                                                               VARCHAR2(7)
+ CLUSTERING                                                                                                                 VARCHAR2(3)
+ ACTIVITY_TRACKING                                                                                                          VARCHAR2(23)
+ DML_TIMESTAMP                                                                                                              VARCHAR2(25)
+ HAS_IDENTITY                                                                                                               VARCHAR2(3)
+ CONTAINER_DATA                                                                                                             VARCHAR2(3)
+ INMEMORY                                                                                                                   VARCHAR2(8)
+ INMEMORY_PRIORITY                                                                                                          VARCHAR2(8)
+ INMEMORY_DISTRIBUTE                                                                                                        VARCHAR2(15)
+ INMEMORY_COMPRESSION                                                                                                       VARCHAR2(17)
+ INMEMORY_DUPLICATE                                                                                                         VARCHAR2(13)
+ DEFAULT_COLLATION                                                                                                          VARCHAR2(100)
+ DUPLICATED                                                                                                                 VARCHAR2(1)
+ SHARDED                                                                                                                    VARCHAR2(1)
+ EXTERNAL                                                                                                                   VARCHAR2(3)
+ CELLMEMORY                                                                                                                 VARCHAR2(24)
+ CONTAINERS_DEFAULT                                                                                                         VARCHAR2(3)
+ CONTAINER_MAP                                                                                                              VARCHAR2(3)
+ EXTENDED_DATA_LINK                                                                                                         VARCHAR2(3)
+ EXTENDED_DATA_LINK_MAP                                                                                                     VARCHAR2(3)
+ INMEMORY_SERVICE                                                                                                           VARCHAR2(12)
+ INMEMORY_SERVICE_NAME                                                                                                      VARCHAR2(1000)
+ CONTAINER_MAP_OBJECT                                                                                                       VARCHAR2(3)
+
+SQL> select owner, tablespace_name, table_name from dba_tables
+  2   where owner = 'ABD1'
+  3   ;
+
+OWNER                                                                                                                            TABLESPACE_NAME                                                        
+-------------------------------------------------------------------------------------------------------------------------------- ------------------------------                                         
+TABLE_NAME                                                                                                                                                                                              
+--------------------------------------------------------------------------------------------------------------------------------                                                                        
+ABD1                                                                                                                             BD_DATA                                                                
+LOGIN_LAB_UBD                                                                                                                                                                                           
+                                                                                                                                                                                                        
+ABD1                                                                                                                             BD_DATA                                                                
+DEPT                                                                                                                                                                                                    
+                                                                                                                                                                                                        
+ABD1                                                                                                                             BD_DATA                                                                
+EMP                                                                                                                                                                                                     
+                                                                                                                                                                                                        
+ABD1                                                                                                                             BD_DATA                                                                
+SALGRADE                                                                                                                                                                                                
+                                                                                                                                                                                                        
+ABD1                                                                                                                             BD_DATA                                                                
+EMP_COPY                                                                                                                                                                                                
+                                                                                                                                                                                                        
+ABD1                                                                                                                                                                                                    
+ANGAJATI_DEP                                                                                                                                                                                            
+                                                                                                                                                                                                        
+ABD1                                                                                                                                                                                                    
+EMP_TEMP                                                                                                                                                                                                
+                                                                                                                                                                                                        
+ABD1                                                                                                                             BD_DATA                                                                
+BONUS                                                                                                                                                                                                   
+                                                                                                                                                                                                        
+ABD1                                                                                                                             BD_DATA                                                                
+STUDENTI                                                                                                                                                                                                
+                                                                                                                                                                                                        
+
+9 rows selected.
+
+SQL> desc user_tables
+ Name                                                                                                              Null?    Type
+ ----------------------------------------------------------------------------------------------------------------- -------- ----------------------------------------------------------------------------
+ TABLE_NAME                                                                                                        NOT NULL VARCHAR2(128)
+ TABLESPACE_NAME                                                                                                            VARCHAR2(30)
+ CLUSTER_NAME                                                                                                               VARCHAR2(128)
+ IOT_NAME                                                                                                                   VARCHAR2(128)
+ STATUS                                                                                                                     VARCHAR2(8)
+ PCT_FREE                                                                                                                   NUMBER
+ PCT_USED                                                                                                                   NUMBER
+ INI_TRANS                                                                                                                  NUMBER
+ MAX_TRANS                                                                                                                  NUMBER
+ INITIAL_EXTENT                                                                                                             NUMBER
+ NEXT_EXTENT                                                                                                                NUMBER
+ MIN_EXTENTS                                                                                                                NUMBER
+ MAX_EXTENTS                                                                                                                NUMBER
+ PCT_INCREASE                                                                                                               NUMBER
+ FREELISTS                                                                                                                  NUMBER
+ FREELIST_GROUPS                                                                                                            NUMBER
+ LOGGING                                                                                                                    VARCHAR2(3)
+ BACKED_UP                                                                                                                  VARCHAR2(1)
+ NUM_ROWS                                                                                                                   NUMBER
+ BLOCKS                                                                                                                     NUMBER
+ EMPTY_BLOCKS                                                                                                               NUMBER
+ AVG_SPACE                                                                                                                  NUMBER
+ CHAIN_CNT                                                                                                                  NUMBER
+ AVG_ROW_LEN                                                                                                                NUMBER
+ AVG_SPACE_FREELIST_BLOCKS                                                                                                  NUMBER
+ NUM_FREELIST_BLOCKS                                                                                                        NUMBER
+ DEGREE                                                                                                                     VARCHAR2(10)
+ INSTANCES                                                                                                                  VARCHAR2(10)
+ CACHE                                                                                                                      VARCHAR2(5)
+ TABLE_LOCK                                                                                                                 VARCHAR2(8)
+ SAMPLE_SIZE                                                                                                                NUMBER
+ LAST_ANALYZED                                                                                                              DATE
+ PARTITIONED                                                                                                                VARCHAR2(3)
+ IOT_TYPE                                                                                                                   VARCHAR2(12)
+ TEMPORARY                                                                                                                  VARCHAR2(1)
+ SECONDARY                                                                                                                  VARCHAR2(1)
+ NESTED                                                                                                                     VARCHAR2(3)
+ BUFFER_POOL                                                                                                                VARCHAR2(7)
+ FLASH_CACHE                                                                                                                VARCHAR2(7)
+ CELL_FLASH_CACHE                                                                                                           VARCHAR2(7)
+ ROW_MOVEMENT                                                                                                               VARCHAR2(8)
+ GLOBAL_STATS                                                                                                               VARCHAR2(3)
+ USER_STATS                                                                                                                 VARCHAR2(3)
+ DURATION                                                                                                                   VARCHAR2(15)
+ SKIP_CORRUPT                                                                                                               VARCHAR2(8)
+ MONITORING                                                                                                                 VARCHAR2(3)
+ CLUSTER_OWNER                                                                                                              VARCHAR2(128)
+ DEPENDENCIES                                                                                                               VARCHAR2(8)
+ COMPRESSION                                                                                                                VARCHAR2(8)
+ COMPRESS_FOR                                                                                                               VARCHAR2(30)
+ DROPPED                                                                                                                    VARCHAR2(3)
+ READ_ONLY                                                                                                                  VARCHAR2(3)
+ SEGMENT_CREATED                                                                                                            VARCHAR2(3)
+ RESULT_CACHE                                                                                                               VARCHAR2(7)
+ CLUSTERING                                                                                                                 VARCHAR2(3)
+ ACTIVITY_TRACKING                                                                                                          VARCHAR2(23)
+ DML_TIMESTAMP                                                                                                              VARCHAR2(25)
+ HAS_IDENTITY                                                                                                               VARCHAR2(3)
+ CONTAINER_DATA                                                                                                             VARCHAR2(3)
+ INMEMORY                                                                                                                   VARCHAR2(8)
+ INMEMORY_PRIORITY                                                                                                          VARCHAR2(8)
+ INMEMORY_DISTRIBUTE                                                                                                        VARCHAR2(15)
+ INMEMORY_COMPRESSION                                                                                                       VARCHAR2(17)
+ INMEMORY_DUPLICATE                                                                                                         VARCHAR2(13)
+ DEFAULT_COLLATION                                                                                                          VARCHAR2(100)
+ DUPLICATED                                                                                                                 VARCHAR2(1)
+ SHARDED                                                                                                                    VARCHAR2(1)
+ EXTERNAL                                                                                                                   VARCHAR2(3)
+ CELLMEMORY                                                                                                                 VARCHAR2(24)
+ CONTAINERS_DEFAULT                                                                                                         VARCHAR2(3)
+ CONTAINER_MAP                                                                                                              VARCHAR2(3)
+ EXTENDED_DATA_LINK                                                                                                         VARCHAR2(3)
+ EXTENDED_DATA_LINK_MAP                                                                                                     VARCHAR2(3)
+ INMEMORY_SERVICE                                                                                                           VARCHAR2(12)
+ INMEMORY_SERVICE_NAME                                                                                                      VARCHAR2(1000)
+ CONTAINER_MAP_OBJECT                                                                                                       VARCHAR2(3)
+
+SQL> elect instances, tablespace_name, table_name from user_tables;
+SP2-0734: unknown command beginning "elect inst..." - rest of line ignored.
+SQL>  select instances, tablespace_name, table_name from user_tables;
+
+INSTANCES                                TABLESPACE_NAME                TABLE_NAME                                                                                                                      
+---------------------------------------- ------------------------------ --------------------------------------------------------------------------------------------------------------------------------
+         1                               BD_DATA                        LOGIN_LAB_UBD                                                                                                                   
+         1                               BD_DATA                        EMP                                                                                                                             
+         1                               BD_DATA                        DEPT                                                                                                                            
+         1                               BD_DATA                        BONUS                                                                                                                           
+         1                               BD_DATA                        SALGRADE                                                                                                                        
+         1                               BD_DATA                        STUDENTI                                                                                                                        
+         1                                                              ANGAJATI_DEP                                                                                                                    
+         1                                                              EMP_TEMP                                                                                                                        
+         1                               BD_DATA                        EMP_COPY                                                                                                                        
+
+9 rows selected.
+
+SQL>  select table_name, partition_name, high_value from user_tab_partitions
+  2   where table_name = 'ANGAJATI_DEP'
+  3   order by partition_name;
+
+TABLE_NAME                                                                                                                                                                                              
+--------------------------------------------------------------------------------------------------------------------------------                                                                        
+PARTITION_NAME                                                                                                                                                                                          
+--------------------------------------------------------------------------------------------------------------------------------                                                                        
+HIGH_VALUE                                                                                                                                                                                              
+--------------------------------------------------------------------------------                                                                                                                        
+ANGAJATI_DEP                                                                                                                                                                                            
+DEP10                                                                                                                                                                                                   
+10                                                                                                                                                                                                      
+                                                                                                                                                                                                        
+ANGAJATI_DEP                                                                                                                                                                                            
+DEP20                                                                                                                                                                                                   
+20                                                                                                                                                                                                      
+                                                                                                                                                                                                        
+ANGAJATI_DEP                                                                                                                                                                                            
+DEP30                                                                                                                                                                                                   
+30                                                                                                                                                                                                      
+                                                                                                                                                                                                        
+
+SQL> desc dba_objects
+ Name                                                                                                              Null?    Type
+ ----------------------------------------------------------------------------------------------------------------- -------- ----------------------------------------------------------------------------
+ OWNER                                                                                                                      VARCHAR2(128)
+ OBJECT_NAME                                                                                                                VARCHAR2(128)
+ SUBOBJECT_NAME                                                                                                             VARCHAR2(128)
+ OBJECT_ID                                                                                                                  NUMBER
+ DATA_OBJECT_ID                                                                                                             NUMBER
+ OBJECT_TYPE                                                                                                                VARCHAR2(23)
+ CREATED                                                                                                                    DATE
+ LAST_DDL_TIME                                                                                                              DATE
+ TIMESTAMP                                                                                                                  VARCHAR2(19)
+ STATUS                                                                                                                     VARCHAR2(7)
+ TEMPORARY                                                                                                                  VARCHAR2(1)
+ GENERATED                                                                                                                  VARCHAR2(1)
+ SECONDARY                                                                                                                  VARCHAR2(1)
+ NAMESPACE                                                                                                                  NUMBER
+ EDITION_NAME                                                                                                               VARCHAR2(128)
+ SHARING                                                                                                                    VARCHAR2(18)
+ EDITIONABLE                                                                                                                VARCHAR2(1)
+ ORACLE_MAINTAINED                                                                                                          VARCHAR2(1)
+ APPLICATION                                                                                                                VARCHAR2(1)
+ DEFAULT_COLLATION                                                                                                          VARCHAR2(100)
+ DUPLICATED                                                                                                                 VARCHAR2(1)
+ SHARDED                                                                                                                    VARCHAR2(1)
+ CREATED_APPID                                                                                                              NUMBER
+ CREATED_VSNID                                                                                                              NUMBER
+ MODIFIED_APPID                                                                                                             NUMBER
+ MODIFIED_VSNID                                                                                                             NUMBER
+
+SQL>  select object_name, created
+  2   from dba_objects
+  3   where object_name like 'EMP%' and owner ='SCOTT';
+
+no rows selected
+
+SQL>  select object_name, created
+  2   from dba_objects
+  3   where object_name like 'EMP%' and owner ='ABD1';
+
+OBJECT_NAME                                                                                                                      CREATED                                                                
+-------------------------------------------------------------------------------------------------------------------------------- ---------                                                              
+EMP                                                                                                                              21-OCT-20                                                              
+EMP_COPY                                                                                                                         08-DEC-20                                                              
+EMP_TEMP                                                                                                                         08-DEC-20                                                              
+
+SQL>  desc user_objects
+ Name                                                                                                              Null?    Type
+ ----------------------------------------------------------------------------------------------------------------- -------- ----------------------------------------------------------------------------
+ OBJECT_NAME                                                                                                                VARCHAR2(128)
+ SUBOBJECT_NAME                                                                                                             VARCHAR2(128)
+ OBJECT_ID                                                                                                                  NUMBER
+ DATA_OBJECT_ID                                                                                                             NUMBER
+ OBJECT_TYPE                                                                                                                VARCHAR2(23)
+ CREATED                                                                                                                    DATE
+ LAST_DDL_TIME                                                                                                              DATE
+ TIMESTAMP                                                                                                                  VARCHAR2(19)
+ STATUS                                                                                                                     VARCHAR2(7)
+ TEMPORARY                                                                                                                  VARCHAR2(1)
+ GENERATED                                                                                                                  VARCHAR2(1)
+ SECONDARY                                                                                                                  VARCHAR2(1)
+ NAMESPACE                                                                                                                  NUMBER
+ EDITION_NAME                                                                                                               VARCHAR2(128)
+ SHARING                                                                                                                    VARCHAR2(18)
+ EDITIONABLE                                                                                                                VARCHAR2(1)
+ ORACLE_MAINTAINED                                                                                                          VARCHAR2(1)
+ APPLICATION                                                                                                                VARCHAR2(1)
+ DEFAULT_COLLATION                                                                                                          VARCHAR2(100)
+ DUPLICATED                                                                                                                 VARCHAR2(1)
+ SHARDED                                                                                                                    VARCHAR2(1)
+ CREATED_APPID                                                                                                              NUMBER
+ CREATED_VSNID                                                                                                              NUMBER
+ MODIFIED_APPID                                                                                                             NUMBER
+ MODIFIED_VSNID                                                                                                             NUMBER
+
+SQL> select object_name, object_type,created, status from user_objects;
+
+OBJECT_NAME                                                                                                                      OBJECT_TYPE             CREATED   STATUS                               
+-------------------------------------------------------------------------------------------------------------------------------- ----------------------- --------- -------                              
+LOGIN_LAB_UBD                                                                                                                    TABLE                   21-OCT-20 VALID                                
+PK_DEPT                                                                                                                          INDEX                   21-OCT-20 VALID                                
+EMP                                                                                                                              TABLE                   21-OCT-20 VALID                                
+PK_EMP                                                                                                                           INDEX                   21-OCT-20 VALID                                
+UNIQ_DEPT1                                                                                                                       INDEX                   21-OCT-20 VALID                                
+DEPT                                                                                                                             TABLE                   21-OCT-20 VALID                                
+BONUS                                                                                                                            TABLE                   21-OCT-20 VALID                                
+SALGRADE                                                                                                                         TABLE                   21-OCT-20 VALID                                
+ENAME_INDEX                                                                                                                      INDEX                   21-OCT-20 VALID                                
+STUDENTI                                                                                                                         TABLE                   08-DEC-20 VALID                                
+ANGAJATI_DEP                                                                                                                     TABLE PARTITION         08-DEC-20 VALID                                
+ANGAJATI_DEP                                                                                                                     TABLE PARTITION         08-DEC-20 VALID                                
+ANGAJATI_DEP                                                                                                                     TABLE PARTITION         08-DEC-20 VALID                                
+ANGAJATI_DEP                                                                                                                     TABLE                   08-DEC-20 VALID                                
+EMP_TEMP                                                                                                                         TABLE                   08-DEC-20 VALID                                
+EMP_COPY                                                                                                                         TABLE                   08-DEC-20 VALID                                
+
+16 rows selected.
+
+SQL> delete from emp_copy where deptno=10;
+
+4 rows deleted.
+
+SQL>  truncate table emp_copy;
+
+Table truncated.
+
+SQL> drop table emp_copy cascade constraints;
+
+Table dropped.
+
+SQL>  create table emp_del as select * from emp;
+
+Table created.
+
+SQL>  insert into emp_del select * from emp;
+
+15 rows created.
+
+SQL> SELECT rowid, empno, ename FROM emp_del order by empno;
+
+ROWID                   EMPNO ENAME                                                                                                                                                                     
+------------------ ---------- ----------                                                                                                                                                                
+AAATWwAAMAAAAFHAAA        999 TEST                                                                                                                                                                      
+AAATWwAAMAAAAFDAAA        999 TEST                                                                                                                                                                      
+AAATWwAAMAAAAFDAAB       7369 SMITH                                                                                                                                                                     
+AAATWwAAMAAAAFHAAB       7369 SMITH                                                                                                                                                                     
+AAATWwAAMAAAAFDAAC       7499 ALLEN                                                                                                                                                                     
+AAATWwAAMAAAAFHAAC       7499 ALLEN                                                                                                                                                                     
+AAATWwAAMAAAAFDAAD       7521 WARD                                                                                                                                                                      
+AAATWwAAMAAAAFHAAD       7521 WARD                                                                                                                                                                      
+AAATWwAAMAAAAFHAAE       7566 JONES                                                                                                                                                                     
+AAATWwAAMAAAAFDAAE       7566 JONES                                                                                                                                                                     
+AAATWwAAMAAAAFDAAF       7654 MARTIN                                                                                                                                                                    
+AAATWwAAMAAAAFHAAF       7654 MARTIN                                                                                                                                                                    
+AAATWwAAMAAAAFHAAG       7698 BLAKE                                                                                                                                                                     
+AAATWwAAMAAAAFDAAG       7698 BLAKE                                                                                                                                                                     
+AAATWwAAMAAAAFDAAH       7782 CLARK                                                                                                                                                                     
+AAATWwAAMAAAAFHAAH       7782 CLARK                                                                                                                                                                     
+AAATWwAAMAAAAFDAAI       7788 SCOTT                                                                                                                                                                     
+AAATWwAAMAAAAFHAAI       7788 SCOTT                                                                                                                                                                     
+AAATWwAAMAAAAFDAAJ       7839 KING                                                                                                                                                                      
+AAATWwAAMAAAAFHAAJ       7839 KING                                                                                                                                                                      
+AAATWwAAMAAAAFDAAK       7844 TURNER                                                                                                                                                                    
+AAATWwAAMAAAAFHAAK       7844 TURNER                                                                                                                                                                    
+AAATWwAAMAAAAFDAAL       7876 ADAMS                                                                                                                                                                     
+AAATWwAAMAAAAFHAAL       7876 ADAMS                                                                                                                                                                     
+AAATWwAAMAAAAFDAAM       7900 JAMES                                                                                                                                                                     
+AAATWwAAMAAAAFHAAM       7900 JAMES                                                                                                                                                                     
+AAATWwAAMAAAAFDAAN       7902 FORD                                                                                                                                                                      
+AAATWwAAMAAAAFHAAN       7902 FORD                                                                                                                                                                      
+AAATWwAAMAAAAFHAAO       7934 MILLER                                                                                                                                                                    
+AAATWwAAMAAAAFDAAO       7934 MILLER                                                                                                                                                                    
+
+30 rows selected.
+
+SQL>  delete from emp_del where rowid='AAAQwSAAEAAAAKUAAB';
+ delete from emp_del where rowid='AAAQwSAAEAAAAKUAAB'
+             *
+ERROR at line 1:
+ORA-01410: invalid ROWID 
+
+
+SQL>  delete from emp_del where rowid='AAATWwAAMAAAAFHAAK';
+
+1 row deleted.
+
+SQL>  select rowid, empno, ename from emp_del order by empno;
+
+ROWID                   EMPNO ENAME                                                                                                                                                                     
+------------------ ---------- ----------                                                                                                                                                                
+AAATWwAAMAAAAFDAAA        999 TEST                                                                                                                                                                      
+AAATWwAAMAAAAFHAAA        999 TEST                                                                                                                                                                      
+AAATWwAAMAAAAFDAAB       7369 SMITH                                                                                                                                                                     
+AAATWwAAMAAAAFHAAB       7369 SMITH                                                                                                                                                                     
+AAATWwAAMAAAAFDAAC       7499 ALLEN                                                                                                                                                                     
+AAATWwAAMAAAAFHAAC       7499 ALLEN                                                                                                                                                                     
+AAATWwAAMAAAAFDAAD       7521 WARD                                                                                                                                                                      
+AAATWwAAMAAAAFHAAD       7521 WARD                                                                                                                                                                      
+AAATWwAAMAAAAFDAAE       7566 JONES                                                                                                                                                                     
+AAATWwAAMAAAAFHAAE       7566 JONES                                                                                                                                                                     
+AAATWwAAMAAAAFDAAF       7654 MARTIN                                                                                                                                                                    
+AAATWwAAMAAAAFHAAF       7654 MARTIN                                                                                                                                                                    
+AAATWwAAMAAAAFDAAG       7698 BLAKE                                                                                                                                                                     
+AAATWwAAMAAAAFHAAG       7698 BLAKE                                                                                                                                                                     
+AAATWwAAMAAAAFHAAH       7782 CLARK                                                                                                                                                                     
+AAATWwAAMAAAAFDAAH       7782 CLARK                                                                                                                                                                     
+AAATWwAAMAAAAFDAAI       7788 SCOTT                                                                                                                                                                     
+AAATWwAAMAAAAFHAAI       7788 SCOTT                                                                                                                                                                     
+AAATWwAAMAAAAFDAAJ       7839 KING                                                                                                                                                                      
+AAATWwAAMAAAAFHAAJ       7839 KING                                                                                                                                                                      
+AAATWwAAMAAAAFDAAK       7844 TURNER                                                                                                                                                                    
+AAATWwAAMAAAAFDAAL       7876 ADAMS                                                                                                                                                                     
+AAATWwAAMAAAAFHAAL       7876 ADAMS                                                                                                                                                                     
+AAATWwAAMAAAAFDAAM       7900 JAMES                                                                                                                                                                     
+AAATWwAAMAAAAFHAAM       7900 JAMES                                                                                                                                                                     
+AAATWwAAMAAAAFDAAN       7902 FORD                                                                                                                                                                      
+AAATWwAAMAAAAFHAAN       7902 FORD                                                                                                                                                                      
+AAATWwAAMAAAAFHAAO       7934 MILLER                                                                                                                                                                    
+AAATWwAAMAAAAFDAAO       7934 MILLER                                                                                                                                                                    
+
+29 rows selected.
+
+SQL> select rownum, empno, ename from emp_del order by empno;
+
+    ROWNUM      EMPNO ENAME                                                                                                                                                                             
+---------- ---------- ----------                                                                                                                                                                        
+         1        999 TEST                                                                                                                                                                              
+        16        999 TEST                                                                                                                                                                              
+         2       7369 SMITH                                                                                                                                                                             
+        17       7369 SMITH                                                                                                                                                                             
+         3       7499 ALLEN                                                                                                                                                                             
+        18       7499 ALLEN                                                                                                                                                                             
+         4       7521 WARD                                                                                                                                                                              
+        19       7521 WARD                                                                                                                                                                              
+         5       7566 JONES                                                                                                                                                                             
+        20       7566 JONES                                                                                                                                                                             
+         6       7654 MARTIN                                                                                                                                                                            
+        21       7654 MARTIN                                                                                                                                                                            
+         7       7698 BLAKE                                                                                                                                                                             
+        22       7698 BLAKE                                                                                                                                                                             
+        23       7782 CLARK                                                                                                                                                                             
+         8       7782 CLARK                                                                                                                                                                             
+         9       7788 SCOTT                                                                                                                                                                             
+        24       7788 SCOTT                                                                                                                                                                             
+        10       7839 KING                                                                                                                                                                              
+        25       7839 KING                                                                                                                                                                              
+        11       7844 TURNER                                                                                                                                                                            
+        12       7876 ADAMS                                                                                                                                                                             
+        26       7876 ADAMS                                                                                                                                                                             
+        13       7900 JAMES                                                                                                                                                                             
+        27       7900 JAMES                                                                                                                                                                             
+        14       7902 FORD                                                                                                                                                                              
+        28       7902 FORD                                                                                                                                                                              
+        29       7934 MILLER                                                                                                                                                                            
+        15       7934 MILLER                                                                                                                                                                            
+
+29 rows selected.
+
+SQL>  delete from emp_del where rownum=16;
+
+0 rows deleted.
+
+SQL> delete from emp_del where rownum>16 and rownum<18;
+
+0 rows deleted.
+
+SQL>  delete from emp_del where rownum<15;
+
+14 rows deleted.
+
+SQL>  select rownum, empno, ename from emp_del order by empno;
+
+    ROWNUM      EMPNO ENAME                                                                                                                                                                             
+---------- ---------- ----------                                                                                                                                                                        
+         2        999 TEST                                                                                                                                                                              
+         3       7369 SMITH                                                                                                                                                                             
+         4       7499 ALLEN                                                                                                                                                                             
+         5       7521 WARD                                                                                                                                                                              
+         6       7566 JONES                                                                                                                                                                             
+         7       7654 MARTIN                                                                                                                                                                            
+         8       7698 BLAKE                                                                                                                                                                             
+         9       7782 CLARK                                                                                                                                                                             
+        10       7788 SCOTT                                                                                                                                                                             
+        11       7839 KING                                                                                                                                                                              
+        12       7876 ADAMS                                                                                                                                                                             
+        13       7900 JAMES                                                                                                                                                                             
+        14       7902 FORD                                                                                                                                                                              
+        15       7934 MILLER                                                                                                                                                                            
+         1       7934 MILLER                                                                                                                                                                            
+
+15 rows selected.
+
+SQL>  delete from emp_del where rownum=1;
+
+1 row deleted.
+
+SQL>  select rownum, empno, ename from emp_del order by empno;
+
+    ROWNUM      EMPNO ENAME                                                                                                                                                                             
+---------- ---------- ----------                                                                                                                                                                        
+         1        999 TEST                                                                                                                                                                              
+         2       7369 SMITH                                                                                                                                                                             
+         3       7499 ALLEN                                                                                                                                                                             
+         4       7521 WARD                                                                                                                                                                              
+         5       7566 JONES                                                                                                                                                                             
+         6       7654 MARTIN                                                                                                                                                                            
+         7       7698 BLAKE                                                                                                                                                                             
+         8       7782 CLARK                                                                                                                                                                             
+         9       7788 SCOTT                                                                                                                                                                             
+        10       7839 KING                                                                                                                                                                              
+        11       7876 ADAMS                                                                                                                                                                             
+        12       7900 JAMES                                                                                                                                                                             
+        13       7902 FORD                                                                                                                                                                              
+        14       7934 MILLER                                                                                                                                                                            
+
+14 rows selected.
+
+SQL> create table emp_copy2 as select * from emp;
+
+Table created.
+
+SQL> insert into emp_copy2 select * from emp;
+
+15 rows created.
+
+SQL> delete from emp_del where rownum=(select min(rownum) from emp_copy2
+  2  where empno=7566);
+
+1 row deleted.
+
+SQL> select rownum from emp_copy2 where empno=7566;
+
+    ROWNUM                                                                                                                                                                                              
+----------                                                                                                                                                                                              
+         1                                                                                                                                                                                              
+         2                                                                                                                                                                                              
+
+SQL> select min(rownum) from emp_copy2 where empno=7566;
+
+MIN(ROWNUM)                                                                                                                                                                                             
+-----------                                                                                                                                                                                             
+          1                                                                                                                                                                                             
+
+SQL> select table_name, tablespace_name, owner from user_tables where owner like 'ABD1';
+select table_name, tablespace_name, owner from user_tables where owner like 'ABD1'
+                                                                 *
+ERROR at line 1:
+ORA-00904: "OWNER": invalid identifier 
+
+
+SQL> select table_name, tablespace_name, owner from user_tables;
+select table_name, tablespace_name, owner from user_tables
+                                    *
+ERROR at line 1:
+ORA-00904: "OWNER": invalid identifier 
+
+
+SQL> select table_name, tablespace_name, owner from dba_tables where owner like 'ABD1';
+
+TABLE_NAME                                                                                                                       TABLESPACE_NAME                                                        
+-------------------------------------------------------------------------------------------------------------------------------- ------------------------------                                         
+OWNER                                                                                                                                                                                                   
+--------------------------------------------------------------------------------------------------------------------------------                                                                        
+LOGIN_LAB_UBD                                                                                                                    BD_DATA                                                                
+ABD1                                                                                                                                                                                                    
+                                                                                                                                                                                                        
+DEPT                                                                                                                             BD_DATA                                                                
+ABD1                                                                                                                                                                                                    
+                                                                                                                                                                                                        
+EMP                                                                                                                              BD_DATA                                                                
+ABD1                                                                                                                                                                                                    
+                                                                                                                                                                                                        
+SALGRADE                                                                                                                         BD_DATA                                                                
+ABD1                                                                                                                                                                                                    
+                                                                                                                                                                                                        
+EMP_DEL                                                                                                                          BD_DATA                                                                
+ABD1                                                                                                                                                                                                    
+                                                                                                                                                                                                        
+EMP_COPY2                                                                                                                        BD_DATA                                                                
+ABD1                                                                                                                                                                                                    
+                                                                                                                                                                                                        
+ANGAJATI_DEP                                                                                                                                                                                            
+ABD1                                                                                                                                                                                                    
+                                                                                                                                                                                                        
+EMP_TEMP                                                                                                                                                                                                
+ABD1                                                                                                                                                                                                    
+                                                                                                                                                                                                        
+BONUS                                                                                                                            BD_DATA                                                                
+ABD1                                                                                                                                                                                                    
+                                                                                                                                                                                                        
+STUDENTI                                                                                                                         BD_DATA                                                                
+ABD1                                                                                                                                                                                                    
+                                                                                                                                                                                                        
+
+10 rows selected.
+
+SQL> create table emp_copy as select * from emp;
+
+Table created.
+
+SQL> 
+SQL>  alter table emp_copy
+  2  set unused column sal
+  3  cascade constraints;
+
+Table altered.
+
+SQL>  alter table emp_copy
+  2  set unused column comm
+  3  cascade constraints;
+
+Table altered.
+
+SQL>  select * from dba_unused_col_tabs where table_name like 'EMP_COPY';
+
+OWNER                                                                                                                                                                                                   
+--------------------------------------------------------------------------------------------------------------------------------                                                                        
+TABLE_NAME                                                                                                                            COUNT                                                             
+-------------------------------------------------------------------------------------------------------------------------------- ----------                                                             
+ABD1                                                                                                                                                                                                    
+EMP_COPY                                                                                                                                  2                                                             
+                                                                                                                                                                                                        
+
+SQL> ALTER TABLE emp_copy
+  2  ADD TELEFON NUMBER(10);
+
+Table altered.
+
+SQL> describe emp_copy;
+ Name                                                                                                              Null?    Type
+ ----------------------------------------------------------------------------------------------------------------- -------- ----------------------------------------------------------------------------
+ EMPNO                                                                                                                      NUMBER(4)
+ ENAME                                                                                                                      VARCHAR2(10)
+ JOB                                                                                                                        VARCHAR2(9)
+ MGR                                                                                                                        NUMBER(4)
+ HIREDATE                                                                                                                   DATE
+ DEPTNO                                                                                                                     NUMBER(2)
+ TELEFON                                                                                                                    NUMBER(10)
+
+SQL> alter table emp_copy
+  2  allocate extent(size 100k datafile 'd:/ubd_dataa1.dbf');
+
+Table altered.
+
+SQL>  insert into emp_copy select * from emp;
+ insert into emp_copy select * from emp
+             *
+ERROR at line 1:
+ORA-00913: too many values 
+
+
+SQL> select * from emp;
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM     DEPTNO                                                                                                                   
+---------- ---------- --------- ---------- --------- ---------- ---------- ----------                                                                                                                   
+       999 TEST       TRANZACT        1111 25-NOV-20        100          0         10                                                                                                                   
+      7369 SMITH      CLERK           7902 17-DEC-80        800                    20                                                                                                                   
+      7499 ALLEN      SALESMAN        7698 20-FEB-81       1600        300         30                                                                                                                   
+      7521 WARD       SALESMAN        7698 22-FEB-81       1250        500         30                                                                                                                   
+      7566 JONES      MANAGER         7839 02-APR-81       2975                    20                                                                                                                   
+      7654 MARTIN     SALESMAN        7698 28-SEP-81       1250       1400         30                                                                                                                   
+      7698 BLAKE      MANAGER         7839 01-MAY-81       2850                    30                                                                                                                   
+      7782 CLARK      MANAGER         7839 09-JUN-81       2450                    10                                                                                                                   
+      7788 SCOTT      ANALYST         7566 19-APR-87       3000                    20                                                                                                                   
+      7839 KING       PRESIDENT            17-NOV-81       5000                    10                                                                                                                   
+      7844 TURNER     SALESMAN        7698 08-SEP-81       1500          0         30                                                                                                                   
+      7876 ADAMS      CLERK           7788 23-MAY-87       1100                    20                                                                                                                   
+      7900 JAMES      CLERK           7698 03-DEC-81        950                    30                                                                                                                   
+      7902 FORD       ANALYST         7566 03-DEC-81       3000                    20                                                                                                                   
+      7934 MILLER     CLERK           7782 23-JAN-82       1300                    10                                                                                                                   
+
+15 rows selected.
+
+SQL> create table emp_copy2 as select * from emp;
+create table emp_copy2 as select * from emp
+             *
+ERROR at line 1:
+ORA-00955: name is already used by an existing object 
+
+
+SQL> create table emp_copy3 as select * from emp;
+
+Table created.
+
+SQL> insert into emp_copy3 select * from emp;
+
+15 rows created.
+
+SQL> select * from emp_copy3;
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM     DEPTNO                                                                                                                   
+---------- ---------- --------- ---------- --------- ---------- ---------- ----------                                                                                                                   
+       999 TEST       TRANZACT        1111 25-NOV-20        100          0         10                                                                                                                   
+      7369 SMITH      CLERK           7902 17-DEC-80        800                    20                                                                                                                   
+      7499 ALLEN      SALESMAN        7698 20-FEB-81       1600        300         30                                                                                                                   
+      7521 WARD       SALESMAN        7698 22-FEB-81       1250        500         30                                                                                                                   
+      7566 JONES      MANAGER         7839 02-APR-81       2975                    20                                                                                                                   
+      7654 MARTIN     SALESMAN        7698 28-SEP-81       1250       1400         30                                                                                                                   
+      7698 BLAKE      MANAGER         7839 01-MAY-81       2850                    30                                                                                                                   
+      7782 CLARK      MANAGER         7839 09-JUN-81       2450                    10                                                                                                                   
+      7788 SCOTT      ANALYST         7566 19-APR-87       3000                    20                                                                                                                   
+      7839 KING       PRESIDENT            17-NOV-81       5000                    10                                                                                                                   
+      7844 TURNER     SALESMAN        7698 08-SEP-81       1500          0         30                                                                                                                   
+      7876 ADAMS      CLERK           7788 23-MAY-87       1100                    20                                                                                                                   
+      7900 JAMES      CLERK           7698 03-DEC-81        950                    30                                                                                                                   
+      7902 FORD       ANALYST         7566 03-DEC-81       3000                    20                                                                                                                   
+      7934 MILLER     CLERK           7782 23-JAN-82       1300                    10                                                                                                                   
+       999 TEST       TRANZACT        1111 25-NOV-20        100          0         10                                                                                                                   
+      7369 SMITH      CLERK           7902 17-DEC-80        800                    20                                                                                                                   
+      7499 ALLEN      SALESMAN        7698 20-FEB-81       1600        300         30                                                                                                                   
+      7521 WARD       SALESMAN        7698 22-FEB-81       1250        500         30                                                                                                                   
+      7566 JONES      MANAGER         7839 02-APR-81       2975                    20                                                                                                                   
+      7654 MARTIN     SALESMAN        7698 28-SEP-81       1250       1400         30                                                                                                                   
+      7698 BLAKE      MANAGER         7839 01-MAY-81       2850                    30                                                                                                                   
+      7782 CLARK      MANAGER         7839 09-JUN-81       2450                    10                                                                                                                   
+      7788 SCOTT      ANALYST         7566 19-APR-87       3000                    20                                                                                                                   
+      7839 KING       PRESIDENT            17-NOV-81       5000                    10                                                                                                                   
+      7844 TURNER     SALESMAN        7698 08-SEP-81       1500          0         30                                                                                                                   
+      7876 ADAMS      CLERK           7788 23-MAY-87       1100                    20                                                                                                                   
+      7900 JAMES      CLERK           7698 03-DEC-81        950                    30                                                                                                                   
+      7902 FORD       ANALYST         7566 03-DEC-81       3000                    20                                                                                                                   
+      7934 MILLER     CLERK           7782 23-JAN-82       1300                    10                                                                                                                   
+
+30 rows selected.
+
+SQL> DELETE
+  2  FROM emp_copy3
+  3  WHERE ROWID NOT IN
+  4  (
+  5  SELECT MIN(rowid)
+  6  FROM emp_copy3
+  7  GROUP BY empno, ename, job, mgr, hiredate, sal, comm, deptno);
+
+15 rows deleted.
+
+SQL> select * from emp_copy3;
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM     DEPTNO                                                                                                                   
+---------- ---------- --------- ---------- --------- ---------- ---------- ----------                                                                                                                   
+       999 TEST       TRANZACT        1111 25-NOV-20        100          0         10                                                                                                                   
+      7369 SMITH      CLERK           7902 17-DEC-80        800                    20                                                                                                                   
+      7499 ALLEN      SALESMAN        7698 20-FEB-81       1600        300         30                                                                                                                   
+      7521 WARD       SALESMAN        7698 22-FEB-81       1250        500         30                                                                                                                   
+      7566 JONES      MANAGER         7839 02-APR-81       2975                    20                                                                                                                   
+      7654 MARTIN     SALESMAN        7698 28-SEP-81       1250       1400         30                                                                                                                   
+      7698 BLAKE      MANAGER         7839 01-MAY-81       2850                    30                                                                                                                   
+      7782 CLARK      MANAGER         7839 09-JUN-81       2450                    10                                                                                                                   
+      7788 SCOTT      ANALYST         7566 19-APR-87       3000                    20                                                                                                                   
+      7839 KING       PRESIDENT            17-NOV-81       5000                    10                                                                                                                   
+      7844 TURNER     SALESMAN        7698 08-SEP-81       1500          0         30                                                                                                                   
+      7876 ADAMS      CLERK           7788 23-MAY-87       1100                    20                                                                                                                   
+      7900 JAMES      CLERK           7698 03-DEC-81        950                    30                                                                                                                   
+      7902 FORD       ANALYST         7566 03-DEC-81       3000                    20                                                                                                                   
+      7934 MILLER     CLERK           7782 23-JAN-82       1300                    10                                                                                                                   
+
+15 rows selected.
+
+SQL> update login_lab_ubd set data_sf= sysdate where laborator='Lab9';
+
+1 row updated.
+
+SQL> update login_lab_ubd set durata= round((data_sf-data_in)*24*60) where laborator='Lab9';
+
+1 row updated.
+
+SQL> select instance_number,instance_name, to_char(startup_time, 'dd-mm-yyyy hh:mi:ss'), host_name from v$instance;
+
+INSTANCE_NUMBER INSTANCE_NAME    TO_CHAR(STARTUP_TIM HOST_NAME                                                                                                                                          
+--------------- ---------------- ------------------- ----------------------------------------------------------------                                                                                   
+              1 oracle           03-12-2020 04:44:34 DESKTOP-KIRQEDP                                                                                                                                    
+
+SQL> select nume_stud, grupa, laborator, to_char(data_in, 'dd-mm-yyyy hh:mi:ss') data_inceput,
+  2  to_char(data_sf, 'dd-mm-yyyy hh:mi:ss') data_sfarsit, durata minute_lucrate from login_lab_ubd;
+
+NUME_STUD                      GRUPA      LABORATOR  DATA_INCEPUT        DATA_SFARSIT        MINUTE_LUCRATE                                                                                             
+------------------------------ ---------- ---------- ------------------- ------------------- --------------                                                                                             
+Coman_DianaStefania            343C5      Lab8       25-11-2020 05:13:25 25-11-2020 05:39:29             26                                                                                             
+Coman_DianaStefania            343C5      Lab5       04-11-2020 05:26:17 04-11-2020 05:58:25             32                                                                                             
+Coman_DianaStefania            343C5      Lab3       21-10-2020 05:49:36                                                                                                                                
+Coman_DianaStefania            343C5      Lab9       08-12-2020 08:18:16 08-12-2020 08:58:02             40                                                                                             
+Coman_DianaStefania            343C5      Lab7       17-11-2020 08:20:11 17-11-2020 08:41:41             22                                                                                             
+Coman_DianaStefania            343C5      Lab4       04-11-2020 02:40:32 04-11-2020 02:55:43             15                                                                                             
+Coman_DianaStefania            343C5      Lab6       17-11-2020 05:44:10 17-11-2020 06:16:09             32                                                                                             
+
+7 rows selected.
+
+SQL> spool off

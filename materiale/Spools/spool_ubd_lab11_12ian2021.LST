@@ -1,0 +1,1172 @@
+SQL> set lines 200
+SQL> set pages 100
+SQL> select to_char(sysdate, 'dd-mm-yyyy hh:mi:ss') from dual;
+
+TO_CHAR(SYSDATE,'DD                                                                                                                                                                                     
+-------------------                                                                                                                                                                                     
+12-01-2021 05:25:45                                                                                                                                                                                     
+
+SQL> insert into login_lab_ubd values( 'Coman_DianaStefania', '343C5', 'Lab11', user, sysdate, null, null);
+
+1 row created.
+
+SQL> select * from login_lab_ubd;
+
+NUME_STUD                      GRUPA      LABORATOR  NUME_USER  DATA_IN   DATA_SF       DURATA                                                                                                          
+------------------------------ ---------- ---------- ---------- --------- --------- ----------                                                                                                          
+Coman_DianaStefania            343C5      Lab8       ABD1       25-NOV-20 25-NOV-20         26                                                                                                          
+Coman_DianaStefania            343C5      Lab10      ABD1       15-DEC-20 15-DEC-20         20                                                                                                          
+Coman_DianaStefania            343C5      Lab5       ABD1       04-NOV-20 04-NOV-20         32                                                                                                          
+Coman_DianaStefania            343C5      Lab3       ABD1       21-OCT-20                                                                                                                               
+Coman_DianaStefania            343C5      Lab11      ABD1       12-JAN-21                                                                                                                               
+Coman_DianaStefania            343C5      Lab9       ABD1       08-DEC-20 08-DEC-20         40                                                                                                          
+Coman_DianaStefania            343C5      Lab7       ABD1       17-NOV-20 17-NOV-20         22                                                                                                          
+Coman_DianaStefania            343C5      Lab4       ABD1       04-NOV-20 04-NOV-20         15                                                                                                          
+Coman_DianaStefania            343C5      Lab6       ABD1       17-NOV-20 17-NOV-20         32                                                                                                          
+
+9 rows selected.
+
+SQL>  create user test identified by test
+  2  default tablespace bd_data
+  3  temporary tablespace bd_temp
+  4  quota 10M on bd_data;
+
+User created.
+
+SQL> alter user test identified by pass_test;
+
+User altered.
+
+SQL> grant create session to test;
+
+Grant succeeded.
+
+SQL>  grant create session to test with admin option;
+
+Grant succeeded.
+
+SQL>  alter user test quota 5 M on bd_data;
+
+User altered.
+
+SQL>  alter user test quota 5 M on bd_data;
+
+User altered.
+
+SQL> alter user test quota unlimited on bd_data;
+
+User altered.
+
+SQL>  alter user test quota 0 M on bd_data;
+
+User altered.
+
+SQL>  alter user test account lock;
+
+User altered.
+
+SQL> alter user test account unlock;
+
+User altered.
+
+SQL> desc dba_users
+ Name                                                                                                              Null?    Type
+ ----------------------------------------------------------------------------------------------------------------- -------- ----------------------------------------------------------------------------
+ USERNAME                                                                                                          NOT NULL VARCHAR2(128)
+ USER_ID                                                                                                           NOT NULL NUMBER
+ PASSWORD                                                                                                                   VARCHAR2(4000)
+ ACCOUNT_STATUS                                                                                                    NOT NULL VARCHAR2(32)
+ LOCK_DATE                                                                                                                  DATE
+ EXPIRY_DATE                                                                                                                DATE
+ DEFAULT_TABLESPACE                                                                                                NOT NULL VARCHAR2(30)
+ TEMPORARY_TABLESPACE                                                                                              NOT NULL VARCHAR2(30)
+ LOCAL_TEMP_TABLESPACE                                                                                                      VARCHAR2(30)
+ CREATED                                                                                                           NOT NULL DATE
+ PROFILE                                                                                                           NOT NULL VARCHAR2(128)
+ INITIAL_RSRC_CONSUMER_GROUP                                                                                                VARCHAR2(128)
+ EXTERNAL_NAME                                                                                                              VARCHAR2(4000)
+ PASSWORD_VERSIONS                                                                                                          VARCHAR2(17)
+ EDITIONS_ENABLED                                                                                                           VARCHAR2(1)
+ AUTHENTICATION_TYPE                                                                                                        VARCHAR2(8)
+ PROXY_ONLY_CONNECT                                                                                                         VARCHAR2(1)
+ COMMON                                                                                                                     VARCHAR2(3)
+ LAST_LOGIN                                                                                                                 TIMESTAMP(9) WITH TIME ZONE
+ ORACLE_MAINTAINED                                                                                                          VARCHAR2(1)
+ INHERITED                                                                                                                  VARCHAR2(3)
+ DEFAULT_COLLATION                                                                                                          VARCHAR2(100)
+ IMPLICIT                                                                                                                   VARCHAR2(3)
+ ALL_SHARD                                                                                                                  VARCHAR2(3)
+
+SQL> set linesize 120
+SQL> desc dba_users
+ Name                                                              Null?    Type
+ ----------------------------------------------------------------- -------- --------------------------------------------
+ USERNAME                                                          NOT NULL VARCHAR2(128)
+ USER_ID                                                           NOT NULL NUMBER
+ PASSWORD                                                                   VARCHAR2(4000)
+ ACCOUNT_STATUS                                                    NOT NULL VARCHAR2(32)
+ LOCK_DATE                                                                  DATE
+ EXPIRY_DATE                                                                DATE
+ DEFAULT_TABLESPACE                                                NOT NULL VARCHAR2(30)
+ TEMPORARY_TABLESPACE                                              NOT NULL VARCHAR2(30)
+ LOCAL_TEMP_TABLESPACE                                                      VARCHAR2(30)
+ CREATED                                                           NOT NULL DATE
+ PROFILE                                                           NOT NULL VARCHAR2(128)
+ INITIAL_RSRC_CONSUMER_GROUP                                                VARCHAR2(128)
+ EXTERNAL_NAME                                                              VARCHAR2(4000)
+ PASSWORD_VERSIONS                                                          VARCHAR2(17)
+ EDITIONS_ENABLED                                                           VARCHAR2(1)
+ AUTHENTICATION_TYPE                                                        VARCHAR2(8)
+ PROXY_ONLY_CONNECT                                                         VARCHAR2(1)
+ COMMON                                                                     VARCHAR2(3)
+ LAST_LOGIN                                                                 TIMESTAMP(9) WITH TIME ZONE
+ ORACLE_MAINTAINED                                                          VARCHAR2(1)
+ INHERITED                                                                  VARCHAR2(3)
+ DEFAULT_COLLATION                                                          VARCHAR2(100)
+ IMPLICIT                                                                   VARCHAR2(3)
+ ALL_SHARD                                                                  VARCHAR2(3)
+
+SQL> select username, default_tablespace, temporary_tablespace from dba_users;
+
+USERNAME                                                                                                                
+------------------------------------------------------------------------------------------------------------------------
+DEFAULT_TABLESPACE             TEMPORARY_TABLESPACE                                                                     
+------------------------------ ------------------------------                                                           
+ABD2                                                                                                                    
+BD_DATA                        BD_TEMP                                                                                  
+                                                                                                                        
+ABD1                                                                                                                    
+BD_DATA                        BD_TEMP                                                                                  
+                                                                                                                        
+A1                                                                                                                      
+BD_DATA                        BD_TEMP                                                                                  
+                                                                                                                        
+TEST                                                                                                                    
+BD_DATA                        BD_TEMP                                                                                  
+                                                                                                                        
+SYS                                                                                                                     
+SYSTEM                         UBD_TEMP2                                                                                
+                                                                                                                        
+SYSTEM                                                                                                                  
+SYSTEM                         UBD_TEMP2                                                                                
+                                                                                                                        
+XS$NULL                                                                                                                 
+SYSTEM                         UBD_TEMP2                                                                                
+                                                                                                                        
+OJVMSYS                                                                                                                 
+SYSTEM                         UBD_TEMP2                                                                                
+                                                                                                                        
+LBACSYS                                                                                                                 
+SYSTEM                         UBD_TEMP2                                                                                
+                                                                                                                        
+OUTLN                                                                                                                   
+SYSTEM                         UBD_TEMP2                                                                                
+                                                                                                                        
+SYS$UMF                                                                                                                 
+SYSTEM                         UBD_TEMP2                                                                                
+                                                                                                                        
+DBSNMP                                                                                                                  
+SYSAUX                         UBD_TEMP2                                                                                
+                                                                                                                        
+APPQOSSYS                                                                                                               
+SYSAUX                         UBD_TEMP2                                                                                
+                                                                                                                        
+DBSFWUSER                                                                                                               
+SYSAUX                         UBD_TEMP2                                                                                
+                                                                                                                        
+GGSYS                                                                                                                   
+SYSAUX                         UBD_TEMP2                                                                                
+                                                                                                                        
+ANONYMOUS                                                                                                               
+SYSAUX                         UBD_TEMP2                                                                                
+                                                                                                                        
+CTXSYS                                                                                                                  
+SYSAUX                         UBD_TEMP2                                                                                
+                                                                                                                        
+SI_INFORMTN_SCHEMA                                                                                                      
+SYSAUX                         UBD_TEMP2                                                                                
+                                                                                                                        
+DVSYS                                                                                                                   
+SYSAUX                         UBD_TEMP2                                                                                
+                                                                                                                        
+DVF                                                                                                                     
+SYSAUX                         UBD_TEMP2                                                                                
+                                                                                                                        
+GSMADMIN_INTERNAL                                                                                                       
+SYSAUX                         UBD_TEMP2                                                                                
+                                                                                                                        
+ORDPLUGINS                                                                                                              
+SYSAUX                         UBD_TEMP2                                                                                
+                                                                                                                        
+MDSYS                                                                                                                   
+SYSAUX                         UBD_TEMP2                                                                                
+                                                                                                                        
+OLAPSYS                                                                                                                 
+SYSAUX                         UBD_TEMP2                                                                                
+                                                                                                                        
+ORDDATA                                                                                                                 
+SYSAUX                         UBD_TEMP2                                                                                
+                                                                                                                        
+XDB                                                                                                                     
+SYSAUX                         UBD_TEMP2                                                                                
+                                                                                                                        
+WMSYS                                                                                                                   
+SYSAUX                         UBD_TEMP2                                                                                
+                                                                                                                        
+ORDSYS                                                                                                                  
+SYSAUX                         UBD_TEMP2                                                                                
+                                                                                                                        
+GSMCATUSER                                                                                                              
+USERS                          UBD_TEMP2                                                                                
+                                                                                                                        
+MDDATA                                                                                                                  
+USERS                          UBD_TEMP2                                                                                
+                                                                                                                        
+SYSBACKUP                                                                                                               
+USERS                          UBD_TEMP2                                                                                
+                                                                                                                        
+REMOTE_SCHEDULER_AGENT                                                                                                  
+USERS                          UBD_TEMP2                                                                                
+
+USERNAME                                                                                                                
+------------------------------------------------------------------------------------------------------------------------
+DEFAULT_TABLESPACE             TEMPORARY_TABLESPACE                                                                     
+------------------------------ ------------------------------                                                           
+                                                                                                                        
+GSMUSER                                                                                                                 
+USERS                          UBD_TEMP2                                                                                
+                                                                                                                        
+SYSRAC                                                                                                                  
+USERS                          UBD_TEMP2                                                                                
+                                                                                                                        
+AUDSYS                                                                                                                  
+USERS                          UBD_TEMP2                                                                                
+                                                                                                                        
+DIP                                                                                                                     
+USERS                          UBD_TEMP2                                                                                
+                                                                                                                        
+SYSKM                                                                                                                   
+USERS                          UBD_TEMP2                                                                                
+                                                                                                                        
+ORACLE_OCM                                                                                                              
+USERS                          UBD_TEMP2                                                                                
+                                                                                                                        
+SYSDG                                                                                                                   
+USERS                          UBD_TEMP2                                                                                
+                                                                                                                        
+SPATIAL_CSW_ADMIN_USR                                                                                                   
+USERS                          UBD_TEMP2                                                                                
+                                                                                                                        
+
+40 rows selected.
+
+SQL> desc dba_ts_quotas
+ Name                                                              Null?    Type
+ ----------------------------------------------------------------- -------- --------------------------------------------
+ TABLESPACE_NAME                                                   NOT NULL VARCHAR2(30)
+ USERNAME                                                          NOT NULL VARCHAR2(128)
+ BYTES                                                                      NUMBER
+ MAX_BYTES                                                                  NUMBER
+ BLOCKS                                                                     NUMBER
+ MAX_BLOCKS                                                                 NUMBER
+ DROPPED                                                                    VARCHAR2(3)
+
+SQL>  select username, tablespace_name, max_bytes, bytes from dba_ts_quotas:
+  2  
+SQL>  select username, tablespace_name, max_bytes, bytes from dba_ts_quotas;
+
+USERNAME                                                                                                                
+------------------------------------------------------------------------------------------------------------------------
+TABLESPACE_NAME                 MAX_BYTES      BYTES                                                                    
+------------------------------ ---------- ----------                                                                    
+AUDSYS                                                                                                                  
+SYSAUX                                 -1    2621440                                                                    
+                                                                                                                        
+GSMADMIN_INTERNAL                                                                                                       
+SYSAUX                                 -1     917504                                                                    
+                                                                                                                        
+DBSFWUSER                                                                                                               
+SYSAUX                                 -1          0                                                                    
+                                                                                                                        
+APPQOSSYS                                                                                                               
+SYSAUX                                 -1          0                                                                    
+                                                                                                                        
+GGSYS                                                                                                                   
+SYSAUX                                 -1          0                                                                    
+                                                                                                                        
+OLAPSYS                                                                                                                 
+SYSAUX                                 -1          0                                                                    
+                                                                                                                        
+A1                                                                                                                      
+BD_DATA                          10485760          0                                                                    
+                                                                                                                        
+ABD1                                                                                                                    
+BD_DATA                          10485760   26935296                                                                    
+                                                                                                                        
+ABD2                                                                                                                    
+BD_DATA                          10485760          0                                                                    
+                                                                                                                        
+
+9 rows selected.
+
+SQL> desc user_users
+ Name                                                              Null?    Type
+ ----------------------------------------------------------------- -------- --------------------------------------------
+ USERNAME                                                          NOT NULL VARCHAR2(128)
+ USER_ID                                                           NOT NULL NUMBER
+ ACCOUNT_STATUS                                                    NOT NULL VARCHAR2(32)
+ LOCK_DATE                                                                  DATE
+ EXPIRY_DATE                                                                DATE
+ DEFAULT_TABLESPACE                                                NOT NULL VARCHAR2(30)
+ TEMPORARY_TABLESPACE                                              NOT NULL VARCHAR2(30)
+ LOCAL_TEMP_TABLESPACE                                                      VARCHAR2(30)
+ CREATED                                                           NOT NULL DATE
+ INITIAL_RSRC_CONSUMER_GROUP                                                VARCHAR2(128)
+ EXTERNAL_NAME                                                              VARCHAR2(4000)
+ PROXY_ONLY_CONNECT                                                         VARCHAR2(1)
+ COMMON                                                                     VARCHAR2(3)
+ ORACLE_MAINTAINED                                                          VARCHAR2(1)
+ INHERITED                                                                  VARCHAR2(3)
+ DEFAULT_COLLATION                                                          VARCHAR2(100)
+ IMPLICIT                                                                   VARCHAR2(3)
+ ALL_SHARD                                                                  VARCHAR2(3)
+
+SQL> select user_id, username, created, lock_date from user_users;
+
+   USER_ID                                                                                                              
+----------                                                                                                              
+USERNAME                                                                                                                
+------------------------------------------------------------------------------------------------------------------------
+CREATED   LOCK_DATE                                                                                                     
+--------- ---------                                                                                                     
+       107                                                                                                              
+ABD1                                                                                                                    
+20-OCT-20                                                                                                               
+                                                                                                                        
+
+SQL> drop user test;
+
+User dropped.
+
+SQL>  create user test identified by test
+  2  default tablespace bd_data
+  3  temporary tablespace bd_temp
+  4  quota 10M on bd_data;
+
+User created.
+
+SQL> grant select, insert, update on emp_copy to test;
+
+Grant succeeded.
+
+SQL>  grant create table to test;
+
+Grant succeeded.
+
+SQL>  grant create table to test;
+
+Grant succeeded.
+
+SQL> connect test@bd /test
+ERROR:
+ORA-12154: TNS:could not resolve the connect identifier specified 
+
+
+Warning: You are no longer connected to ORACLE.
+SQL> connect test@bd /test
+ERROR:
+ORA-12154: TNS:could not resolve the connect identifier specified 
+
+
+SQL> 
+SQL> connect abd1
+Connected.
+SQL> select * from scott.emp_copy;
+select * from scott.emp_copy
+                    *
+ERROR at line 1:
+ORA-00942: table or view does not exist 
+
+
+SQL> select * from abd1.emp_copy;
+
+     EMPNO ENAME      JOB              MGR HIREDATE      DEPTNO    TELEFON                                              
+---------- ---------- --------- ---------- --------- ---------- ----------                                              
+       999 TEST       TRANZACT        1111 25-NOV-20         10                                                         
+      7369 SMITH      CLERK           7902 17-DEC-80         20                                                         
+      7499 ALLEN      SALESMAN        7698 20-FEB-81         30                                                         
+      7521 WARD       SALESMAN        7698 22-FEB-81         30                                                         
+      7566 JONES      MANAGER         7839 02-APR-81         20                                                         
+      7654 MARTIN     SALESMAN        7698 28-SEP-81         30                                                         
+      7698 BLAKE      MANAGER         7839 01-MAY-81         30                                                         
+      7782 CLARK      MANAGER         7839 09-JUN-81         10                                                         
+      7788 SCOTT      ANALYST         7566 19-APR-87         20                                                         
+      7839 KING       PRESIDENT            17-NOV-81         10                                                         
+      7844 TURNER     SALESMAN        7698 08-SEP-81         30                                                         
+      7876 ADAMS      CLERK           7788 23-MAY-87         20                                                         
+      7900 JAMES      CLERK           7698 03-DEC-81         30                                                         
+      7902 FORD       ANALYST         7566 03-DEC-81         20                                                         
+      7934 MILLER     CLERK           7782 23-JAN-82         10                                                         
+
+15 rows selected.
+
+SQL>  desc dba_sys_privs
+ Name                                                              Null?    Type
+ ----------------------------------------------------------------- -------- --------------------------------------------
+ GRANTEE                                                                    VARCHAR2(128)
+ PRIVILEGE                                                                  VARCHAR2(40)
+ ADMIN_OPTION                                                               VARCHAR2(3)
+ COMMON                                                                     VARCHAR2(3)
+ INHERITED                                                                  VARCHAR2(3)
+
+SQL> select * from dba_sys_privs where grantee='TEST';
+
+GRAN PRIVILEGE                                ADM COM INH                                                               
+---- ---------------------------------------- --- --- ---                                                               
+TEST CREATE TABLE                             NO  YES NO                                                                
+
+SQL> desc session_privs
+ Name                                                              Null?    Type
+ ----------------------------------------------------------------- -------- --------------------------------------------
+ PRIVILEGE                                                         NOT NULL VARCHAR2(40)
+
+SQL>  select * from session_privs order by privilege;
+
+PRIVILEGE                                                                                                               
+----------------------------------------                                                                                
+ADMINISTER ANY SQL TUNING SET                                                                                           
+ADMINISTER DATABASE TRIGGER                                                                                             
+ADMINISTER RESOURCE MANAGER                                                                                             
+ADMINISTER SQL MANAGEMENT OBJECT                                                                                        
+ADMINISTER SQL TUNING SET                                                                                               
+ADVISOR                                                                                                                 
+ALTER ANY ANALYTIC VIEW                                                                                                 
+ALTER ANY ASSEMBLY                                                                                                      
+ALTER ANY ATTRIBUTE DIMENSION                                                                                           
+ALTER ANY CLUSTER                                                                                                       
+ALTER ANY CUBE                                                                                                          
+ALTER ANY CUBE BUILD PROCESS                                                                                            
+ALTER ANY CUBE DIMENSION                                                                                                
+ALTER ANY DIMENSION                                                                                                     
+ALTER ANY EDITION                                                                                                       
+ALTER ANY EVALUATION CONTEXT                                                                                            
+ALTER ANY HIERARCHY                                                                                                     
+ALTER ANY INDEX                                                                                                         
+ALTER ANY INDEXTYPE                                                                                                     
+ALTER ANY LIBRARY                                                                                                       
+ALTER ANY MATERIALIZED VIEW                                                                                             
+ALTER ANY MEASURE FOLDER                                                                                                
+ALTER ANY MINING MODEL                                                                                                  
+ALTER ANY OPERATOR                                                                                                      
+ALTER ANY OUTLINE                                                                                                       
+ALTER ANY PROCEDURE                                                                                                     
+ALTER ANY ROLE                                                                                                          
+ALTER ANY RULE                                                                                                          
+ALTER ANY RULE SET                                                                                                      
+ALTER ANY SEQUENCE                                                                                                      
+ALTER ANY SQL PROFILE                                                                                                   
+ALTER ANY SQL TRANSLATION PROFILE                                                                                       
+ALTER ANY TABLE                                                                                                         
+ALTER ANY TRIGGER                                                                                                       
+ALTER ANY TYPE                                                                                                          
+ALTER DATABASE                                                                                                          
+ALTER LOCKDOWN PROFILE                                                                                                  
+ALTER PROFILE                                                                                                           
+ALTER RESOURCE COST                                                                                                     
+ALTER ROLLBACK SEGMENT                                                                                                  
+ALTER SESSION                                                                                                           
+ALTER SYSTEM                                                                                                            
+ALTER TABLESPACE                                                                                                        
+ALTER USER                                                                                                              
+ANALYZE ANY                                                                                                             
+ANALYZE ANY DICTIONARY                                                                                                  
+AUDIT ANY                                                                                                               
+AUDIT SYSTEM                                                                                                            
+BACKUP ANY TABLE                                                                                                        
+BECOME USER                                                                                                             
+CHANGE NOTIFICATION                                                                                                     
+COMMENT ANY MINING MODEL                                                                                                
+COMMENT ANY TABLE                                                                                                       
+CREATE ANALYTIC VIEW                                                                                                    
+CREATE ANY ANALYTIC VIEW                                                                                                
+CREATE ANY ASSEMBLY                                                                                                     
+CREATE ANY ATTRIBUTE DIMENSION                                                                                          
+CREATE ANY CLUSTER                                                                                                      
+CREATE ANY CONTEXT                                                                                                      
+CREATE ANY CREDENTIAL                                                                                                   
+CREATE ANY CUBE                                                                                                         
+CREATE ANY CUBE BUILD PROCESS                                                                                           
+CREATE ANY CUBE DIMENSION                                                                                               
+CREATE ANY DIMENSION                                                                                                    
+CREATE ANY DIRECTORY                                                                                                    
+CREATE ANY EDITION                                                                                                      
+CREATE ANY EVALUATION CONTEXT                                                                                           
+CREATE ANY HIERARCHY                                                                                                    
+CREATE ANY INDEX                                                                                                        
+CREATE ANY INDEXTYPE                                                                                                    
+CREATE ANY JOB                                                                                                          
+CREATE ANY LIBRARY                                                                                                      
+CREATE ANY MATERIALIZED VIEW                                                                                            
+CREATE ANY MEASURE FOLDER                                                                                               
+CREATE ANY MINING MODEL                                                                                                 
+CREATE ANY OPERATOR                                                                                                     
+CREATE ANY OUTLINE                                                                                                      
+CREATE ANY PROCEDURE                                                                                                    
+CREATE ANY RULE                                                                                                         
+CREATE ANY RULE SET                                                                                                     
+CREATE ANY SEQUENCE                                                                                                     
+CREATE ANY SQL PROFILE                                                                                                  
+CREATE ANY SQL TRANSLATION PROFILE                                                                                      
+CREATE ANY SYNONYM                                                                                                      
+CREATE ANY TABLE                                                                                                        
+CREATE ANY TRIGGER                                                                                                      
+CREATE ANY TYPE                                                                                                         
+CREATE ANY VIEW                                                                                                         
+CREATE ASSEMBLY                                                                                                         
+CREATE ATTRIBUTE DIMENSION                                                                                              
+CREATE CLUSTER                                                                                                          
+CREATE CREDENTIAL                                                                                                       
+CREATE CUBE                                                                                                             
+CREATE CUBE BUILD PROCESS                                                                                               
+CREATE CUBE DIMENSION                                                                                                   
+CREATE DATABASE LINK                                                                                                    
+CREATE DIMENSION                                                                                                        
+
+PRIVILEGE                                                                                                               
+----------------------------------------                                                                                
+CREATE EVALUATION CONTEXT                                                                                               
+CREATE EXTERNAL JOB                                                                                                     
+CREATE HIERARCHY                                                                                                        
+CREATE INDEXTYPE                                                                                                        
+CREATE JOB                                                                                                              
+CREATE LIBRARY                                                                                                          
+CREATE LOCKDOWN PROFILE                                                                                                 
+CREATE MATERIALIZED VIEW                                                                                                
+CREATE MEASURE FOLDER                                                                                                   
+CREATE MINING MODEL                                                                                                     
+CREATE OPERATOR                                                                                                         
+CREATE PLUGGABLE DATABASE                                                                                               
+CREATE PROCEDURE                                                                                                        
+CREATE PROFILE                                                                                                          
+CREATE PUBLIC DATABASE LINK                                                                                             
+CREATE PUBLIC SYNONYM                                                                                                   
+CREATE ROLE                                                                                                             
+CREATE ROLLBACK SEGMENT                                                                                                 
+CREATE RULE                                                                                                             
+CREATE RULE SET                                                                                                         
+CREATE SEQUENCE                                                                                                         
+CREATE SESSION                                                                                                          
+CREATE SQL TRANSLATION PROFILE                                                                                          
+CREATE SYNONYM                                                                                                          
+CREATE TABLE                                                                                                            
+CREATE TABLESPACE                                                                                                       
+CREATE TRIGGER                                                                                                          
+CREATE TYPE                                                                                                             
+CREATE USER                                                                                                             
+CREATE VIEW                                                                                                             
+DEBUG ANY PROCEDURE                                                                                                     
+DEBUG CONNECT ANY                                                                                                       
+DEBUG CONNECT SESSION                                                                                                   
+DELETE ANY CUBE DIMENSION                                                                                               
+DELETE ANY MEASURE FOLDER                                                                                               
+DELETE ANY TABLE                                                                                                        
+DEQUEUE ANY QUEUE                                                                                                       
+DROP ANY ANALYTIC VIEW                                                                                                  
+DROP ANY ASSEMBLY                                                                                                       
+DROP ANY ATTRIBUTE DIMENSION                                                                                            
+DROP ANY CLUSTER                                                                                                        
+DROP ANY CONTEXT                                                                                                        
+DROP ANY CUBE                                                                                                           
+DROP ANY CUBE BUILD PROCESS                                                                                             
+DROP ANY CUBE DIMENSION                                                                                                 
+DROP ANY DIMENSION                                                                                                      
+DROP ANY DIRECTORY                                                                                                      
+DROP ANY EDITION                                                                                                        
+DROP ANY EVALUATION CONTEXT                                                                                             
+DROP ANY HIERARCHY                                                                                                      
+DROP ANY INDEX                                                                                                          
+DROP ANY INDEXTYPE                                                                                                      
+DROP ANY LIBRARY                                                                                                        
+DROP ANY MATERIALIZED VIEW                                                                                              
+DROP ANY MEASURE FOLDER                                                                                                 
+DROP ANY MINING MODEL                                                                                                   
+DROP ANY OPERATOR                                                                                                       
+DROP ANY OUTLINE                                                                                                        
+DROP ANY PROCEDURE                                                                                                      
+DROP ANY ROLE                                                                                                           
+DROP ANY RULE                                                                                                           
+DROP ANY RULE SET                                                                                                       
+DROP ANY SEQUENCE                                                                                                       
+DROP ANY SQL PROFILE                                                                                                    
+DROP ANY SQL TRANSLATION PROFILE                                                                                        
+DROP ANY SYNONYM                                                                                                        
+DROP ANY TABLE                                                                                                          
+DROP ANY TRIGGER                                                                                                        
+DROP ANY TYPE                                                                                                           
+DROP ANY VIEW                                                                                                           
+DROP LOCKDOWN PROFILE                                                                                                   
+DROP PROFILE                                                                                                            
+DROP PUBLIC DATABASE LINK                                                                                               
+DROP PUBLIC SYNONYM                                                                                                     
+DROP ROLLBACK SEGMENT                                                                                                   
+DROP TABLESPACE                                                                                                         
+DROP USER                                                                                                               
+EM EXPRESS CONNECT                                                                                                      
+ENQUEUE ANY QUEUE                                                                                                       
+EXECUTE ANY ASSEMBLY                                                                                                    
+EXECUTE ANY CLASS                                                                                                       
+EXECUTE ANY EVALUATION CONTEXT                                                                                          
+EXECUTE ANY INDEXTYPE                                                                                                   
+EXECUTE ANY LIBRARY                                                                                                     
+EXECUTE ANY OPERATOR                                                                                                    
+EXECUTE ANY PROCEDURE                                                                                                   
+EXECUTE ANY PROGRAM                                                                                                     
+EXECUTE ANY RULE                                                                                                        
+EXECUTE ANY RULE SET                                                                                                    
+EXECUTE ANY TYPE                                                                                                        
+EXECUTE ASSEMBLY                                                                                                        
+EXEMPT DDL REDACTION POLICY                                                                                             
+EXEMPT DML REDACTION POLICY                                                                                             
+EXEMPT REDACTION POLICY                                                                                                 
+EXPORT FULL DATABASE                                                                                                    
+FLASHBACK ANY TABLE                                                                                                     
+FLASHBACK ARCHIVE ADMINISTER                                                                                            
+
+PRIVILEGE                                                                                                               
+----------------------------------------                                                                                
+FORCE ANY TRANSACTION                                                                                                   
+FORCE TRANSACTION                                                                                                       
+GLOBAL QUERY REWRITE                                                                                                    
+GRANT ANY OBJECT PRIVILEGE                                                                                              
+GRANT ANY PRIVILEGE                                                                                                     
+GRANT ANY ROLE                                                                                                          
+IMPORT FULL DATABASE                                                                                                    
+INSERT ANY CUBE DIMENSION                                                                                               
+INSERT ANY MEASURE FOLDER                                                                                               
+INSERT ANY TABLE                                                                                                        
+LOCK ANY TABLE                                                                                                          
+LOGMINING                                                                                                               
+MANAGE ANY FILE GROUP                                                                                                   
+MANAGE ANY QUEUE                                                                                                        
+MANAGE FILE GROUP                                                                                                       
+MANAGE SCHEDULER                                                                                                        
+MANAGE TABLESPACE                                                                                                       
+MERGE ANY VIEW                                                                                                          
+ON COMMIT REFRESH                                                                                                       
+QUERY REWRITE                                                                                                           
+READ ANY FILE GROUP                                                                                                     
+READ ANY TABLE                                                                                                          
+REDEFINE ANY TABLE                                                                                                      
+RESTRICTED SESSION                                                                                                      
+RESUMABLE                                                                                                               
+SELECT ANY CUBE                                                                                                         
+SELECT ANY CUBE BUILD PROCESS                                                                                           
+SELECT ANY CUBE DIMENSION                                                                                               
+SELECT ANY DICTIONARY                                                                                                   
+SELECT ANY MEASURE FOLDER                                                                                               
+SELECT ANY MINING MODEL                                                                                                 
+SELECT ANY SEQUENCE                                                                                                     
+SELECT ANY TABLE                                                                                                        
+SELECT ANY TRANSACTION                                                                                                  
+SET CONTAINER                                                                                                           
+UNDER ANY TABLE                                                                                                         
+UNDER ANY TYPE                                                                                                          
+UNDER ANY VIEW                                                                                                          
+UNLIMITED TABLESPACE                                                                                                    
+UPDATE ANY CUBE                                                                                                         
+UPDATE ANY CUBE BUILD PROCESS                                                                                           
+UPDATE ANY CUBE DIMENSION                                                                                               
+UPDATE ANY TABLE                                                                                                        
+USE ANY JOB RESOURCE                                                                                                    
+USE ANY SQL TRANSLATION PROFILE                                                                                         
+
+239 rows selected.
+
+SQL> desc dba_tab_privs
+ Name                                                              Null?    Type
+ ----------------------------------------------------------------- -------- --------------------------------------------
+ GRANTEE                                                                    VARCHAR2(128)
+ OWNER                                                                      VARCHAR2(128)
+ TABLE_NAME                                                                 VARCHAR2(128)
+ GRANTOR                                                                    VARCHAR2(128)
+ PRIVILEGE                                                                  VARCHAR2(40)
+ GRANTABLE                                                                  VARCHAR2(3)
+ HIERARCHY                                                                  VARCHAR2(3)
+ COMMON                                                                     VARCHAR2(3)
+ TYPE                                                                       VARCHAR2(24)
+ INHERITED                                                                  VARCHAR2(3)
+
+SQL> select grantee, owner, table_name, grantor, privilege from dba_tab_privs
+  2   where grantee='TEST';
+
+GRANTEE                                                                                                                 
+------------------------------------------------------------------------------------------------------------------------
+OWNER                                                                                                                   
+------------------------------------------------------------------------------------------------------------------------
+TABLE_NAME                                                                                                              
+------------------------------------------------------------------------------------------------------------------------
+GRANTOR                                                                                                                 
+------------------------------------------------------------------------------------------------------------------------
+PRIVILEGE                                                                                                               
+----------------------------------------                                                                                
+TEST                                                                                                                    
+ABD1                                                                                                                    
+EMP_COPY                                                                                                                
+ABD1                                                                                                                    
+INSERT                                                                                                                  
+                                                                                                                        
+TEST                                                                                                                    
+ABD1                                                                                                                    
+EMP_COPY                                                                                                                
+ABD1                                                                                                                    
+SELECT                                                                                                                  
+                                                                                                                        
+TEST                                                                                                                    
+ABD1                                                                                                                    
+EMP_COPY                                                                                                                
+ABD1                                                                                                                    
+UPDATE                                                                                                                  
+                                                                                                                        
+
+SQL> grant insert(empno, ename) on emp_copy to test;
+
+Grant succeeded.
+
+SQL> grant update(empno, ename) on emp_copy to test;
+
+Grant succeeded.
+
+SQL> desc dba_col_privs
+ Name                                                              Null?    Type
+ ----------------------------------------------------------------- -------- --------------------------------------------
+ GRANTEE                                                                    VARCHAR2(128)
+ OWNER                                                                      VARCHAR2(128)
+ TABLE_NAME                                                                 VARCHAR2(128)
+ COLUMN_NAME                                                                VARCHAR2(128)
+ GRANTOR                                                                    VARCHAR2(128)
+ PRIVILEGE                                                                  VARCHAR2(40)
+ GRANTABLE                                                                  VARCHAR2(3)
+ COMMON                                                                     VARCHAR2(3)
+ INHERITED                                                                  VARCHAR2(3)
+
+SQL> select grantee, owner, table_name, column_name, grantor, privilege
+  2   from dba_col_privs;
+
+GRANTEE                                                                                                                 
+------------------------------------------------------------------------------------------------------------------------
+OWNER                                                                                                                   
+------------------------------------------------------------------------------------------------------------------------
+TABLE_NAME                                                                                                              
+------------------------------------------------------------------------------------------------------------------------
+COLUMN_NAME                                                                                                             
+------------------------------------------------------------------------------------------------------------------------
+GRANTOR                                                                                                                 
+------------------------------------------------------------------------------------------------------------------------
+PRIVILEGE                                                                                                               
+----------------------------------------                                                                                
+TEST                                                                                                                    
+ABD1                                                                                                                    
+EMP_COPY                                                                                                                
+ENAME                                                                                                                   
+ABD1                                                                                                                    
+INSERT                                                                                                                  
+                                                                                                                        
+TEST                                                                                                                    
+ABD1                                                                                                                    
+EMP_COPY                                                                                                                
+EMPNO                                                                                                                   
+ABD1                                                                                                                    
+INSERT                                                                                                                  
+                                                                                                                        
+TEST                                                                                                                    
+ABD1                                                                                                                    
+EMP_COPY                                                                                                                
+ENAME                                                                                                                   
+ABD1                                                                                                                    
+UPDATE                                                                                                                  
+                                                                                                                        
+TEST                                                                                                                    
+ABD1                                                                                                                    
+EMP_COPY                                                                                                                
+EMPNO                                                                                                                   
+ABD1                                                                                                                    
+UPDATE                                                                                                                  
+                                                                                                                        
+IMP_FULL_DATABASE                                                                                                       
+SYS                                                                                                                     
+KET$_CLIENT_CONFIG                                                                                                      
+FIELD_3                                                                                                                 
+SYS                                                                                                                     
+UPDATE                                                                                                                  
+                                                                                                                        
+IMP_FULL_DATABASE                                                                                                       
+SYS                                                                                                                     
+KET$_CLIENT_CONFIG                                                                                                      
+FIELD_2                                                                                                                 
+SYS                                                                                                                     
+UPDATE                                                                                                                  
+                                                                                                                        
+IMP_FULL_DATABASE                                                                                                       
+SYS                                                                                                                     
+KET$_CLIENT_CONFIG                                                                                                      
+FIELD_1                                                                                                                 
+SYS                                                                                                                     
+UPDATE                                                                                                                  
+                                                                                                                        
+
+7 rows selected.
+
+SQL>  grant connect to test;
+
+Grant succeeded.
+
+SQL> grant create session to test
+  2  ;
+
+Grant succeeded.
+
+SQL> alter system enable restricted session;
+
+System altered.
+
+SQL> select logins from v$instance;
+
+LOGINS                                                                                                                  
+----------                                                                                                              
+RESTRICTED                                                                                                              
+
+SQL> alter system disable restricted session;
+
+System altered.
+
+SQL> alter system disable restricted session;
+
+System altered.
+
+SQL> select logins from v$instance;
+
+LOGINS                                                                                                                  
+----------                                                                                                              
+ALLOWED                                                                                                                 
+
+SQL> conn test
+Connected.
+SQL> conn abd1
+Connected.
+SQL>  create user test1 identified by test
+  2  default tablespace bd_data
+  3  temporary tablespace bd_temp
+  4  quota 10M on bd_data;
+ create user test1 identified by test
+             *
+ERROR at line 1:
+ORA-65096: invalid common user or role name 
+
+
+SQL> alter session set "_ORACLE_SCRIPT"=true;
+
+Session altered.
+
+SQL>  create user test1 identified by test
+  2  default tablespace bd_data
+  3  temporary tablespace bd_temp
+  4  quota 10M on bd_data;
+
+User created.
+
+SQL> grant create session to test1;
+
+Grant succeeded.
+
+SQL> select * from dba_sys_privs where grantee='TEST';
+
+GRAN PRIVILEGE                                ADM COM INH                                                               
+---- ---------------------------------------- --- --- ---                                                               
+TEST CREATE SESSION                           NO  NO  NO                                                                
+TEST CREATE TABLE                             NO  YES NO                                                                
+
+SQL> select * from dba_sys_privs where grantee='TEST1';
+
+GRANT PRIVILEGE                                ADM COM INH                                                              
+----- ---------------------------------------- --- --- ---                                                              
+TEST1 CREATE SESSION                           NO  YES NO                                                               
+
+SQL>  grant select, insert, update on emp_copy to test1;
+
+Grant succeeded.
+
+SQL>  revoke update on emp_copy from test1;
+
+Revoke succeeded.
+
+SQL>  grant select, insert, update on emp to test1;
+
+Grant succeeded.
+
+SQL>  revoke update on emp from test1;
+
+Revoke succeeded.
+
+SQL> grant update(empno, ename) on emp_copy to test;
+
+Grant succeeded.
+
+SQL> grant update(sal, comm) on emp to test1;
+
+Grant succeeded.
+
+SQL> select * from dba_sys_privs where grantee='TEST1';
+
+GRANT PRIVILEGE                                ADM COM INH                                                              
+----- ---------------------------------------- --- --- ---                                                              
+TEST1 CREATE SESSION                           NO  YES NO                                                               
+
+SQL> select grantee, owner, table_name, column_name, grantor, privilege
+  2   from dba_col_privs where grantee like 'test1';
+
+no rows selected
+
+SQL> select grantee, owner, table_name, column_name, grantor, privilege
+  2   from dba_col_privs ;
+
+GRANTEE                                                                                                                 
+------------------------------------------------------------------------------------------------------------------------
+OWNER                                                                                                                   
+------------------------------------------------------------------------------------------------------------------------
+TABLE_NAME                                                                                                              
+------------------------------------------------------------------------------------------------------------------------
+COLUMN_NAME                                                                                                             
+------------------------------------------------------------------------------------------------------------------------
+GRANTOR                                                                                                                 
+------------------------------------------------------------------------------------------------------------------------
+PRIVILEGE                                                                                                               
+----------------------------------------                                                                                
+TEST                                                                                                                    
+ABD1                                                                                                                    
+EMP_COPY                                                                                                                
+ENAME                                                                                                                   
+ABD1                                                                                                                    
+INSERT                                                                                                                  
+                                                                                                                        
+TEST                                                                                                                    
+ABD1                                                                                                                    
+EMP_COPY                                                                                                                
+EMPNO                                                                                                                   
+ABD1                                                                                                                    
+INSERT                                                                                                                  
+                                                                                                                        
+TEST                                                                                                                    
+ABD1                                                                                                                    
+EMP_COPY                                                                                                                
+ENAME                                                                                                                   
+ABD1                                                                                                                    
+UPDATE                                                                                                                  
+                                                                                                                        
+TEST                                                                                                                    
+ABD1                                                                                                                    
+EMP_COPY                                                                                                                
+EMPNO                                                                                                                   
+ABD1                                                                                                                    
+UPDATE                                                                                                                  
+                                                                                                                        
+TEST1                                                                                                                   
+ABD1                                                                                                                    
+EMP                                                                                                                     
+COMM                                                                                                                    
+ABD1                                                                                                                    
+UPDATE                                                                                                                  
+                                                                                                                        
+TEST1                                                                                                                   
+ABD1                                                                                                                    
+EMP                                                                                                                     
+SAL                                                                                                                     
+ABD1                                                                                                                    
+UPDATE                                                                                                                  
+                                                                                                                        
+IMP_FULL_DATABASE                                                                                                       
+SYS                                                                                                                     
+KET$_CLIENT_CONFIG                                                                                                      
+FIELD_3                                                                                                                 
+SYS                                                                                                                     
+UPDATE                                                                                                                  
+                                                                                                                        
+IMP_FULL_DATABASE                                                                                                       
+SYS                                                                                                                     
+KET$_CLIENT_CONFIG                                                                                                      
+FIELD_2                                                                                                                 
+SYS                                                                                                                     
+UPDATE                                                                                                                  
+                                                                                                                        
+IMP_FULL_DATABASE                                                                                                       
+SYS                                                                                                                     
+KET$_CLIENT_CONFIG                                                                                                      
+FIELD_1                                                                                                                 
+SYS                                                                                                                     
+UPDATE                                                                                                                  
+                                                                                                                        
+
+9 rows selected.
+
+SQL> grant update(sal, comm) on emp to test1;
+
+Grant succeeded.
+
+SQL> select grantee, owner, table_name, column_name, grantor, privilege
+  2  grant update(sal, comm) on emp to test1;
+grant update(sal, comm) on emp to test1
+*
+ERROR at line 2:
+ORA-00923: FROM keyword not found where expected 
+
+
+SQL> select grantee, owner, table_name, column_name, grantor, privilege
+  2   from dba_col_privs ;
+
+GRANTEE                                                                                                                 
+------------------------------------------------------------------------------------------------------------------------
+OWNER                                                                                                                   
+------------------------------------------------------------------------------------------------------------------------
+TABLE_NAME                                                                                                              
+------------------------------------------------------------------------------------------------------------------------
+COLUMN_NAME                                                                                                             
+------------------------------------------------------------------------------------------------------------------------
+GRANTOR                                                                                                                 
+------------------------------------------------------------------------------------------------------------------------
+PRIVILEGE                                                                                                               
+----------------------------------------                                                                                
+TEST                                                                                                                    
+ABD1                                                                                                                    
+EMP_COPY                                                                                                                
+ENAME                                                                                                                   
+ABD1                                                                                                                    
+INSERT                                                                                                                  
+                                                                                                                        
+TEST                                                                                                                    
+ABD1                                                                                                                    
+EMP_COPY                                                                                                                
+EMPNO                                                                                                                   
+ABD1                                                                                                                    
+INSERT                                                                                                                  
+                                                                                                                        
+TEST                                                                                                                    
+ABD1                                                                                                                    
+EMP_COPY                                                                                                                
+ENAME                                                                                                                   
+ABD1                                                                                                                    
+UPDATE                                                                                                                  
+                                                                                                                        
+TEST                                                                                                                    
+ABD1                                                                                                                    
+EMP_COPY                                                                                                                
+EMPNO                                                                                                                   
+ABD1                                                                                                                    
+UPDATE                                                                                                                  
+                                                                                                                        
+TEST1                                                                                                                   
+ABD1                                                                                                                    
+EMP                                                                                                                     
+COMM                                                                                                                    
+ABD1                                                                                                                    
+UPDATE                                                                                                                  
+                                                                                                                        
+TEST1                                                                                                                   
+ABD1                                                                                                                    
+EMP                                                                                                                     
+SAL                                                                                                                     
+ABD1                                                                                                                    
+UPDATE                                                                                                                  
+                                                                                                                        
+IMP_FULL_DATABASE                                                                                                       
+SYS                                                                                                                     
+KET$_CLIENT_CONFIG                                                                                                      
+FIELD_3                                                                                                                 
+SYS                                                                                                                     
+UPDATE                                                                                                                  
+                                                                                                                        
+IMP_FULL_DATABASE                                                                                                       
+SYS                                                                                                                     
+KET$_CLIENT_CONFIG                                                                                                      
+FIELD_2                                                                                                                 
+SYS                                                                                                                     
+UPDATE                                                                                                                  
+                                                                                                                        
+IMP_FULL_DATABASE                                                                                                       
+SYS                                                                                                                     
+KET$_CLIENT_CONFIG                                                                                                      
+FIELD_1                                                                                                                 
+SYS                                                                                                                     
+UPDATE                                                                                                                  
+                                                                                                                        
+
+9 rows selected.
+
+SQL> select grantee, owner, table_name, column_name, grantor, privilege
+  2   from dba_col_privs where grantee='TEST1';
+
+GRANTEE                                                                                                                 
+------------------------------------------------------------------------------------------------------------------------
+OWNER                                                                                                                   
+------------------------------------------------------------------------------------------------------------------------
+TABLE_NAME                                                                                                              
+------------------------------------------------------------------------------------------------------------------------
+COLUMN_NAME                                                                                                             
+------------------------------------------------------------------------------------------------------------------------
+GRANTOR                                                                                                                 
+------------------------------------------------------------------------------------------------------------------------
+PRIVILEGE                                                                                                               
+----------------------------------------                                                                                
+TEST1                                                                                                                   
+ABD1                                                                                                                    
+EMP                                                                                                                     
+SAL                                                                                                                     
+ABD1                                                                                                                    
+UPDATE                                                                                                                  
+                                                                                                                        
+TEST1                                                                                                                   
+ABD1                                                                                                                    
+EMP                                                                                                                     
+COMM                                                                                                                    
+ABD1                                                                                                                    
+UPDATE                                                                                                                  
+                                                                                                                        
+
+SQL> alter user test1 quota 10 M on bd_data;
+
+User altered.
+
+SQL> update login_lab_ubd set data_sf= sysdate where laborator='Lab11';
+
+1 row updated.
+
+SQL> update login_lab_ubd set durata= round((data_sf-data_in)*24*60) where laborator='Lab11';
+
+1 row updated.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> select instance_number,instance_name, to_char(startup_time, 'dd-mm-yyyy hh:mi:ss'), host_name from v$instance;
+
+INSTANCE_NUMBER INSTANCE_NAME    TO_CHAR(STARTUP_TIM HOST_NAME                                                          
+--------------- ---------------- ------------------- ----------------------------------------------------------------   
+              1 oracle           10-12-2020 07:20:48 DESKTOP-KIRQEDP                                                    
+
+SQL> select nume_stud, grupa, laborator, to_char(data_in, 'dd-mm-yyyy hh:mi:ss') data_inceput,
+  2  to_char(data_sf, 'dd-mm-yyyy hh:mi:ss') data_sfarsit, durata minute_lucrate from login_lab_ubd;
+
+NUME_STUD                      GRUPA      LABORATOR  DATA_INCEPUT        DATA_SFARSIT        MINUTE_LUCRATE             
+------------------------------ ---------- ---------- ------------------- ------------------- --------------             
+Coman_DianaStefania            343C5      Lab8       25-11-2020 05:13:25 25-11-2020 05:39:29             26             
+Coman_DianaStefania            343C5      Lab10      15-12-2020 09:00:38 15-12-2020 09:20:39             20             
+Coman_DianaStefania            343C5      Lab5       04-11-2020 05:26:17 04-11-2020 05:58:25             32             
+Coman_DianaStefania            343C5      Lab3       21-10-2020 05:49:36                                                
+Coman_DianaStefania            343C5      Lab11      12-01-2021 05:26:20 12-01-2021 05:48:42             22             
+Coman_DianaStefania            343C5      Lab9       08-12-2020 08:18:16 08-12-2020 08:58:02             40             
+Coman_DianaStefania            343C5      Lab7       17-11-2020 08:20:11 17-11-2020 08:41:41             22             
+Coman_DianaStefania            343C5      Lab4       04-11-2020 02:40:32 04-11-2020 02:55:43             15             
+Coman_DianaStefania            343C5      Lab6       17-11-2020 05:44:10 17-11-2020 06:16:09             32             
+
+9 rows selected.
+
+SQL> spool off

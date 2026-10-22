@@ -1,0 +1,964 @@
+SQL> set lines 200
+SQL> set pages 100
+SQL> select to_char(sysdate, 'dd-mm-yyyy hh:mi:ss') from dual;
+
+TO_CHAR(SYSDATE,'DD                                                                                                                                                                                     
+-------------------                                                                                                                                                                                     
+25-11-2020 05:13:10                                                                                                                                                                                     
+
+SQL> insert into login_lab_ubd values( 'Coman_DianaStefania', '343C5', 'Lab8', user, sysdate, null, null);
+
+1 row created.
+
+SQL> create undo tablespace BD_UNDO datafile 'd:\undo_db01.dbf' size 2M;
+create undo tablespace BD_UNDO datafile 'd:\undo_db01.dbf' size 2M
+*
+ERROR at line 1:
+ORA-01119: error in creating database file 'd:\undo_db01.dbf' 
+ORA-27038: created file already exists 
+OSD-04010: <create> option specified, file already exists 
+
+
+SQL> create undo tablespace BD_UNDO datafile 'd:\undo_db02.dbf' size 2M;
+
+Tablespace created.
+
+SQL>  create rollback segment UBD_UNDO tablespace BD_UNDO
+  2   storage (initial 100k next 100k optimal 4M minextents 20 maxextents 100);
+
+Rollback segment created.
+
+SQL> desc dba_rollback_segs
+ Name                                                                                                              Null?    Type
+ ----------------------------------------------------------------------------------------------------------------- -------- ----------------------------------------------------------------------------
+ SEGMENT_NAME                                                                                                      NOT NULL VARCHAR2(30)
+ OWNER                                                                                                                      VARCHAR2(6)
+ TABLESPACE_NAME                                                                                                   NOT NULL VARCHAR2(30)
+ SEGMENT_ID                                                                                                        NOT NULL NUMBER
+ FILE_ID                                                                                                           NOT NULL NUMBER
+ BLOCK_ID                                                                                                          NOT NULL NUMBER
+ INITIAL_EXTENT                                                                                                             NUMBER
+ NEXT_EXTENT                                                                                                                NUMBER
+ MIN_EXTENTS                                                                                                       NOT NULL NUMBER
+ MAX_EXTENTS                                                                                                       NOT NULL NUMBER
+ PCT_INCREASE                                                                                                               NUMBER
+ STATUS                                                                                                                     VARCHAR2(16)
+ INSTANCE_NUM                                                                                                               VARCHAR2(40)
+ RELATIVE_FNO                                                                                                      NOT NULL NUMBER
+
+SQL>  select segment_name,tablespace_name,owner,status from dba_rollback_segs;
+
+SEGMENT_NAME                   TABLESPACE_NAME                OWNER  STATUS                                                                                                                             
+------------------------------ ------------------------------ ------ ----------------                                                                                                                   
+SYSTEM                         SYSTEM                         SYS    ONLINE                                                                                                                             
+_SYSSMU1_3766953279$           UNDOTBS1                       PUBLIC ONLINE                                                                                                                             
+_SYSSMU2_1688819604$           UNDOTBS1                       PUBLIC ONLINE                                                                                                                             
+_SYSSMU3_32628729$             UNDOTBS1                       PUBLIC ONLINE                                                                                                                             
+_SYSSMU4_2351403306$           UNDOTBS1                       PUBLIC ONLINE                                                                                                                             
+_SYSSMU5_1687539587$           UNDOTBS1                       PUBLIC ONLINE                                                                                                                             
+_SYSSMU6_1835543333$           UNDOTBS1                       PUBLIC ONLINE                                                                                                                             
+_SYSSMU7_2446095939$           UNDOTBS1                       PUBLIC ONLINE                                                                                                                             
+_SYSSMU8_3978790002$           UNDOTBS1                       PUBLIC ONLINE                                                                                                                             
+_SYSSMU9_4290633479$           UNDOTBS1                       PUBLIC ONLINE                                                                                                                             
+_SYSSMU10_2082653219$          UNDOTBS1                       PUBLIC ONLINE                                                                                                                             
+_SYSSMU11_3254202064$          UBD_UNDO1                      PUBLIC OFFLINE                                                                                                                            
+_SYSSMU12_1492251733$          UBD_UNDO1                      PUBLIC OFFLINE                                                                                                                            
+_SYSSMU13_4051450491$          UBD_UNDO1                      PUBLIC OFFLINE                                                                                                                            
+_SYSSMU14_113887638$           UBD_UNDO1                      PUBLIC OFFLINE                                                                                                                            
+_SYSSMU15_2030638612$          UBD_UNDO1                      PUBLIC OFFLINE                                                                                                                            
+_SYSSMU16_2610716308$          UBD_UNDO1                      PUBLIC OFFLINE                                                                                                                            
+_SYSSMU17_1576274162$          UBD_UNDO1                      PUBLIC OFFLINE                                                                                                                            
+_SYSSMU18_207428933$           UBD_UNDO1                      PUBLIC OFFLINE                                                                                                                            
+_SYSSMU19_139036714$           UBD_UNDO1                      PUBLIC OFFLINE                                                                                                                            
+_SYSSMU20_2365710408$          UBD_UNDO1                      PUBLIC OFFLINE                                                                                                                            
+_SYSSMU21_3049212870$          BD_UNDO                        PUBLIC OFFLINE                                                                                                                            
+_SYSSMU22_3922348826$          BD_UNDO                        PUBLIC OFFLINE                                                                                                                            
+_SYSSMU23_2985580321$          BD_UNDO                        PUBLIC OFFLINE                                                                                                                            
+_SYSSMU24_3926484911$          BD_UNDO                        PUBLIC OFFLINE                                                                                                                            
+_SYSSMU25_3513056724$          BD_UNDO                        PUBLIC OFFLINE                                                                                                                            
+_SYSSMU26_576054574$           BD_UNDO                        PUBLIC OFFLINE                                                                                                                            
+_SYSSMU27_2031405159$          BD_UNDO                        PUBLIC OFFLINE                                                                                                                            
+_SYSSMU28_3208456036$          BD_UNDO                        PUBLIC OFFLINE                                                                                                                            
+
+29 rows selected.
+
+SQL> desc v$rollname
+ Name                                                                                                              Null?    Type
+ ----------------------------------------------------------------------------------------------------------------- -------- ----------------------------------------------------------------------------
+ USN                                                                                                                        NUMBER
+ NAME                                                                                                              NOT NULL VARCHAR2(30)
+ CON_ID                                                                                                                     NUMBER
+
+SQL> select * from v$rollname;
+
+       USN NAME                               CON_ID                                                                                                                                                    
+---------- ------------------------------ ----------                                                                                                                                                    
+         0 SYSTEM                                  1                                                                                                                                                    
+         1 _SYSSMU1_3766953279$                    1                                                                                                                                                    
+         2 _SYSSMU2_1688819604$                    1                                                                                                                                                    
+         3 _SYSSMU3_32628729$                      1                                                                                                                                                    
+         4 _SYSSMU4_2351403306$                    1                                                                                                                                                    
+         5 _SYSSMU5_1687539587$                    1                                                                                                                                                    
+         6 _SYSSMU6_1835543333$                    1                                                                                                                                                    
+         7 _SYSSMU7_2446095939$                    1                                                                                                                                                    
+         8 _SYSSMU8_3978790002$                    1                                                                                                                                                    
+         9 _SYSSMU9_4290633479$                    1                                                                                                                                                    
+        10 _SYSSMU10_2082653219$                   1                                                                                                                                                    
+
+11 rows selected.
+
+SQL> desc v$rollstat
+ Name                                                                                                              Null?    Type
+ ----------------------------------------------------------------------------------------------------------------- -------- ----------------------------------------------------------------------------
+ USN                                                                                                                        NUMBER
+ LATCH                                                                                                                      NUMBER
+ EXTENTS                                                                                                                    NUMBER
+ RSSIZE                                                                                                                     NUMBER
+ WRITES                                                                                                                     NUMBER
+ XACTS                                                                                                                      NUMBER
+ GETS                                                                                                                       NUMBER
+ WAITS                                                                                                                      NUMBER
+ OPTSIZE                                                                                                                    NUMBER
+ HWMSIZE                                                                                                                    NUMBER
+ SHRINKS                                                                                                                    NUMBER
+ WRAPS                                                                                                                      NUMBER
+ EXTENDS                                                                                                                    NUMBER
+ AVESHRINK                                                                                                                  NUMBER
+ AVEACTIVE                                                                                                                  NUMBER
+ STATUS                                                                                                                     VARCHAR2(15)
+ CUREXT                                                                                                                     NUMBER
+ CURBLK                                                                                                                     NUMBER
+ CON_ID                                                                                                                     NUMBER
+
+SQL> select usn, rssize, extents, status from v$rollstat;
+
+       USN     RSSIZE    EXTENTS STATUS                                                                                                                                                                 
+---------- ---------- ---------- ---------------                                                                                                                                                        
+         0     450560          7 ONLINE                                                                                                                                                                 
+         1    3268608          5 ONLINE                                                                                                                                                                 
+         2    1171456          3 ONLINE                                                                                                                                                                 
+         3    2220032          4 ONLINE                                                                                                                                                                 
+         4    2220032          4 ONLINE                                                                                                                                                                 
+         5    1171456          3 ONLINE                                                                                                                                                                 
+         6    2220032          4 ONLINE                                                                                                                                                                 
+         7    2220032          4 ONLINE                                                                                                                                                                 
+         8    1171456          3 ONLINE                                                                                                                                                                 
+         9    5365760          7 ONLINE                                                                                                                                                                 
+        10    3268608          5 ONLINE                                                                                                                                                                 
+
+11 rows selected.
+
+SQL> desc v$session
+ Name                                                                                                              Null?    Type
+ ----------------------------------------------------------------------------------------------------------------- -------- ----------------------------------------------------------------------------
+ SADDR                                                                                                                      RAW(8)
+ SID                                                                                                                        NUMBER
+ SERIAL#                                                                                                                    NUMBER
+ AUDSID                                                                                                                     NUMBER
+ PADDR                                                                                                                      RAW(8)
+ USER#                                                                                                                      NUMBER
+ USERNAME                                                                                                                   VARCHAR2(128)
+ COMMAND                                                                                                                    NUMBER
+ OWNERID                                                                                                                    NUMBER
+ TADDR                                                                                                                      VARCHAR2(16)
+ LOCKWAIT                                                                                                                   VARCHAR2(16)
+ STATUS                                                                                                                     VARCHAR2(8)
+ SERVER                                                                                                                     VARCHAR2(9)
+ SCHEMA#                                                                                                                    NUMBER
+ SCHEMANAME                                                                                                                 VARCHAR2(128)
+ OSUSER                                                                                                                     VARCHAR2(128)
+ PROCESS                                                                                                                    VARCHAR2(24)
+ MACHINE                                                                                                                    VARCHAR2(64)
+ PORT                                                                                                                       NUMBER
+ TERMINAL                                                                                                                   VARCHAR2(16)
+ PROGRAM                                                                                                                    VARCHAR2(64)
+ TYPE                                                                                                                       VARCHAR2(10)
+ SQL_ADDRESS                                                                                                                RAW(8)
+ SQL_HASH_VALUE                                                                                                             NUMBER
+ SQL_ID                                                                                                                     VARCHAR2(13)
+ SQL_CHILD_NUMBER                                                                                                           NUMBER
+ SQL_EXEC_START                                                                                                             DATE
+ SQL_EXEC_ID                                                                                                                NUMBER
+ PREV_SQL_ADDR                                                                                                              RAW(8)
+ PREV_HASH_VALUE                                                                                                            NUMBER
+ PREV_SQL_ID                                                                                                                VARCHAR2(13)
+ PREV_CHILD_NUMBER                                                                                                          NUMBER
+ PREV_EXEC_START                                                                                                            DATE
+ PREV_EXEC_ID                                                                                                               NUMBER
+ PLSQL_ENTRY_OBJECT_ID                                                                                                      NUMBER
+ PLSQL_ENTRY_SUBPROGRAM_ID                                                                                                  NUMBER
+ PLSQL_OBJECT_ID                                                                                                            NUMBER
+ PLSQL_SUBPROGRAM_ID                                                                                                        NUMBER
+ MODULE                                                                                                                     VARCHAR2(64)
+ MODULE_HASH                                                                                                                NUMBER
+ ACTION                                                                                                                     VARCHAR2(64)
+ ACTION_HASH                                                                                                                NUMBER
+ CLIENT_INFO                                                                                                                VARCHAR2(64)
+ FIXED_TABLE_SEQUENCE                                                                                                       NUMBER
+ ROW_WAIT_OBJ#                                                                                                              NUMBER
+ ROW_WAIT_FILE#                                                                                                             NUMBER
+ ROW_WAIT_BLOCK#                                                                                                            NUMBER
+ ROW_WAIT_ROW#                                                                                                              NUMBER
+ TOP_LEVEL_CALL#                                                                                                            NUMBER
+ LOGON_TIME                                                                                                                 DATE
+ LAST_CALL_ET                                                                                                               NUMBER
+ PDML_ENABLED                                                                                                               VARCHAR2(3)
+ FAILOVER_TYPE                                                                                                              VARCHAR2(13)
+ FAILOVER_METHOD                                                                                                            VARCHAR2(10)
+ FAILED_OVER                                                                                                                VARCHAR2(3)
+ RESOURCE_CONSUMER_GROUP                                                                                                    VARCHAR2(32)
+ PDML_STATUS                                                                                                                VARCHAR2(8)
+ PDDL_STATUS                                                                                                                VARCHAR2(8)
+ PQ_STATUS                                                                                                                  VARCHAR2(8)
+ CURRENT_QUEUE_DURATION                                                                                                     NUMBER
+ CLIENT_IDENTIFIER                                                                                                          VARCHAR2(64)
+ BLOCKING_SESSION_STATUS                                                                                                    VARCHAR2(11)
+ BLOCKING_INSTANCE                                                                                                          NUMBER
+ BLOCKING_SESSION                                                                                                           NUMBER
+ FINAL_BLOCKING_SESSION_STATUS                                                                                              VARCHAR2(11)
+ FINAL_BLOCKING_INSTANCE                                                                                                    NUMBER
+ FINAL_BLOCKING_SESSION                                                                                                     NUMBER
+ SEQ#                                                                                                                       NUMBER
+ EVENT#                                                                                                                     NUMBER
+ EVENT                                                                                                                      VARCHAR2(64)
+ P1TEXT                                                                                                                     VARCHAR2(64)
+ P1                                                                                                                         NUMBER
+ P1RAW                                                                                                                      RAW(8)
+ P2TEXT                                                                                                                     VARCHAR2(64)
+ P2                                                                                                                         NUMBER
+ P2RAW                                                                                                                      RAW(8)
+ P3TEXT                                                                                                                     VARCHAR2(64)
+ P3                                                                                                                         NUMBER
+ P3RAW                                                                                                                      RAW(8)
+ WAIT_CLASS_ID                                                                                                              NUMBER
+ WAIT_CLASS#                                                                                                                NUMBER
+ WAIT_CLASS                                                                                                                 VARCHAR2(64)
+ WAIT_TIME                                                                                                                  NUMBER
+ SECONDS_IN_WAIT                                                                                                            NUMBER
+ STATE                                                                                                                      VARCHAR2(19)
+ WAIT_TIME_MICRO                                                                                                            NUMBER
+ TIME_REMAINING_MICRO                                                                                                       NUMBER
+ TIME_SINCE_LAST_WAIT_MICRO                                                                                                 NUMBER
+ SERVICE_NAME                                                                                                               VARCHAR2(64)
+ SQL_TRACE                                                                                                                  VARCHAR2(8)
+ SQL_TRACE_WAITS                                                                                                            VARCHAR2(5)
+ SQL_TRACE_BINDS                                                                                                            VARCHAR2(5)
+ SQL_TRACE_PLAN_STATS                                                                                                       VARCHAR2(10)
+ SESSION_EDITION_ID                                                                                                         NUMBER
+ CREATOR_ADDR                                                                                                               RAW(8)
+ CREATOR_SERIAL#                                                                                                            NUMBER
+ ECID                                                                                                                       VARCHAR2(64)
+ SQL_TRANSLATION_PROFILE_ID                                                                                                 NUMBER
+ PGA_TUNABLE_MEM                                                                                                            NUMBER
+ SHARD_DDL_STATUS                                                                                                           VARCHAR2(8)
+ CON_ID                                                                                                                     NUMBER
+ EXTERNAL_NAME                                                                                                              VARCHAR2(1024)
+ PLSQL_DEBUGGER_CONNECTED                                                                                                   VARCHAR2(5)
+
+SQL> select username, sid, saddr, service_name from v$session;
+
+USERNAME                                                                                                                                SID SADDR                                                       
+-------------------------------------------------------------------------------------------------------------------------------- ---------- ----------------                                            
+SERVICE_NAME                                                                                                                                                                                            
+----------------------------------------------------------------                                                                                                                                        
+                                                                                                                                          1 00007FFB8A8F2078                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                          2 00007FFB8A8EFAC0                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                          3 00007FFB8A8ED508                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                          4 00007FFB8A8EAF50                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                          5 00007FFB8A8E8998                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                          8 00007FFB8A8E1870                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                        124 00007FFB8AA13FE0                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                        125 00007FFB8AA11A28                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                        128 00007FFB8AA0A900                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                        129 00007FFB8AA08348                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+ABD1                                                                                                                                    131 00007FFB8AA037D8                                            
+SYS$USERS                                                                                                                                                                                               
+                                                                                                                                                                                                        
+                                                                                                                                        247 00007FFB8AB35F48                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                        248 00007FFB8AB33990                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                        249 00007FFB8AB313D8                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                        250 00007FFB8AB2EE20                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                        251 00007FFB8AB2C868                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                        370 00007FFB8AC57EB0                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                        371 00007FFB8AC558F8                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                        372 00007FFB8AC53340                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                        375 00007FFB8AC4C218                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                        377 00007FFB8AC476A8                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                        381 00007FFB8AC3DFC8                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                        493 00007FFB8AD79E18                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                        494 00007FFB8AD77860                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                        495 00007FFB8AD752A8                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                        496 00007FFB8AD72CF0                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                        499 00007FFB8AD6BBC8                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                        502 00007FFB8AD64AA0                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                        616 00007FFB8AE9BD80                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                        617 00007FFB8AE997C8                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                        618 00007FFB8AE97210                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                        619 00007FFB8AE94C58                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+
+USERNAME                                                                                                                                SID SADDR                                                       
+-------------------------------------------------------------------------------------------------------------------------------- ---------- ----------------                                            
+SERVICE_NAME                                                                                                                                                                                            
+----------------------------------------------------------------                                                                                                                                        
+                                                                                                                                                                                                        
+                                                                                                                                        620 00007FFB8AE926A0                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                        622 00007FFB8AE8DB30                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                        739 00007FFB8AFBDCE8                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                        740 00007FFB8AFBB730                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                        741 00007FFB8AFB9178                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                        745 00007FFB8AFAFA98                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                        862 00007FFB892DFF70                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                        863 00007FFB892DD9B8                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                        864 00007FFB892DB400                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+                                                                                                                                        869 00007FFB892CF768                                            
+SYS$BACKGROUND                                                                                                                                                                                          
+                                                                                                                                                                                                        
+
+42 rows selected.
+
+SQL>  desc v$transaction
+ Name                                                                                                              Null?    Type
+ ----------------------------------------------------------------------------------------------------------------- -------- ----------------------------------------------------------------------------
+ ADDR                                                                                                                       RAW(8)
+ XIDUSN                                                                                                                     NUMBER
+ XIDSLOT                                                                                                                    NUMBER
+ XIDSQN                                                                                                                     NUMBER
+ UBAFIL                                                                                                                     NUMBER
+ UBABLK                                                                                                                     NUMBER
+ UBASQN                                                                                                                     NUMBER
+ UBAREC                                                                                                                     NUMBER
+ STATUS                                                                                                                     VARCHAR2(16)
+ START_TIME                                                                                                                 VARCHAR2(20)
+ START_SCNB                                                                                                                 NUMBER
+ START_SCNW                                                                                                                 NUMBER
+ START_UEXT                                                                                                                 NUMBER
+ START_UBAFIL                                                                                                               NUMBER
+ START_UBABLK                                                                                                               NUMBER
+ START_UBASQN                                                                                                               NUMBER
+ START_UBAREC                                                                                                               NUMBER
+ SES_ADDR                                                                                                                   RAW(8)
+ FLAG                                                                                                                       NUMBER
+ SPACE                                                                                                                      VARCHAR2(3)
+ RECURSIVE                                                                                                                  VARCHAR2(3)
+ NOUNDO                                                                                                                     VARCHAR2(3)
+ PTX                                                                                                                        VARCHAR2(3)
+ NAME                                                                                                                       VARCHAR2(256)
+ PRV_XIDUSN                                                                                                                 NUMBER
+ PRV_XIDSLT                                                                                                                 NUMBER
+ PRV_XIDSQN                                                                                                                 NUMBER
+ PTX_XIDUSN                                                                                                                 NUMBER
+ PTX_XIDSLT                                                                                                                 NUMBER
+ PTX_XIDSQN                                                                                                                 NUMBER
+ DSCN-B                                                                                                                     NUMBER
+ DSCN-W                                                                                                                     NUMBER
+ USED_UBLK                                                                                                                  NUMBER
+ USED_UREC                                                                                                                  NUMBER
+ LOG_IO                                                                                                                     NUMBER
+ PHY_IO                                                                                                                     NUMBER
+ CR_GET                                                                                                                     NUMBER
+ CR_CHANGE                                                                                                                  NUMBER
+ START_DATE                                                                                                                 DATE
+ DSCN_BASE                                                                                                                  NUMBER
+ DSCN_WRAP                                                                                                                  NUMBER
+ START_SCN                                                                                                                  NUMBER
+ DEPENDENT_SCN                                                                                                              NUMBER
+ XID                                                                                                                        RAW(8)
+ PRV_XID                                                                                                                    RAW(8)
+ PTX_XID                                                                                                                    RAW(8)
+ CON_ID                                                                                                                     NUMBER
+
+SQL> insert into emp values (999, 'TEST','TRANZACT',1111,sysdate, 100,0,10)
+  2  ;
+
+1 row created.
+
+SQL> select addr, xidusn, used_ublk,start_uext, start_ubafil from v$transaction
+  2  ;
+
+ADDR                 XIDUSN  USED_UBLK START_UEXT START_UBAFIL                                                                                                                                          
+---------------- ---------- ---------- ---------- ------------                                                                                                                                          
+00007FFB8214C680          4          1          1            5                                                                                                                                          
+
+SQL> SELECT s.username, t.xidusn, t.ubafil, t.ubablk, t.used_ublk FROM v$session s,
+  2  v$transaction t WHERE s.saddr = t.ses_addr;
+
+USERNAME                                                                                                                             XIDUSN     UBAFIL     UBABLK  USED_UBLK                            
+-------------------------------------------------------------------------------------------------------------------------------- ---------- ---------- ---------- ----------                            
+ABD1                                                                                                                                      4          5        203          1                            
+
+SQL> desc v$undostat
+ Name                                                                                                              Null?    Type
+ ----------------------------------------------------------------------------------------------------------------- -------- ----------------------------------------------------------------------------
+ BEGIN_TIME                                                                                                                 DATE
+ END_TIME                                                                                                                   DATE
+ UNDOTSN                                                                                                                    NUMBER
+ UNDOBLKS                                                                                                                   NUMBER
+ TXNCOUNT                                                                                                                   NUMBER
+ MAXQUERYLEN                                                                                                                NUMBER
+ MAXQUERYID                                                                                                                 VARCHAR2(13)
+ MAXCONCURRENCY                                                                                                             NUMBER
+ UNXPSTEALCNT                                                                                                               NUMBER
+ UNXPBLKRELCNT                                                                                                              NUMBER
+ UNXPBLKREUCNT                                                                                                              NUMBER
+ EXPSTEALCNT                                                                                                                NUMBER
+ EXPBLKRELCNT                                                                                                               NUMBER
+ EXPBLKREUCNT                                                                                                               NUMBER
+ SSOLDERRCNT                                                                                                                NUMBER
+ NOSPACEERRCNT                                                                                                              NUMBER
+ ACTIVEBLKS                                                                                                                 NUMBER
+ UNEXPIREDBLKS                                                                                                              NUMBER
+ EXPIREDBLKS                                                                                                                NUMBER
+ TUNED_UNDORETENTION                                                                                                        NUMBER
+ CON_ID                                                                                                                     NUMBER
+
+SQL>  SELECT to_char(begin_time, 'dd-mm-yyyy hh:mi:ss') start_time, to_char(end_time,'ddmm-yyyy hh:mi:ss') end_time, ((end_time-begin_time)* 24)*60 minute, undoblks FROM
+  2  v$undostat;
+
+START_TIME          END_TIME               MINUTE   UNDOBLKS                                                                                                                                            
+------------------- ------------------ ---------- ----------                                                                                                                                            
+25-11-2020 05:11:36 2511-2020 05:18:45       7.15          3                                                                                                                                            
+25-11-2020 05:01:36 2511-2020 05:11:36         10          3                                                                                                                                            
+25-11-2020 04:51:36 2511-2020 05:01:36         10        199                                                                                                                                            
+25-11-2020 04:41:36 2511-2020 04:51:36         10          2                                                                                                                                            
+25-11-2020 04:31:36 2511-2020 04:41:36         10          7                                                                                                                                            
+25-11-2020 04:21:36 2511-2020 04:31:36         10          0                                                                                                                                            
+25-11-2020 04:11:36 2511-2020 04:21:36         10          0                                                                                                                                            
+25-11-2020 04:01:36 2511-2020 04:11:36         10          0                                                                                                                                            
+25-11-2020 03:51:36 2511-2020 04:01:36         10        282                                                                                                                                            
+25-11-2020 03:41:36 2511-2020 03:51:36         10          3                                                                                                                                            
+25-11-2020 03:31:36 2511-2020 03:41:36         10         13                                                                                                                                            
+25-11-2020 03:21:36 2511-2020 03:31:36         10          0                                                                                                                                            
+25-11-2020 03:11:36 2511-2020 03:21:36         10          0                                                                                                                                            
+25-11-2020 03:01:36 2511-2020 03:11:36         10          1                                                                                                                                            
+25-11-2020 02:51:36 2511-2020 03:01:36         10        263                                                                                                                                            
+25-11-2020 02:41:36 2511-2020 02:51:36         10         12                                                                                                                                            
+25-11-2020 02:31:36 2511-2020 02:41:36         10          4                                                                                                                                            
+25-11-2020 02:21:36 2511-2020 02:31:36         10          1                                                                                                                                            
+25-11-2020 02:11:36 2511-2020 02:21:36         10          1                                                                                                                                            
+25-11-2020 02:01:36 2511-2020 02:11:36         10          1                                                                                                                                            
+25-11-2020 01:51:36 2511-2020 02:01:36         10          1                                                                                                                                            
+25-11-2020 01:41:36 2511-2020 01:51:36         10          1                                                                                                                                            
+25-11-2020 01:31:36 2511-2020 01:41:36         10       1511                                                                                                                                            
+25-11-2020 01:21:36 2511-2020 01:31:36        730          0                                                                                                                                            
+25-11-2020 01:11:36 2511-2020 01:21:36         10        193                                                                                                                                            
+25-11-2020 01:01:36 2511-2020 01:11:36         10          4                                                                                                                                            
+25-11-2020 12:51:36 2511-2020 01:01:36         10        188                                                                                                                                            
+25-11-2020 12:41:36 2511-2020 12:51:36         10          1                                                                                                                                            
+25-11-2020 12:31:36 2511-2020 12:41:36         10          0                                                                                                                                            
+25-11-2020 12:21:36 2511-2020 12:31:36         10          3                                                                                                                                            
+25-11-2020 12:11:36 2511-2020 12:21:36         10          6                                                                                                                                            
+25-11-2020 12:01:36 2511-2020 12:11:36         10       2379                                                                                                                                            
+24-11-2020 09:11:36 2511-2020 12:01:36        170          0                                                                                                                                            
+24-11-2020 09:01:36 2411-2020 09:11:36         10          0                                                                                                                                            
+24-11-2020 08:51:36 2411-2020 09:01:36         10        207                                                                                                                                            
+24-11-2020 08:41:36 2411-2020 08:51:36         10          4                                                                                                                                            
+24-11-2020 08:31:36 2411-2020 08:41:36         10          0                                                                                                                                            
+24-11-2020 08:21:36 2411-2020 08:31:36         10          1                                                                                                                                            
+24-11-2020 08:11:36 2411-2020 08:21:36         10          1                                                                                                                                            
+24-11-2020 08:01:36 2411-2020 08:11:36         10          4                                                                                                                                            
+24-11-2020 07:51:36 2411-2020 08:01:36         10        194                                                                                                                                            
+24-11-2020 07:41:36 2411-2020 07:51:36         10          2                                                                                                                                            
+24-11-2020 07:31:36 2411-2020 07:41:36         10          0                                                                                                                                            
+24-11-2020 07:21:36 2411-2020 07:31:36         10          1                                                                                                                                            
+24-11-2020 07:11:36 2411-2020 07:21:36         10          0                                                                                                                                            
+24-11-2020 07:01:36 2411-2020 07:11:36         10          0                                                                                                                                            
+24-11-2020 06:51:36 2411-2020 07:01:36         10        209                                                                                                                                            
+24-11-2020 06:41:36 2411-2020 06:51:36         10          6                                                                                                                                            
+24-11-2020 06:31:36 2411-2020 06:41:36         10          1                                                                                                                                            
+24-11-2020 06:21:36 2411-2020 06:31:36         10          0                                                                                                                                            
+24-11-2020 06:11:36 2411-2020 06:21:36         10          2                                                                                                                                            
+24-11-2020 06:01:36 2411-2020 06:11:36         10          1                                                                                                                                            
+24-11-2020 05:51:36 2411-2020 06:01:36         10        202                                                                                                                                            
+24-11-2020 05:41:36 2411-2020 05:51:36         10          3                                                                                                                                            
+24-11-2020 05:31:36 2411-2020 05:41:36         10          0                                                                                                                                            
+24-11-2020 05:21:36 2411-2020 05:31:36         10          0                                                                                                                                            
+24-11-2020 05:11:36 2411-2020 05:21:36         10          1                                                                                                                                            
+24-11-2020 05:01:36 2411-2020 05:11:36         10          1                                                                                                                                            
+24-11-2020 04:51:36 2411-2020 05:01:36         10        201                                                                                                                                            
+24-11-2020 04:41:36 2411-2020 04:51:36         10          5                                                                                                                                            
+24-11-2020 04:31:36 2411-2020 04:41:36         10          1                                                                                                                                            
+24-11-2020 04:21:36 2411-2020 04:31:36         10          0                                                                                                                                            
+24-11-2020 04:11:36 2411-2020 04:21:36         10          2                                                                                                                                            
+24-11-2020 04:01:36 2411-2020 04:11:36         10          4                                                                                                                                            
+24-11-2020 03:51:36 2411-2020 04:01:36         10       4201                                                                                                                                            
+24-11-2020 03:41:36 2411-2020 03:51:36         10          4                                                                                                                                            
+24-11-2020 03:31:36 2411-2020 03:41:36         10          1                                                                                                                                            
+24-11-2020 03:21:36 2411-2020 03:31:36         10          5                                                                                                                                            
+24-11-2020 03:11:36 2411-2020 03:21:36         10        205                                                                                                                                            
+24-11-2020 03:01:36 2411-2020 03:11:36         10          0                                                                                                                                            
+24-11-2020 02:51:36 2411-2020 03:01:36         10          2                                                                                                                                            
+24-11-2020 02:41:36 2411-2020 02:51:36         10          0                                                                                                                                            
+24-11-2020 02:31:36 2411-2020 02:41:36         10          2                                                                                                                                            
+24-11-2020 02:21:36 2411-2020 02:31:36         10          1                                                                                                                                            
+24-11-2020 02:11:36 2411-2020 02:21:36         10          0                                                                                                                                            
+24-11-2020 02:01:36 2411-2020 02:11:36         10          5                                                                                                                                            
+24-11-2020 01:51:36 2411-2020 02:01:36         10        205                                                                                                                                            
+24-11-2020 01:41:36 2411-2020 01:51:36         10          0                                                                                                                                            
+24-11-2020 01:31:36 2411-2020 01:41:36         10          1                                                                                                                                            
+24-11-2020 01:21:36 2411-2020 01:31:36         10          0                                                                                                                                            
+24-11-2020 01:11:36 2411-2020 01:21:36         10          0                                                                                                                                            
+24-11-2020 01:01:36 2411-2020 01:11:36         10          3                                                                                                                                            
+24-11-2020 12:51:36 2411-2020 01:01:36         10        194                                                                                                                                            
+24-11-2020 12:41:36 2411-2020 12:51:36         10          1                                                                                                                                            
+24-11-2020 12:31:36 2411-2020 12:41:36         10          0                                                                                                                                            
+24-11-2020 12:21:36 2411-2020 12:31:36         10          0                                                                                                                                            
+24-11-2020 12:11:36 2411-2020 12:21:36         10          0                                                                                                                                            
+24-11-2020 12:01:36 2411-2020 12:11:36         10          1                                                                                                                                            
+24-11-2020 11:51:36 2411-2020 12:01:36         10        198                                                                                                                                            
+24-11-2020 11:41:36 2411-2020 11:51:36         10          0                                                                                                                                            
+24-11-2020 11:31:36 2411-2020 11:41:36         10          0                                                                                                                                            
+24-11-2020 11:21:36 2411-2020 11:31:36         10          2                                                                                                                                            
+24-11-2020 11:11:36 2411-2020 11:21:36         10          1                                                                                                                                            
+24-11-2020 11:01:36 2411-2020 11:11:36         10          2                                                                                                                                            
+24-11-2020 10:51:36 2411-2020 11:01:36         10        219                                                                                                                                            
+24-11-2020 10:41:36 2411-2020 10:51:36         10          0                                                                                                                                            
+24-11-2020 10:31:36 2411-2020 10:41:36         10          5                                                                                                                                            
+
+START_TIME          END_TIME               MINUTE   UNDOBLKS                                                                                                                                            
+------------------- ------------------ ---------- ----------                                                                                                                                            
+24-11-2020 10:21:36 2411-2020 10:31:36         10          1                                                                                                                                            
+24-11-2020 10:11:36 2411-2020 10:21:36         10          2                                                                                                                                            
+24-11-2020 10:01:36 2411-2020 10:11:36         10          3                                                                                                                                            
+24-11-2020 09:51:36 2411-2020 10:01:36         10       1652                                                                                                                                            
+23-11-2020 10:41:36 2411-2020 09:51:36        670          0                                                                                                                                            
+23-11-2020 10:31:36 2311-2020 10:41:36         10          1                                                                                                                                            
+23-11-2020 10:21:36 2311-2020 10:31:36         10          1                                                                                                                                            
+23-11-2020 10:11:36 2311-2020 10:21:36         10          2                                                                                                                                            
+23-11-2020 10:01:36 2311-2020 10:11:36         10          2                                                                                                                                            
+23-11-2020 09:51:36 2311-2020 10:01:36         10       1102                                                                                                                                            
+23-11-2020 09:41:36 2311-2020 09:51:36         10          2                                                                                                                                            
+23-11-2020 09:31:36 2311-2020 09:41:36         10          0                                                                                                                                            
+23-11-2020 09:21:36 2311-2020 09:31:36         10          1                                                                                                                                            
+23-11-2020 09:11:36 2311-2020 09:21:36         10          4                                                                                                                                            
+23-11-2020 09:01:36 2311-2020 09:11:36         10          1                                                                                                                                            
+23-11-2020 08:51:36 2311-2020 09:01:36         10        187                                                                                                                                            
+23-11-2020 08:41:36 2311-2020 08:51:36         10          3                                                                                                                                            
+23-11-2020 08:31:36 2311-2020 08:41:36         10          3                                                                                                                                            
+23-11-2020 08:21:36 2311-2020 08:31:36         10          0                                                                                                                                            
+23-11-2020 08:11:36 2311-2020 08:21:36         10          5                                                                                                                                            
+23-11-2020 08:01:36 2311-2020 08:11:36         10          2                                                                                                                                            
+23-11-2020 07:51:36 2311-2020 08:01:36         10        205                                                                                                                                            
+23-11-2020 07:41:36 2311-2020 07:51:36         10         34                                                                                                                                            
+23-11-2020 07:31:36 2311-2020 07:41:36         10          1                                                                                                                                            
+23-11-2020 07:21:36 2311-2020 07:31:36         10          0                                                                                                                                            
+23-11-2020 07:11:36 2311-2020 07:21:36         10          2                                                                                                                                            
+23-11-2020 07:01:36 2311-2020 07:11:36         10          0                                                                                                                                            
+23-11-2020 06:51:36 2311-2020 07:01:36         10        203                                                                                                                                            
+23-11-2020 06:41:36 2311-2020 06:51:36         10          4                                                                                                                                            
+23-11-2020 06:31:36 2311-2020 06:41:36         10          1                                                                                                                                            
+23-11-2020 06:21:36 2311-2020 06:31:36         10          0                                                                                                                                            
+23-11-2020 06:11:36 2311-2020 06:21:36         10          4                                                                                                                                            
+23-11-2020 06:01:36 2311-2020 06:11:36         10          1                                                                                                                                            
+23-11-2020 05:51:36 2311-2020 06:01:36         10        187                                                                                                                                            
+23-11-2020 05:41:36 2311-2020 05:51:36         10          6                                                                                                                                            
+23-11-2020 05:31:36 2311-2020 05:41:36         10          1                                                                                                                                            
+23-11-2020 05:21:36 2311-2020 05:31:36         10          0                                                                                                                                            
+23-11-2020 05:11:36 2311-2020 05:21:36         10          3                                                                                                                                            
+23-11-2020 05:01:36 2311-2020 05:11:36         10          3                                                                                                                                            
+23-11-2020 04:51:36 2311-2020 05:01:36         10        181                                                                                                                                            
+23-11-2020 04:41:36 2311-2020 04:51:36         10          7                                                                                                                                            
+23-11-2020 04:31:36 2311-2020 04:41:36         10          0                                                                                                                                            
+23-11-2020 04:21:36 2311-2020 04:31:36         10          0                                                                                                                                            
+23-11-2020 04:11:36 2311-2020 04:21:36         10          0                                                                                                                                            
+23-11-2020 04:01:36 2311-2020 04:11:36         10          5                                                                                                                                            
+23-11-2020 03:51:36 2311-2020 04:01:36         10        207                                                                                                                                            
+23-11-2020 03:41:36 2311-2020 03:51:36         10          4                                                                                                                                            
+23-11-2020 03:31:36 2311-2020 03:41:36         10          1                                                                                                                                            
+23-11-2020 03:21:36 2311-2020 03:31:36         10          0                                                                                                                                            
+23-11-2020 03:11:36 2311-2020 03:21:36         10          0                                                                                                                                            
+23-11-2020 03:01:36 2311-2020 03:11:36         10          6                                                                                                                                            
+23-11-2020 02:51:36 2311-2020 03:01:36         10        200                                                                                                                                            
+23-11-2020 02:41:36 2311-2020 02:51:36         10         10                                                                                                                                            
+23-11-2020 02:31:36 2311-2020 02:41:36         10          0                                                                                                                                            
+23-11-2020 02:21:36 2311-2020 02:31:36         10          0                                                                                                                                            
+23-11-2020 02:11:36 2311-2020 02:21:36         10          1                                                                                                                                            
+23-11-2020 02:01:36 2311-2020 02:11:36         10          2                                                                                                                                            
+23-11-2020 01:51:36 2311-2020 02:01:36         10        197                                                                                                                                            
+23-11-2020 01:41:36 2311-2020 01:51:36         10         28                                                                                                                                            
+23-11-2020 01:31:36 2311-2020 01:41:36         10          1                                                                                                                                            
+23-11-2020 01:21:36 2311-2020 01:31:36         10          0                                                                                                                                            
+23-11-2020 01:11:36 2311-2020 01:21:36         10          0                                                                                                                                            
+23-11-2020 01:01:36 2311-2020 01:11:36         10          5                                                                                                                                            
+23-11-2020 12:51:36 2311-2020 01:01:36         10        193                                                                                                                                            
+23-11-2020 12:41:36 2311-2020 12:51:36         10          6                                                                                                                                            
+23-11-2020 12:31:36 2311-2020 12:41:36         10          1                                                                                                                                            
+23-11-2020 12:21:36 2311-2020 12:31:36         10          0                                                                                                                                            
+23-11-2020 12:11:36 2311-2020 12:21:36         10          1                                                                                                                                            
+23-11-2020 12:01:36 2311-2020 12:11:36         10          2                                                                                                                                            
+23-11-2020 11:51:36 2311-2020 12:01:36         10        195                                                                                                                                            
+23-11-2020 11:41:36 2311-2020 11:51:36         10          6                                                                                                                                            
+23-11-2020 11:31:36 2311-2020 11:41:36         10          1                                                                                                                                            
+23-11-2020 11:21:36 2311-2020 11:31:36         10          0                                                                                                                                            
+23-11-2020 11:11:36 2311-2020 11:21:36         10          1                                                                                                                                            
+23-11-2020 11:01:36 2311-2020 11:11:36         10          4                                                                                                                                            
+23-11-2020 10:51:36 2311-2020 11:01:36         10        199                                                                                                                                            
+23-11-2020 10:41:36 2311-2020 10:51:36         10          2                                                                                                                                            
+23-11-2020 10:31:36 2311-2020 10:41:36         10          1                                                                                                                                            
+23-11-2020 10:21:36 2311-2020 10:31:36         10          0                                                                                                                                            
+23-11-2020 10:11:36 2311-2020 10:21:36         10          0                                                                                                                                            
+23-11-2020 10:01:36 2311-2020 10:11:36         10          3                                                                                                                                            
+23-11-2020 09:51:36 2311-2020 10:01:36         10        197                                                                                                                                            
+23-11-2020 09:41:36 2311-2020 09:51:36         10          6                                                                                                                                            
+23-11-2020 09:31:36 2311-2020 09:41:36         10          0                                                                                                                                            
+23-11-2020 09:21:36 2311-2020 09:31:36         10          0                                                                                                                                            
+23-11-2020 09:11:36 2311-2020 09:21:36         10          5                                                                                                                                            
+23-11-2020 09:01:36 2311-2020 09:11:36         10          4                                                                                                                                            
+23-11-2020 08:51:36 2311-2020 09:01:36         10        198                                                                                                                                            
+23-11-2020 08:41:36 2311-2020 08:51:36         10          8                                                                                                                                            
+23-11-2020 08:31:36 2311-2020 08:41:36         10          7                                                                                                                                            
+23-11-2020 08:21:36 2311-2020 08:31:36         10          3                                                                                                                                            
+23-11-2020 08:11:36 2311-2020 08:21:36         10          2                                                                                                                                            
+23-11-2020 08:01:36 2311-2020 08:11:36         10         14                                                                                                                                            
+23-11-2020 07:51:36 2311-2020 08:01:36         10          2                                                                                                                                            
+23-11-2020 07:41:36 2311-2020 07:51:36         10       1263                                                                                                                                            
+22-11-2020 09:41:36 2311-2020 07:41:36        600          0                                                                                                                                            
+22-11-2020 09:31:36 2211-2020 09:41:36         10        102                                                                                                                                            
+
+START_TIME          END_TIME               MINUTE   UNDOBLKS                                                                                                                                            
+------------------- ------------------ ---------- ----------                                                                                                                                            
+22-11-2020 09:21:36 2211-2020 09:31:36         10          4                                                                                                                                            
+22-11-2020 09:11:36 2211-2020 09:21:36         10          0                                                                                                                                            
+22-11-2020 09:01:36 2211-2020 09:11:36         10          2                                                                                                                                            
+22-11-2020 08:51:36 2211-2020 09:01:36         10        201                                                                                                                                            
+22-11-2020 08:41:36 2211-2020 08:51:36         10          1                                                                                                                                            
+22-11-2020 08:31:36 2211-2020 08:41:36         10          7                                                                                                                                            
+22-11-2020 08:21:36 2211-2020 08:31:36         10        625                                                                                                                                            
+21-11-2020 11:11:36 2211-2020 08:21:36       1270          0                                                                                                                                            
+21-11-2020 11:01:36 2111-2020 11:11:36         10          0                                                                                                                                            
+21-11-2020 10:51:36 2111-2020 11:01:36         10        201                                                                                                                                            
+21-11-2020 10:41:36 2111-2020 10:51:36         10          2                                                                                                                                            
+21-11-2020 10:31:36 2111-2020 10:41:36         10          1                                                                                                                                            
+21-11-2020 10:21:36 2111-2020 10:31:36         10          7                                                                                                                                            
+21-11-2020 10:11:36 2111-2020 10:21:36         10       1653                                                                                                                                            
+21-11-2020 10:01:36 2111-2020 10:11:36         10          1                                                                                                                                            
+21-11-2020 09:51:36 2111-2020 10:01:36         10        189                                                                                                                                            
+21-11-2020 09:41:36 2111-2020 09:51:36         10          0                                                                                                                                            
+21-11-2020 09:31:36 2111-2020 09:41:36         10          1                                                                                                                                            
+21-11-2020 09:21:36 2111-2020 09:31:36         10          3                                                                                                                                            
+21-11-2020 09:11:36 2111-2020 09:21:36         10          1                                                                                                                                            
+21-11-2020 09:01:36 2111-2020 09:11:36         10          0                                                                                                                                            
+21-11-2020 08:51:36 2111-2020 09:01:36         10        203                                                                                                                                            
+21-11-2020 08:41:36 2111-2020 08:51:36         10          0                                                                                                                                            
+21-11-2020 08:31:36 2111-2020 08:41:36         10          4                                                                                                                                            
+21-11-2020 08:21:36 2111-2020 08:31:36         10          0                                                                                                                                            
+21-11-2020 08:11:36 2111-2020 08:21:36         10          4                                                                                                                                            
+21-11-2020 08:01:36 2111-2020 08:11:36         10          1                                                                                                                                            
+21-11-2020 07:51:36 2111-2020 08:01:36         10        188                                                                                                                                            
+21-11-2020 07:41:36 2111-2020 07:51:36         10          0                                                                                                                                            
+21-11-2020 07:31:36 2111-2020 07:41:36         10          0                                                                                                                                            
+21-11-2020 07:21:36 2111-2020 07:31:36         10          0                                                                                                                                            
+21-11-2020 07:11:36 2111-2020 07:21:36         10          2                                                                                                                                            
+21-11-2020 07:01:36 2111-2020 07:11:36         10          2                                                                                                                                            
+21-11-2020 06:51:36 2111-2020 07:01:36         10        195                                                                                                                                            
+21-11-2020 06:41:36 2111-2020 06:51:36         10          3                                                                                                                                            
+21-11-2020 06:31:36 2111-2020 06:41:36         10          0                                                                                                                                            
+21-11-2020 06:21:36 2111-2020 06:31:36         10          1                                                                                                                                            
+21-11-2020 06:11:36 2111-2020 06:21:36         10          4                                                                                                                                            
+21-11-2020 06:01:36 2111-2020 06:11:36         10          1                                                                                                                                            
+21-11-2020 05:51:36 2111-2020 06:01:36         10        192                                                                                                                                            
+21-11-2020 05:41:36 2111-2020 05:51:36         10         32                                                                                                                                            
+21-11-2020 05:31:36 2111-2020 05:41:36         10          0                                                                                                                                            
+21-11-2020 05:21:36 2111-2020 05:31:36         10          1                                                                                                                                            
+
+237 rows selected.
+
+SQL>  SELECT (SUM(undoblks) / SUM ((end_time - begin_time) * 24*60*60))
+  2  nr_med_blocuri_undo_sec FROM v$undostat;
+
+NR_MED_BLOCURI_UNDO_SEC                                                                                                                                                                                 
+-----------------------                                                                                                                                                                                 
+             .063783411                                                                                                                                                                                 
+
+SQL> alter rollback segment ubd shrink to 4M;
+
+Rollback segment altered.
+
+SQL> drop rollback segment ubd;
+
+Rollback segment dropped.
+
+SQL> desc v$sort_segment
+ Name                                                                                                              Null?    Type
+ ----------------------------------------------------------------------------------------------------------------- -------- ----------------------------------------------------------------------------
+ TABLESPACE_NAME                                                                                                            VARCHAR2(30)
+ SEGMENT_FILE                                                                                                               NUMBER
+ SEGMENT_BLOCK                                                                                                              NUMBER
+ EXTENT_SIZE                                                                                                                NUMBER
+ CURRENT_USERS                                                                                                              NUMBER
+ TOTAL_EXTENTS                                                                                                              NUMBER
+ TOTAL_BLOCKS                                                                                                               NUMBER
+ USED_EXTENTS                                                                                                               NUMBER
+ USED_BLOCKS                                                                                                                NUMBER
+ FREE_EXTENTS                                                                                                               NUMBER
+ FREE_BLOCKS                                                                                                                NUMBER
+ ADDED_EXTENTS                                                                                                              NUMBER
+ EXTENT_HITS                                                                                                                NUMBER
+ FREED_EXTENTS                                                                                                              NUMBER
+ FREE_REQUESTS                                                                                                              NUMBER
+ MAX_SIZE                                                                                                                   NUMBER
+ MAX_BLOCKS                                                                                                                 NUMBER
+ MAX_USED_SIZE                                                                                                              NUMBER
+ MAX_USED_BLOCKS                                                                                                            NUMBER
+ MAX_SORT_SIZE                                                                                                              NUMBER
+ MAX_SORT_BLOCKS                                                                                                            NUMBER
+ RELATIVE_FNO                                                                                                               NUMBER
+ TS#                                                                                                                        NUMBER
+ CON_ID                                                                                                                     NUMBER
+ IS_LOCAL_TEMP                                                                                                              NUMBER
+
+SQL> select tablespace_name,max_sort_size,extent_size,max_sort_blocks from v$sort_segment;
+
+TABLESPACE_NAME                MAX_SORT_SIZE EXTENT_SIZE MAX_SORT_BLOCKS                                                                                                                                
+------------------------------ ------------- ----------- ---------------                                                                                                                                
+UBD_TEMP2                                  0         256               0                                                                                                                                
+
+SQL> desc v$tempseg_usage ( v$sort_usage)
+Usage: DESCRIBE [schema.]object[@db_link]
+SQL> desc v$tempseg_usage
+ Name                                                                                                              Null?    Type
+ ----------------------------------------------------------------------------------------------------------------- -------- ----------------------------------------------------------------------------
+ USERNAME                                                                                                                   VARCHAR2(128)
+ USER                                                                                                                       VARCHAR2(128)
+ SESSION_ADDR                                                                                                               RAW(8)
+ SESSION_NUM                                                                                                                NUMBER
+ SQLADDR                                                                                                                    RAW(8)
+ SQLHASH                                                                                                                    NUMBER
+ SQL_ID                                                                                                                     VARCHAR2(13)
+ TABLESPACE                                                                                                                 VARCHAR2(30)
+ CONTENTS                                                                                                                   VARCHAR2(9)
+ SEGTYPE                                                                                                                    VARCHAR2(9)
+ SEGFILE#                                                                                                                   NUMBER
+ SEGBLK#                                                                                                                    NUMBER
+ EXTENTS                                                                                                                    NUMBER
+ BLOCKS                                                                                                                     NUMBER
+ SEGRFNO#                                                                                                                   NUMBER
+ TS#                                                                                                                        NUMBER
+ CON_ID                                                                                                                     NUMBER
+ SQL_ID_TEMPSEG                                                                                                             VARCHAR2(13)
+
+SQL> select username,user,tablespace,contents,extents,blocks from v$tempseg_usage;
+
+no rows selected
+
+SQL> alter system set sort_area_size=10240 deferred;
+
+System altered.
+
+SQL> select owner, segment_name, segment_type, blocks from dba_extents where segment_name like 'EMP' and owner like user;
+
+OWNER                                                                                                                                                                                                   
+--------------------------------------------------------------------------------------------------------------------------------                                                                        
+SEGMENT_NAME                                                                                                                     SEGMENT_TYPE           BLOCKS                                          
+-------------------------------------------------------------------------------------------------------------------------------- ------------------ ----------                                          
+ABD1                                                                                                                                                                                                    
+EMP                                                                                                                              TABLE                       8                                          
+                                                                                                                                                                                                        
+
+SQL> set linesize 100
+SQL> select owner, segment_name, segment_type, blocks from dba_extents where segment_name like 'EMP' and owner like user;
+
+OWNER                                                                                               
+----------------------------------------------------------------------------------------------------
+SEGMENT_NAME                                                                                        
+----------------------------------------------------------------------------------------------------
+SEGMENT_TYPE           BLOCKS                                                                       
+------------------ ----------                                                                       
+ABD1                                                                                                
+EMP                                                                                                 
+TABLE                       8                                                                       
+                                                                                                    
+
+SQL> column segment_name format a30
+SQL> column segment_type format a30
+SQL> select owner, segment_name, segment_type, blocks from dba_extents where segment_name like 'EMP' and owner like user;
+
+OWNER                                                                                               
+----------------------------------------------------------------------------------------------------
+SEGMENT_NAME                   SEGMENT_TYPE                       BLOCKS                            
+------------------------------ ------------------------------ ----------                            
+ABD1                                                                                                
+EMP                            TABLE                                   8                            
+                                                                                                    
+
+SQL>  select tablespace_name, blocks from dba_free_space where tablespace_name in (select property_value from database_properties where property_name = 'DEFAULT_PERMANENT_TABLESPACE');
+
+TABLESPACE_NAME                    BLOCKS                                                           
+------------------------------ ----------                                                           
+USERS                                 512                                                           
+
+SQL> select distinct tablespace_name, owner from dba_extents where owner like 'SYSTEM';
+
+TABLESPACE_NAME                                                                                     
+------------------------------                                                                      
+OWNER                                                                                               
+----------------------------------------------------------------------------------------------------
+SYSTEM                                                                                              
+SYSTEM                                                                                              
+                                                                                                    
+SYSAUX                                                                                              
+SYSTEM                                                                                              
+                                                                                                    
+
+SQL> column owner format a30
+SQL> select distinct tablespace_name, owner from dba_extents where owner like 'SYSTEM';
+
+TABLESPACE_NAME                OWNER                                                                
+------------------------------ ------------------------------                                       
+SYSTEM                         SYSTEM                                                               
+SYSAUX                         SYSTEM                                                               
+
+SQL> select b.name, a.rssize, a.status from v$rollstat a, v$rollname b where a.usn = b.usn;
+
+NAME                               RSSIZE STATUS                                                    
+------------------------------ ---------- ---------------                                           
+SYSTEM                             450560 ONLINE                                                    
+_SYSSMU1_3766953279$              3268608 ONLINE                                                    
+_SYSSMU2_1688819604$              1171456 ONLINE                                                    
+_SYSSMU3_32628729$                2220032 ONLINE                                                    
+_SYSSMU4_2351403306$              2220032 ONLINE                                                    
+_SYSSMU5_1687539587$              1171456 ONLINE                                                    
+_SYSSMU6_1835543333$              2220032 ONLINE                                                    
+_SYSSMU7_2446095939$              2220032 ONLINE                                                    
+_SYSSMU8_3978790002$              1171456 ONLINE                                                    
+_SYSSMU9_4290633479$              5365760 ONLINE                                                    
+_SYSSMU10_2082653219$             3268608 ONLINE                                                    
+
+11 rows selected.
+
+SQL> select tablespace_name,free_extents, segment_file from v$sort_segment a;
+
+TABLESPACE_NAME                FREE_EXTENTS SEGMENT_FILE                                            
+------------------------------ ------------ ------------                                            
+BD_TEMP                                   0            0                                            
+UBD_TEMP2                                 0            0                                            
+
+SQL> update login_lab_ubd set data_sf= sysdate where laborator='Lab8';
+
+1 row updated.
+
+SQL> update login_lab_ubd set durata= round((data_sf-data_in)*24*60) where laborator='Lab8';
+
+1 row updated.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> select instance_number,instance_name, to_char(startup_time, 'dd-mm-yyyy hh:mi:ss'), host_name from v$instance;
+
+INSTANCE_NUMBER INSTANCE_NAME    TO_CHAR(STARTUP_TIM                                                
+--------------- ---------------- -------------------                                                
+HOST_NAME                                                                                           
+----------------------------------------------------------------                                    
+              1 oracle           21-11-2020 11:51:37                                                
+DESKTOP-KIRQEDP                                                                                     
+                                                                                                    
+
+SQL> select nume_stud, grupa, laborator, to_char(data_in, 'dd-mm-yyyy hh:mi:ss') data_inceput,
+  2  to_char(data_sf, 'dd-mm-yyyy hh:mi:ss') data_sfarsit, durata minute_lucrate from login_lab_ubd;
+
+NUME_STUD                      GRUPA      LABORATOR  DATA_INCEPUT        DATA_SFARSIT               
+------------------------------ ---------- ---------- ------------------- -------------------        
+MINUTE_LUCRATE                                                                                      
+--------------                                                                                      
+Coman_DianaStefania            343C5      Lab8       25-11-2020 05:13:25 25-11-2020 05:39:29        
+            26                                                                                      
+                                                                                                    
+Coman_DianaStefania            343C5      Lab5       04-11-2020 05:26:17 04-11-2020 05:58:25        
+            32                                                                                      
+                                                                                                    
+Coman_DianaStefania            343C5      Lab3       21-10-2020 05:49:36                            
+                                                                                                    
+                                                                                                    
+Coman_DianaStefania            343C5      Lab7       17-11-2020 08:20:11 17-11-2020 08:41:41        
+            22                                                                                      
+                                                                                                    
+Coman_DianaStefania            343C5      Lab4       04-11-2020 02:40:32 04-11-2020 02:55:43        
+            15                                                                                      
+                                                                                                    
+Coman_DianaStefania            343C5      Lab6       17-11-2020 05:44:10 17-11-2020 06:16:09        
+            32                                                                                      
+                                                                                                    
+
+6 rows selected.
+
+SQL> spool off

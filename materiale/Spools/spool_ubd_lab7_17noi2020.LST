@@ -1,0 +1,441 @@
+SQL> set lines 200
+SQL> set pages 100
+SQL> select to_char(sysdate, 'dd-mm-yyyy hh:mi:ss') from dual;
+
+TO_CHAR(SYSDATE,'DD                                                                                                                                                                                     
+-------------------                                                                                                                                                                                     
+17-11-2020 08:19:22                                                                                                                                                                                     
+
+SQL> insert into login_lab_ubd values( 'Coman_DianaStefania', '343C5', 'Lab7', user, sysdate, null, null);
+
+1 row created.
+
+SQL> select * from login_lab_ubd;
+
+NUME_STUD                      GRUPA      LABORATOR  NUME_USER  DATA_IN   DATA_SF       DURATA                                                                                                          
+------------------------------ ---------- ---------- ---------- --------- --------- ----------                                                                                                          
+Coman_DianaStefania            343C5      Lab5       ABD1       04-NOV-20 04-NOV-20         32                                                                                                          
+Coman_DianaStefania            343C5      Lab3       ABD1       21-OCT-20                                                                                                                               
+Coman_DianaStefania            343C5      Lab7       ABD1       17-NOV-20                                                                                                                               
+Coman_DianaStefania            343C5      Lab4       ABD1       04-NOV-20 04-NOV-20         15                                                                                                          
+Coman_DianaStefania            343C5      Lab6       ABD1       17-NOV-20 17-NOV-20         32                                                                                                          
+
+SQL> set linesize 120
+SQL> desc dba_tablespaces
+ Name                                                              Null?    Type
+ ----------------------------------------------------------------- -------- --------------------------------------------
+ TABLESPACE_NAME                                                   NOT NULL VARCHAR2(30)
+ BLOCK_SIZE                                                        NOT NULL NUMBER
+ INITIAL_EXTENT                                                             NUMBER
+ NEXT_EXTENT                                                                NUMBER
+ MIN_EXTENTS                                                       NOT NULL NUMBER
+ MAX_EXTENTS                                                                NUMBER
+ MAX_SIZE                                                                   NUMBER
+ PCT_INCREASE                                                               NUMBER
+ MIN_EXTLEN                                                                 NUMBER
+ STATUS                                                                     VARCHAR2(9)
+ CONTENTS                                                                   VARCHAR2(21)
+ LOGGING                                                                    VARCHAR2(9)
+ FORCE_LOGGING                                                              VARCHAR2(3)
+ EXTENT_MANAGEMENT                                                          VARCHAR2(10)
+ ALLOCATION_TYPE                                                            VARCHAR2(9)
+ PLUGGED_IN                                                                 VARCHAR2(3)
+ SEGMENT_SPACE_MANAGEMENT                                                   VARCHAR2(6)
+ DEF_TAB_COMPRESSION                                                        VARCHAR2(8)
+ RETENTION                                                                  VARCHAR2(11)
+ BIGFILE                                                                    VARCHAR2(3)
+ PREDICATE_EVALUATION                                                       VARCHAR2(7)
+ ENCRYPTED                                                                  VARCHAR2(3)
+ COMPRESS_FOR                                                               VARCHAR2(30)
+ DEF_INMEMORY                                                               VARCHAR2(8)
+ DEF_INMEMORY_PRIORITY                                                      VARCHAR2(8)
+ DEF_INMEMORY_DISTRIBUTE                                                    VARCHAR2(15)
+ DEF_INMEMORY_COMPRESSION                                                   VARCHAR2(17)
+ DEF_INMEMORY_DUPLICATE                                                     VARCHAR2(13)
+ SHARED                                                                     VARCHAR2(13)
+ DEF_INDEX_COMPRESSION                                                      VARCHAR2(8)
+ INDEX_COMPRESS_FOR                                                         VARCHAR2(13)
+ DEF_CELLMEMORY                                                             VARCHAR2(14)
+ DEF_INMEMORY_SERVICE                                                       VARCHAR2(12)
+ DEF_INMEMORY_SERVICE_NAME                                                  VARCHAR2(1000)
+ LOST_WRITE_PROTECT                                                         VARCHAR2(7)
+ CHUNK_TABLESPACE                                                           VARCHAR2(1)
+
+SQL> select tablespace_name,block_size,initial_extent,min_extents, max_extents, contents, status
+  2   from dba_tablespaces where tablespace_name='USERS';
+
+TABLESPACE_NAME                BLOCK_SIZE INITIAL_EXTENT MIN_EXTENTS MAX_EXTENTS CONTENTS              STATUS           
+------------------------------ ---------- -------------- ----------- ----------- --------------------- ---------        
+USERS                                8192          65536           1  2147483645 PERMANENT             ONLINE           
+
+SQL> desc dba_data_files;
+ Name                                                              Null?    Type
+ ----------------------------------------------------------------- -------- --------------------------------------------
+ FILE_NAME                                                                  VARCHAR2(513)
+ FILE_ID                                                                    NUMBER
+ TABLESPACE_NAME                                                            VARCHAR2(30)
+ BYTES                                                                      NUMBER
+ BLOCKS                                                                     NUMBER
+ STATUS                                                                     VARCHAR2(9)
+ RELATIVE_FNO                                                               NUMBER
+ AUTOEXTENSIBLE                                                             VARCHAR2(3)
+ MAXBYTES                                                                   NUMBER
+ MAXBLOCKS                                                                  NUMBER
+ INCREMENT_BY                                                               NUMBER
+ USER_BYTES                                                                 NUMBER
+ USER_BLOCKS                                                                NUMBER
+ ONLINE_STATUS                                                              VARCHAR2(7)
+ LOST_WRITE_PROTECT                                                         VARCHAR2(7)
+
+SQL>  select tablespace_name, file_id, file_name, blocks, bytes from dba_data_files
+  2   where tablespace_name='USERS';
+
+TABLESPACE_NAME                   FILE_ID                                                                               
+------------------------------ ----------                                                                               
+FILE_NAME                                                                                                               
+------------------------------------------------------------------------------------------------------------------------
+    BLOCKS      BYTES                                                                                                   
+---------- ----------                                                                                                   
+USERS                                   7                                                                               
+D:\APP\DIANA_ORA\ORADATA\ORACLE\USERS01.DBF                                                                             
+       640    5242880                                                                                                   
+                                                                                                                        
+
+SQL> column file_name size 35a
+SP2-0158: unknown COLUMN option "size"
+SQL> column file_name format 35a
+SP2-0246: Illegal FORMAT string "35a"
+SQL> column file_name format a35
+SQL>  select tablespace_name, file_id, file_name, blocks, bytes from dba_data_files
+  2   where tablespace_name='USERS';
+
+TABLESPACE_NAME                   FILE_ID FILE_NAME                               BLOCKS      BYTES                     
+------------------------------ ---------- ----------------------------------- ---------- ----------                     
+USERS                                   7 D:\APP\DIANA_ORA\ORADATA\ORACLE\USE        640    5242880                     
+                                          RS01.DBF                                                                      
+                                                                                                                        
+
+SQL> desc dba_segments;
+ Name                                                              Null?    Type
+ ----------------------------------------------------------------- -------- --------------------------------------------
+ OWNER                                                                      VARCHAR2(128)
+ SEGMENT_NAME                                                               VARCHAR2(128)
+ PARTITION_NAME                                                             VARCHAR2(128)
+ SEGMENT_TYPE                                                               VARCHAR2(18)
+ SEGMENT_SUBTYPE                                                            VARCHAR2(10)
+ TABLESPACE_NAME                                                            VARCHAR2(30)
+ HEADER_FILE                                                                NUMBER
+ HEADER_BLOCK                                                               NUMBER
+ BYTES                                                                      NUMBER
+ BLOCKS                                                                     NUMBER
+ EXTENTS                                                                    NUMBER
+ INITIAL_EXTENT                                                             NUMBER
+ NEXT_EXTENT                                                                NUMBER
+ MIN_EXTENTS                                                                NUMBER
+ MAX_EXTENTS                                                                NUMBER
+ MAX_SIZE                                                                   NUMBER
+ RETENTION                                                                  VARCHAR2(7)
+ MINRETENTION                                                               NUMBER
+ PCT_INCREASE                                                               NUMBER
+ FREELISTS                                                                  NUMBER
+ FREELIST_GROUPS                                                            NUMBER
+ RELATIVE_FNO                                                               NUMBER
+ BUFFER_POOL                                                                VARCHAR2(7)
+ FLASH_CACHE                                                                VARCHAR2(7)
+ CELL_FLASH_CACHE                                                           VARCHAR2(7)
+ INMEMORY                                                                   VARCHAR2(8)
+ INMEMORY_PRIORITY                                                          VARCHAR2(8)
+ INMEMORY_DISTRIBUTE                                                        VARCHAR2(15)
+ INMEMORY_DUPLICATE                                                         VARCHAR2(13)
+ INMEMORY_COMPRESSION                                                       VARCHAR2(17)
+ CELLMEMORY                                                                 VARCHAR2(24)
+
+SQL> select owner,segment_name,segment_type, tablespace_name, blocks, extents
+  2   from dba_segments where owner='SCOTT'and segment_type='TABLE';
+
+no rows selected
+
+SQL> select owner,segment_name,segment_type, tablespace_name, blocks, extents
+  2   from dba_segments where owner='ABD1'and segment_type='TABLE';
+
+OWNER                                                                                                                   
+------------------------------------------------------------------------------------------------------------------------
+SEGMENT_NAME                                                                                                            
+------------------------------------------------------------------------------------------------------------------------
+SEGMENT_TYPE       TABLESPACE_NAME                    BLOCKS    EXTENTS                                                 
+------------------ ------------------------------ ---------- ----------                                                 
+ABD1                                                                                                                    
+SALGRADE                                                                                                                
+TABLE              BD_DATA                                 8          1                                                 
+                                                                                                                        
+ABD1                                                                                                                    
+EMP                                                                                                                     
+TABLE              BD_DATA                                 8          1                                                 
+                                                                                                                        
+ABD1                                                                                                                    
+BIN$OdyGj3ukS9+m6y/PkQ/t4A==$0                                                                                          
+TABLE              BD_DATA                                 8          1                                                 
+                                                                                                                        
+ABD1                                                                                                                    
+BIN$sLcQ0NUnR6+xxFL51t88eg==$0                                                                                          
+TABLE              BD_DATA                                 8          1                                                 
+                                                                                                                        
+ABD1                                                                                                                    
+BIN$H6c6z12EQOaipoODKnSvNg==$0                                                                                          
+TABLE              BD_DATA                                 8          1                                                 
+                                                                                                                        
+ABD1                                                                                                                    
+LOGIN_LAB_UBD                                                                                                           
+TABLE              BD_DATA                                 8          1                                                 
+                                                                                                                        
+ABD1                                                                                                                    
+BIN$vA7UCrbcSv6/I+3ThvrRdg==$0                                                                                          
+TABLE              BD_DATA                                 8          1                                                 
+                                                                                                                        
+ABD1                                                                                                                    
+BIN$BvSobhtmRjaUtd9JUqtBKQ==$0                                                                                          
+TABLE              BD_DATA                                 8          1                                                 
+                                                                                                                        
+ABD1                                                                                                                    
+BIN$rvdlLL1dSlyL7vRO6f8XhA==$0                                                                                          
+TABLE              BD_DATA                                 8          1                                                 
+                                                                                                                        
+ABD1                                                                                                                    
+BIN$iMatrEBiQlOuuzsKhAA36A==$0                                                                                          
+TABLE              BD_DATA                                 8          1                                                 
+                                                                                                                        
+ABD1                                                                                                                    
+DEPT                                                                                                                    
+TABLE              BD_DATA                                 8          1                                                 
+                                                                                                                        
+
+11 rows selected.
+
+SQL> column owner format a35
+SQL> column segment_name format a35
+SQL> select owner,segment_name,segment_type, tablespace_name, blocks, extents
+  2   from dba_segments where owner='ABD1'and segment_type='TABLE';
+
+OWNER                               SEGMENT_NAME                        SEGMENT_TYPE                                    
+----------------------------------- ----------------------------------- ------------------                              
+TABLESPACE_NAME                    BLOCKS    EXTENTS                                                                    
+------------------------------ ---------- ----------                                                                    
+ABD1                                SALGRADE                            TABLE                                           
+BD_DATA                                 8          1                                                                    
+                                                                                                                        
+ABD1                                EMP                                 TABLE                                           
+BD_DATA                                 8          1                                                                    
+                                                                                                                        
+ABD1                                BIN$OdyGj3ukS9+m6y/PkQ/t4A==$0      TABLE                                           
+BD_DATA                                 8          1                                                                    
+                                                                                                                        
+ABD1                                BIN$sLcQ0NUnR6+xxFL51t88eg==$0      TABLE                                           
+BD_DATA                                 8          1                                                                    
+                                                                                                                        
+ABD1                                BIN$H6c6z12EQOaipoODKnSvNg==$0      TABLE                                           
+BD_DATA                                 8          1                                                                    
+                                                                                                                        
+ABD1                                LOGIN_LAB_UBD                       TABLE                                           
+BD_DATA                                 8          1                                                                    
+                                                                                                                        
+ABD1                                BIN$vA7UCrbcSv6/I+3ThvrRdg==$0      TABLE                                           
+BD_DATA                                 8          1                                                                    
+                                                                                                                        
+ABD1                                BIN$BvSobhtmRjaUtd9JUqtBKQ==$0      TABLE                                           
+BD_DATA                                 8          1                                                                    
+                                                                                                                        
+ABD1                                BIN$rvdlLL1dSlyL7vRO6f8XhA==$0      TABLE                                           
+BD_DATA                                 8          1                                                                    
+                                                                                                                        
+ABD1                                BIN$iMatrEBiQlOuuzsKhAA36A==$0      TABLE                                           
+BD_DATA                                 8          1                                                                    
+                                                                                                                        
+ABD1                                DEPT                                TABLE                                           
+BD_DATA                                 8          1                                                                    
+                                                                                                                        
+
+11 rows selected.
+
+SQL> desc dba_extents
+ Name                                                              Null?    Type
+ ----------------------------------------------------------------- -------- --------------------------------------------
+ OWNER                                                                      VARCHAR2(128)
+ SEGMENT_NAME                                                               VARCHAR2(128)
+ PARTITION_NAME                                                             VARCHAR2(128)
+ SEGMENT_TYPE                                                               VARCHAR2(18)
+ TABLESPACE_NAME                                                            VARCHAR2(30)
+ EXTENT_ID                                                                  NUMBER
+ FILE_ID                                                                    NUMBER
+ BLOCK_ID                                                                   NUMBER
+ BYTES                                                                      NUMBER
+ BLOCKS                                                                     NUMBER
+ RELATIVE_FNO                                                               NUMBER
+
+SQL> select owner, segment_name, segment_type, tablespace_name from
+  2  dba_extents where owner='ABD1' and segment_name='EMP';
+
+OWNER                               SEGMENT_NAME                        SEGMENT_TYPE                                    
+----------------------------------- ----------------------------------- ------------------                              
+TABLESPACE_NAME                                                                                                         
+------------------------------                                                                                          
+ABD1                                EMP                                 TABLE                                           
+BD_DATA                                                                                                                 
+                                                                                                                        
+
+SQL> select segment_name, extent_id, file_id, block_id, blocks, bytes from dba_extents
+  2   where owner='ABD1' and segment_name='EMP' ;
+
+SEGMENT_NAME                         EXTENT_ID    FILE_ID   BLOCK_ID     BLOCKS      BYTES                              
+----------------------------------- ---------- ---------- ---------- ---------- ----------                              
+EMP                                          0         12        272          8      65536                              
+
+SQL> desc dba_free_space
+ Name                                                              Null?    Type
+ ----------------------------------------------------------------- -------- --------------------------------------------
+ TABLESPACE_NAME                                                            VARCHAR2(30)
+ FILE_ID                                                                    NUMBER
+ BLOCK_ID                                                                   NUMBER
+ BYTES                                                                      NUMBER
+ BLOCKS                                                                     NUMBER
+ RELATIVE_FNO                                                               NUMBER
+
+SQL>  select * from dba_free_space where tablespace_name='USERS' ;
+
+TABLESPACE_NAME                   FILE_ID   BLOCK_ID      BYTES     BLOCKS RELATIVE_FNO                                 
+------------------------------ ---------- ---------- ---------- ---------- ------------                                 
+USERS                                   7        128    4194304        512            7                                 
+
+SQL> select tablespace_name, count(*), max(blocks), sum(blocks) from dba_free_space
+  2   group by tablespace_name;
+
+TABLESPACE_NAME                  COUNT(*) MAX(BLOCKS) SUM(BLOCKS)                                                       
+------------------------------ ---------- ----------- -----------                                                       
+SYSAUX                                  1        6872        6872                                                       
+UNDOTBS1                                9       63872       65376                                                       
+UBD_UNDO1                               1         992         992                                                       
+USERS                                   1         512         512                                                       
+SYSTEM                                  2         768         824                                                       
+UBD_DATA2                               1        1152        1152                                                       
+BD_DATA                                17        6088        6336                                                       
+
+7 rows selected.
+
+SQL>  group by tablespace_name;
+SP2-0734: unknown command beginning "group by t..." - rest of line ignored.
+SQL> 
+SQL> 
+SQL> aaa
+SP2-0042: unknown command "aaa" - rest of line ignored.
+SQL> 
+SQL> select tablespace_name, count(*), max(blocks), sum(blocks) from dba_free_space
+  2   group by tablespace_name;
+
+TABLESPACE_NAME                  COUNT(*) MAX(BLOCKS) SUM(BLOCKS)                                                       
+------------------------------ ---------- ----------- -----------                                                       
+SYSAUX                                  1        6872        6872                                                       
+UNDOTBS1                                9       63872       65376                                                       
+UBD_UNDO1                               1         992         992                                                       
+USERS                                   1         512         512                                                       
+SYSTEM                                  2         768         824                                                       
+UBD_DATA2                               1        1152        1152                                                       
+BD_DATA                                17        6088        6336                                                       
+
+7 rows selected.
+
+SQL> 
+SQL>  desc dba_free_space_coalesced
+ Name                                                              Null?    Type
+ ----------------------------------------------------------------- -------- --------------------------------------------
+ TABLESPACE_NAME                                                            VARCHAR2(30)
+ TOTAL_EXTENTS                                                              NUMBER
+ EXTENTS_COALESCED                                                          NUMBER
+ PERCENT_EXTENTS_COALESCED                                                  NUMBER
+ TOTAL_BYTES                                                                NUMBER
+ BYTES_COALESCED                                                            NUMBER
+ TOTAL_BLOCKS                                                               NUMBER
+ BLOCKS_COALESCED                                                           NUMBER
+ PERCENT_BLOCKS_COALESCED                                                   NUMBER
+
+SQL>  alter tablespace BD coalesce ;
+ alter tablespace BD coalesce 
+*
+ERROR at line 1:
+ORA-00959: tablespace 'BD' does not exist 
+
+
+SQL> select name from v$database;
+
+NAME                                                                                                                    
+---------                                                                                                               
+ORACLE                                                                                                                  
+
+SQL>  alter tablespace ORACLE coalesce ;
+ alter tablespace ORACLE coalesce 
+*
+ERROR at line 1:
+ORA-00959: tablespace 'ORACLE' does not exist 
+
+
+SQL> select name from v$tablespace;
+
+NAME                                                                                                                    
+------------------------------                                                                                          
+SYSAUX                                                                                                                  
+SYSTEM                                                                                                                  
+UNDOTBS1                                                                                                                
+USERS                                                                                                                   
+TEMP                                                                                                                    
+BD_TEMP                                                                                                                 
+BD_DATA                                                                                                                 
+UBD_TEMP3                                                                                                               
+UBD_DATA2                                                                                                               
+UBD_TEMP2                                                                                                               
+UBD_UNDO1                                                                                                               
+
+11 rows selected.
+
+SQL>  alter tablespace BD_DATA coalesce ;
+
+Tablespace altered.
+
+SQL>  select tablespace_name,total_extents, percent_extents_coalesced from
+  2  dba_free_space_coalesced;
+
+TABLESPACE_NAME                TOTAL_EXTENTS PERCENT_EXTENTS_COALESCED                                                  
+------------------------------ ------------- -------------------------                                                  
+SYSAUX                                     1                       100                                                  
+UNDOTBS1                                   9                       100                                                  
+USERS                                      1                       100                                                  
+BD_DATA                                   17                       100                                                  
+SYSTEM                                     2                       100                                                  
+UBD_DATA2                                  1                       100                                                  
+UBD_UNDO1                                  1                       100                                                  
+
+7 rows selected.
+
+SQL> update login_lab_ubd set data_sf= sysdate where laborator='Lab7';
+
+1 row updated.
+
+SQL> update login_lab_ubd set durata= round((data_sf-data_in)*24*60) where laborator='Lab7';
+
+1 row updated.
+
+SQL> select instance_number,instance_name, to_char(startup_time, 'dd-mm-yyyy hh:mi:ss'), host_name from v$instance;
+
+INSTANCE_NUMBER INSTANCE_NAME    TO_CHAR(STARTUP_TIM HOST_NAME                                                          
+--------------- ---------------- ------------------- ----------------------------------------------------------------   
+              1 oracle           12-11-2020 02:53:42 DESKTOP-KIRQEDP                                                    
+
+SQL> select nume_stud, grupa, laborator, to_char(data_in, 'dd-mm-yyyy hh:mi:ss') data_inceput,
+  2  to_char(data_sf, 'dd-mm-yyyy hh:mi:ss') data_sfarsit, durata minute_lucrate from login_lab_ubd;
+
+NUME_STUD                      GRUPA      LABORATOR  DATA_INCEPUT        DATA_SFARSIT        MINUTE_LUCRATE             
+------------------------------ ---------- ---------- ------------------- ------------------- --------------             
+Coman_DianaStefania            343C5      Lab5       04-11-2020 05:26:17 04-11-2020 05:58:25             32             
+Coman_DianaStefania            343C5      Lab3       21-10-2020 05:49:36                                                
+Coman_DianaStefania            343C5      Lab7       17-11-2020 08:20:11 17-11-2020 08:41:41             22             
+Coman_DianaStefania            343C5      Lab4       04-11-2020 02:40:32 04-11-2020 02:55:43             15             
+Coman_DianaStefania            343C5      Lab6       17-11-2020 05:44:10 17-11-2020 06:16:09             32             
+
+SQL> spool off

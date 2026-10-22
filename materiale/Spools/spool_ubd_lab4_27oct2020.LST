@@ -1,0 +1,432 @@
+SQL> set lines 200
+SQL> set pages 100
+SQL> set linesize 120
+SQL> insert into login_lab_ubd values( 'Coman_DianaStefania', '343C5', 'Lab4', user, sysdate, null, null);
+
+1 row created.
+
+SQL> select to_char(sysdate, 'dd-mm-yyyy hh:mi:ss') from dual;
+
+TO_CHAR(SYSDATE,'DD                                                                                                     
+-------------------                                                                                                     
+04-11-2020 02:40:56                                                                                                     
+
+SQL> select * from login_lab_ubd;
+
+NUME_STUD                      GRUPA      LABORATOR  NUME_USER  DATA_IN   DATA_SF       DURATA                          
+------------------------------ ---------- ---------- ---------- --------- --------- ----------                          
+Coman_DianaStefania            343C5      Lab3       ABD1       21-OCT-20                                               
+Coman_DianaStefania            343C5      Lab4       ABD1       04-NOV-20                                               
+
+SQL>  desc v$controlfile
+ Name                                                              Null?    Type
+ ----------------------------------------------------------------- -------- --------------------------------------------
+ STATUS                                                                     VARCHAR2(7)
+ NAME                                                                       VARCHAR2(513)
+ IS_RECOVERY_DEST_FILE                                                      VARCHAR2(3)
+ BLOCK_SIZE                                                                 NUMBER
+ FILE_SIZE_BLKS                                                             NUMBER
+ CON_ID                                                                     NUMBER
+
+SQL> select * from v$controlfile;
+
+STATUS                                                                                                                  
+-------                                                                                                                 
+NAME                                                                                                                    
+------------------------------------------------------------------------------------------------------------------------
+IS_ BLOCK_SIZE FILE_SIZE_BLKS     CON_ID                                                                                
+--- ---------- -------------- ----------                                                                                
+                                                                                                                        
+D:\APP\DIANA_ORA\ORADATA\ORACLE\CONTROL01.CTL                                                                           
+NO       16384           1142          0                                                                                
+                                                                                                                        
+                                                                                                                        
+D:\APP\DIANA_ORA\ORADATA\ORACLE\CONTROL02.CTL                                                                           
+NO       16384           1142          0                                                                                
+                                                                                                                        
+
+SQL> set linesize 120
+SQL> select * from v$controlfile;
+
+STATUS                                                                                                                  
+-------                                                                                                                 
+NAME                                                                                                                    
+------------------------------------------------------------------------------------------------------------------------
+IS_ BLOCK_SIZE FILE_SIZE_BLKS     CON_ID                                                                                
+--- ---------- -------------- ----------                                                                                
+                                                                                                                        
+D:\APP\DIANA_ORA\ORADATA\ORACLE\CONTROL01.CTL                                                                           
+NO       16384           1142          0                                                                                
+                                                                                                                        
+                                                                                                                        
+D:\APP\DIANA_ORA\ORADATA\ORACLE\CONTROL02.CTL                                                                           
+NO       16384           1142          0                                                                                
+                                                                                                                        
+
+SQL> set linesize 100
+SQL> select * from v$controlfile;
+
+STATUS                                                                                              
+-------                                                                                             
+NAME                                                                                                
+----------------------------------------------------------------------------------------------------
+IS_ BLOCK_SIZE FILE_SIZE_BLKS     CON_ID                                                            
+--- ---------- -------------- ----------                                                            
+                                                                                                    
+D:\APP\DIANA_ORA\ORADATA\ORACLE\CONTROL01.CTL                                                       
+NO       16384           1142          0                                                            
+                                                                                                    
+                                                                                                    
+D:\APP\DIANA_ORA\ORADATA\ORACLE\CONTROL02.CTL                                                       
+NO       16384           1142          0                                                            
+                                                                                                    
+
+SQL> desc v$parameter
+ Name                                                  Null?    Type
+ ----------------------------------------------------- -------- ------------------------------------
+ NUM                                                            NUMBER
+ NAME                                                           VARCHAR2(80)
+ TYPE                                                           NUMBER
+ VALUE                                                          VARCHAR2(4000)
+ DISPLAY_VALUE                                                  VARCHAR2(4000)
+ DEFAULT_VALUE                                                  VARCHAR2(255)
+ ISDEFAULT                                                      VARCHAR2(9)
+ ISSES_MODIFIABLE                                               VARCHAR2(5)
+ ISSYS_MODIFIABLE                                               VARCHAR2(9)
+ ISPDB_MODIFIABLE                                               VARCHAR2(5)
+ ISINSTANCE_MODIFIABLE                                          VARCHAR2(5)
+ ISMODIFIED                                                     VARCHAR2(10)
+ ISADJUSTED                                                     VARCHAR2(5)
+ ISDEPRECATED                                                   VARCHAR2(5)
+ ISBASIC                                                        VARCHAR2(5)
+ DESCRIPTION                                                    VARCHAR2(255)
+ UPDATE_COMMENT                                                 VARCHAR2(255)
+ HASH                                                           NUMBER
+ CON_ID                                                         NUMBER
+
+SQL> select * from v$parameter where name='control_files';
+
+       NUM NAME                                                                                     
+---------- --------------------------------------------------------------------------------         
+      TYPE                                                                                          
+----------                                                                                          
+VALUE                                                                                               
+----------------------------------------------------------------------------------------------------
+DISPLAY_VALUE                                                                                       
+----------------------------------------------------------------------------------------------------
+DEFAULT_VALUE                                                                                       
+----------------------------------------------------------------------------------------------------
+ISDEFAULT ISSES ISSYS_MOD ISPDB ISINS ISMODIFIED ISADJ ISDEP ISBAS                                  
+--------- ----- --------- ----- ----- ---------- ----- ----- -----                                  
+DESCRIPTION                                                                                         
+----------------------------------------------------------------------------------------------------
+UPDATE_COMMENT                                                                                      
+----------------------------------------------------------------------------------------------------
+      HASH     CON_ID                                                                               
+---------- ----------                                                                               
+      1404 control_files                                                                            
+         2                                                                                          
+D:\APP\DIANA_ORA\ORADATA\ORACLE\CONTROL01.CTL, D:\APP\DIANA_ORA\ORADATA\ORACLE\CONTROL02.CTL        
+D:\APP\DIANA_ORA\ORADATA\ORACLE\CONTROL01.CTL, D:\APP\DIANA_ORA\ORADATA\ORACLE\CONTROL02.CTL        
+?=\DATABASE\CTL1%ORACLE_SID%.ORA                                                                    
+FALSE     FALSE FALSE     FALSE FALSE FALSE      FALSE FALSE TRUE                                   
+control file names list                                                                             
+                                                                                                    
+2567365799          1                                                                               
+                                                                                                    
+
+SQL> set linesize 120
+SQL> select * from v$parameter where name='control_files';
+
+       NUM NAME                                                                                   TYPE                  
+---------- -------------------------------------------------------------------------------- ----------                  
+VALUE                                                                                                                   
+------------------------------------------------------------------------------------------------------------------------
+DISPLAY_VALUE                                                                                                           
+------------------------------------------------------------------------------------------------------------------------
+DEFAULT_VALUE                                                                                                           
+------------------------------------------------------------------------------------------------------------------------
+ISDEFAULT ISSES ISSYS_MOD ISPDB ISINS ISMODIFIED ISADJ ISDEP ISBAS                                                      
+--------- ----- --------- ----- ----- ---------- ----- ----- -----                                                      
+DESCRIPTION                                                                                                             
+------------------------------------------------------------------------------------------------------------------------
+UPDATE_COMMENT                                                                                                          
+------------------------------------------------------------------------------------------------------------------------
+      HASH     CON_ID                                                                                                   
+---------- ----------                                                                                                   
+      1404 control_files                                                                             2                  
+D:\APP\DIANA_ORA\ORADATA\ORACLE\CONTROL01.CTL, D:\APP\DIANA_ORA\ORADATA\ORACLE\CONTROL02.CTL                            
+D:\APP\DIANA_ORA\ORADATA\ORACLE\CONTROL01.CTL, D:\APP\DIANA_ORA\ORADATA\ORACLE\CONTROL02.CTL                            
+?=\DATABASE\CTL1%ORACLE_SID%.ORA                                                                                        
+FALSE     FALSE FALSE     FALSE FALSE FALSE      FALSE FALSE TRUE                                                       
+control file names list                                                                                                 
+                                                                                                                        
+2567365799          1                                                                                                   
+                                                                                                                        
+
+SQL>  desc v$controlfile_record_section
+ Name                                                              Null?    Type
+ ----------------------------------------------------------------- -------- --------------------------------------------
+ TYPE                                                                       VARCHAR2(28)
+ RECORD_SIZE                                                                NUMBER
+ RECORDS_TOTAL                                                              NUMBER
+ RECORDS_USED                                                               NUMBER
+ FIRST_INDEX                                                                NUMBER
+ LAST_INDEX                                                                 NUMBER
+ LAST_RECID                                                                 NUMBER
+ CON_ID                                                                     NUMBER
+
+SQL> select * from v$controlfile_record_section;
+
+TYPE                         RECORD_SIZE RECORDS_TOTAL RECORDS_USED FIRST_INDEX LAST_INDEX LAST_RECID     CON_ID        
+---------------------------- ----------- ------------- ------------ ----------- ---------- ---------- ----------        
+DATABASE                             316             1            1           0          0          0          0        
+CKPT PROGRESS                       8180            11            0           0          0          0          0        
+REDO THREAD                          256             8            1           0          0          0          0        
+REDO LOG                              72            16            3           0          0          3          0        
+DATAFILE                             520          1024           12           0          0        103          0        
+FILENAME                             524          4146           19           0          0          0          0        
+TABLESPACE                           180          1024           16           0          0         12          0        
+TEMPORARY FILENAME                    56          1024            4           0          0         17          0        
+RMAN CONFIGURATION                  1108            50            0           0          0          0          0        
+LOG HISTORY                           56           292           20           1         20         20          0        
+OFFLINE RANGE                        200          1063           12           1         12         12          0        
+ARCHIVED LOG                         584            28            0           0          0          0          0        
+BACKUP SET                            96          1022            0           0          0          0          0        
+BACKUP PIECE                         780          1006            0           0          0          0          0        
+BACKUP DATAFILE                      200          1063            0           0          0          0          0        
+BACKUP REDOLOG                        76           215            0           0          0          0          0        
+DATAFILE COPY                        736          1000            3           1          3          3          0        
+BACKUP CORRUPTION                     44          1115            0           0          0          0          0        
+COPY CORRUPTION                       40          1227            0           0          0          0          0        
+DELETED OBJECT                        20           818            4           1          4          4          0        
+PROXY COPY                           928          1004            0           0          0          0          0        
+BACKUP SPFILE                        124           131            0           0          0          0          0        
+DATABASE INCARNATION                  56           292            2           1          2          2          0        
+FLASHBACK LOG                         84          2048            0           0          0          0          0        
+RECOVERY DESTINATION                 180             1            0           0          0          0          0        
+INSTANCE SPACE RESERVATION            28          1055            1           0          0          0          0        
+REMOVABLE RECOVERY FILES              32          1000            0           0          0          0          0        
+RMAN STATUS                          116           141            3           1          3          3          0        
+THREAD INSTANCE NAME MAPPING          80             8            8           0          0          0          0        
+MTTR                                 100             8            1           0          0          0          0        
+DATAFILE HISTORY                     568            57            0           0          0          0          0        
+STANDBY DATABASE MATRIX              400           128          128           0          0          0          0        
+GUARANTEED RESTORE POINT             256          2048            0           0          0          0          0        
+RESTORE POINT                        256          2108            0           0          0          0          0        
+DATABASE BLOCK CORRUPTION             80          8384            0           0          0          0          0        
+ACM OPERATION                        104            64           10           0          0          0          0        
+FOREIGN ARCHIVED LOG                 604          1002            0           0          0          0          0        
+PDB RECORD                           780            10            3           0          0          8          0        
+AUXILIARY DATAFILE COPY              584           128            0           0          0          0          0        
+MULTI INSTANCE REDO APPLY            556             1            0           0          0          0          0        
+PDBINC RECORD                        144           113            0           0          0          0          0        
+TABLESPACE KEY HISTORY               108           151            0           0          0          0          0        
+
+42 rows selected.
+
+SQL> SHOW PARAMETER CONTROL_FILES
+
+NAME                                 TYPE        VALUE                                                                  
+------------------------------------ ----------- ------------------------------                                         
+control_files                        string      D:\APP\DIANA_ORA\ORADATA\ORACL                                         
+                                                 E\CONTROL01.CTL, D:\APP\DIANA_                                         
+                                                 ORA\ORADATA\ORACLE\CONTROL02.C                                         
+                                                 TL                                                                     
+SQL> desc v$tempfile
+ Name                                                              Null?    Type
+ ----------------------------------------------------------------- -------- --------------------------------------------
+ FILE#                                                                      NUMBER
+ CREATION_CHANGE#                                                           NUMBER
+ CREATION_TIME                                                              DATE
+ TS#                                                                        NUMBER
+ RFILE#                                                                     NUMBER
+ STATUS                                                                     VARCHAR2(7)
+ ENABLED                                                                    VARCHAR2(10)
+ BYTES                                                                      NUMBER
+ BLOCKS                                                                     NUMBER
+ CREATE_BYTES                                                               NUMBER
+ BLOCK_SIZE                                                                 NUMBER
+ NAME                                                                       VARCHAR2(513)
+ CON_ID                                                                     NUMBER
+
+SQL> select * from v$tempfile;
+
+     FILE# CREATION_CHANGE# CREATION_        TS#     RFILE# STATUS  ENABLED         BYTES     BLOCKS CREATE_BYTES       
+---------- ---------------- --------- ---------- ---------- ------- ---------- ---------- ---------- ------------       
+BLOCK_SIZE                                                                                                              
+----------                                                                                                              
+NAME                                                                                                                    
+------------------------------------------------------------------------------------------------------------------------
+    CON_ID                                                                                                              
+----------                                                                                                              
+         1          1490682 15-OCT-20          3          1 ONLINE  READ WRITE   34603008       4224     20971520       
+      8192                                                                                                              
+D:\APP\DIANA_ORA\ORADATA\ORACLE\TEMP01.DBF                                                                              
+         1                                                                                                              
+                                                                                                                        
+         4          1746197 20-OCT-20          6          1 ONLINE  READ WRITE   10485760       1280     10485760       
+      8192                                                                                                              
+D:\APP\DIANA_ORA\ORADATA\BD\BD_TEMP.DBF                                                                                 
+         1                                                                                                              
+                                                                                                                        
+
+SQL> desc v$tablespace
+ Name                                                              Null?    Type
+ ----------------------------------------------------------------- -------- --------------------------------------------
+ TS#                                                                        NUMBER
+ NAME                                                                       VARCHAR2(30)
+ INCLUDED_IN_DATABASE_BACKUP                                                VARCHAR2(3)
+ BIGFILE                                                                    VARCHAR2(3)
+ FLASHBACK_ON                                                               VARCHAR2(3)
+ ENCRYPT_IN_BACKUP                                                          VARCHAR2(3)
+ CON_ID                                                                     NUMBER
+
+SQL> select ts#, name, included_in_database_backup from v$tablespace;
+
+       TS# NAME                           INC                                                                           
+---------- ------------------------------ ---                                                                           
+         1 SYSAUX                         YES                                                                           
+         0 SYSTEM                         YES                                                                           
+         2 UNDOTBS1                       YES                                                                           
+         4 USERS                          YES                                                                           
+         3 TEMP                           NO                                                                            
+         6 BD_TEMP                        NO                                                                            
+         5 BD_DATA                        YES                                                                           
+
+7 rows selected.
+
+SQL> desc v$database
+ Name                                                              Null?    Type
+ ----------------------------------------------------------------- -------- --------------------------------------------
+ DBID                                                                       NUMBER
+ NAME                                                                       VARCHAR2(9)
+ CREATED                                                                    DATE
+ RESETLOGS_CHANGE#                                                          NUMBER
+ RESETLOGS_TIME                                                             DATE
+ PRIOR_RESETLOGS_CHANGE#                                                    NUMBER
+ PRIOR_RESETLOGS_TIME                                                       DATE
+ LOG_MODE                                                                   VARCHAR2(12)
+ CHECKPOINT_CHANGE#                                                         NUMBER
+ ARCHIVE_CHANGE#                                                            NUMBER
+ CONTROLFILE_TYPE                                                           VARCHAR2(7)
+ CONTROLFILE_CREATED                                                        DATE
+ CONTROLFILE_SEQUENCE#                                                      NUMBER
+ CONTROLFILE_CHANGE#                                                        NUMBER
+ CONTROLFILE_TIME                                                           DATE
+ OPEN_RESETLOGS                                                             VARCHAR2(11)
+ VERSION_TIME                                                               DATE
+ OPEN_MODE                                                                  VARCHAR2(20)
+ PROTECTION_MODE                                                            VARCHAR2(20)
+ PROTECTION_LEVEL                                                           VARCHAR2(20)
+ REMOTE_ARCHIVE                                                             VARCHAR2(8)
+ ACTIVATION#                                                                NUMBER
+ SWITCHOVER#                                                                NUMBER
+ DATABASE_ROLE                                                              VARCHAR2(16)
+ ARCHIVELOG_CHANGE#                                                         NUMBER
+ ARCHIVELOG_COMPRESSION                                                     VARCHAR2(8)
+ SWITCHOVER_STATUS                                                          VARCHAR2(20)
+ DATAGUARD_BROKER                                                           VARCHAR2(8)
+ GUARD_STATUS                                                               VARCHAR2(7)
+ SUPPLEMENTAL_LOG_DATA_MIN                                                  VARCHAR2(8)
+ SUPPLEMENTAL_LOG_DATA_PK                                                   VARCHAR2(3)
+ SUPPLEMENTAL_LOG_DATA_UI                                                   VARCHAR2(3)
+ FORCE_LOGGING                                                              VARCHAR2(39)
+ PLATFORM_ID                                                                NUMBER
+ PLATFORM_NAME                                                              VARCHAR2(101)
+ RECOVERY_TARGET_INCARNATION#                                               NUMBER
+ LAST_OPEN_INCARNATION#                                                     NUMBER
+ CURRENT_SCN                                                                NUMBER
+ FLASHBACK_ON                                                               VARCHAR2(18)
+ SUPPLEMENTAL_LOG_DATA_FK                                                   VARCHAR2(3)
+ SUPPLEMENTAL_LOG_DATA_ALL                                                  VARCHAR2(3)
+ DB_UNIQUE_NAME                                                             VARCHAR2(30)
+ STANDBY_BECAME_PRIMARY_SCN                                                 NUMBER
+ FS_FAILOVER_STATUS                                                         VARCHAR2(22)
+ FS_FAILOVER_CURRENT_TARGET                                                 VARCHAR2(30)
+ FS_FAILOVER_THRESHOLD                                                      NUMBER
+ FS_FAILOVER_OBSERVER_PRESENT                                               VARCHAR2(7)
+ FS_FAILOVER_OBSERVER_HOST                                                  VARCHAR2(512)
+ CONTROLFILE_CONVERTED                                                      VARCHAR2(3)
+ PRIMARY_DB_UNIQUE_NAME                                                     VARCHAR2(30)
+ SUPPLEMENTAL_LOG_DATA_PL                                                   VARCHAR2(3)
+ MIN_REQUIRED_CAPTURE_CHANGE#                                               NUMBER
+ CDB                                                                        VARCHAR2(3)
+ CON_ID                                                                     NUMBER
+ PENDING_ROLE_CHANGE_TASKS                                                  VARCHAR2(512)
+ CON_DBID                                                                   NUMBER
+ FORCE_FULL_DB_CACHING                                                      VARCHAR2(3)
+
+SQL> select controlfile_type, controlfile_sequence#, controlfile_change#, controlfile_time from v$database
+  2  ;
+
+CONTROL CONTROLFILE_SEQUENCE# CONTROLFILE_CHANGE# CONTROLFI                                                             
+------- --------------------- ------------------- ---------                                                             
+CURRENT                 15576             2749083 04-NOV-20                                                             
+
+SQL> select * from v$database;
+
+      DBID NAME      CREATED   RESETLOGS_CHANGE# RESETLOGS PRIOR_RESETLOGS_CHANGE# PRIOR_RES LOG_MODE                   
+---------- --------- --------- ----------------- --------- ----------------------- --------- ------------               
+CHECKPOINT_CHANGE# ARCHIVE_CHANGE# CONTROL CONTROLFI CONTROLFILE_SEQUENCE# CONTROLFILE_CHANGE# CONTROLFI OPEN_RESETL    
+------------------ --------------- ------- --------- --------------------- ------------------- --------- -----------    
+VERSION_T OPEN_MODE            PROTECTION_MODE      PROTECTION_LEVEL     REMOTE_A ACTIVATION# SWITCHOVER#               
+--------- -------------------- -------------------- -------------------- -------- ----------- -----------               
+DATABASE_ROLE    ARCHIVELOG_CHANGE# ARCHIVEL SWITCHOVER_STATUS    DATAGUAR GUARD_S SUPPLEME SUP SUP                     
+---------------- ------------------ -------- -------------------- -------- ------- -------- --- ---                     
+FORCE_LOGGING                           PLATFORM_ID                                                                     
+--------------------------------------- -----------                                                                     
+PLATFORM_NAME                                                                                                           
+-----------------------------------------------------------------------------------------------------                   
+RECOVERY_TARGET_INCARNATION# LAST_OPEN_INCARNATION# CURRENT_SCN FLASHBACK_ON       SUP SUP                              
+---------------------------- ---------------------- ----------- ------------------ --- ---                              
+DB_UNIQUE_NAME                 STANDBY_BECAME_PRIMARY_SCN FS_FAILOVER_STATUS     FS_FAILOVER_CURRENT_TARGET             
+------------------------------ -------------------------- ---------------------- ------------------------------         
+FS_FAILOVER_THRESHOLD FS_FAIL                                                                                           
+--------------------- -------                                                                                           
+FS_FAILOVER_OBSERVER_HOST                                                                                               
+------------------------------------------------------------------------------------------------------------------------
+CON PRIMARY_DB_UNIQUE_NAME         SUP MIN_REQUIRED_CAPTURE_CHANGE# CDB     CON_ID                                      
+--- ------------------------------ --- ---------------------------- --- ----------                                      
+PENDING_ROLE_CHANGE_TASKS                                                                                               
+------------------------------------------------------------------------------------------------------------------------
+  CON_DBID FOR                                                                                                          
+---------- ---                                                                                                          
+1926968140 ORACLE    15-OCT-20           1490582 15-OCT-20                       1 08-MAR-17 NOARCHIVELOG               
+           2747400         2653578 CURRENT 15-OCT-20                 15577             2749106 04-NOV-20 NOT ALLOWED    
+15-OCT-20 READ WRITE           MAXIMUM PERFORMANCE  UNPROTECTED          ENABLED   1926973259  1926973259               
+PRIMARY                           0 DISABLED NOT ALLOWED          DISABLED NONE    NO       NO  NO                      
+NO                                               12                                                                     
+Microsoft Windows x86 64-bit                                                                                            
+                           2                      2     2749112 NO                 NO  NO                               
+oracle                                                  0 DISABLED                                                      
+                    0                                                                                                   
+                                                                                                                        
+NO                                 NO                               YES          0                                      
+NOT APPLICABLE                                                                                                          
+1926968140 NO                                                                                                           
+                                                                                                                        
+
+SQL> update login_lab_ubd set data_sf= sysdate where laborator='Lab4';
+
+1 row updated.
+
+SQL> update login_lab_ubd set durata= round((data_sf-data_in)*24*60) where laborator='Lab4';
+
+1 row updated.
+
+SQL> select instance_number,instance_name, to_char(startup_time, 'dd-mm-yyyy hh:mi:ss'), host_name from v$instance;
+
+INSTANCE_NUMBER INSTANCE_NAME    TO_CHAR(STARTUP_TIM HOST_NAME                                                          
+--------------- ---------------- ------------------- ----------------------------------------------------------------   
+              1 oracle           27-10-2020 09:29:29 DESKTOP-KIRQEDP                                                    
+
+SQL> select nume_stud, grupa, laborator, to_char(data_in, 'dd-mm-yyyy hh:mi:ss') data_inceput,
+  2  to_char(data_sf, 'dd-mm-yyyy hh:mi:ss') data_sfarsit, durata minute_lucrate from login_lab_ubd;
+
+NUME_STUD                      GRUPA      LABORATOR  DATA_INCEPUT        DATA_SFARSIT        MINUTE_LUCRATE             
+------------------------------ ---------- ---------- ------------------- ------------------- --------------             
+Coman_DianaStefania            343C5      Lab3       21-10-2020 05:49:36                                                
+Coman_DianaStefania            343C5      Lab4       04-11-2020 02:40:32 04-11-2020 02:55:43             15             
+
+SQL> spool off

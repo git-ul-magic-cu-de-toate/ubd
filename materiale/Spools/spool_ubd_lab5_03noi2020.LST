@@ -1,0 +1,419 @@
+SQL> set lines 200
+SQL> set pages 100
+SQL> select to_char(sysdate, 'dd-mm-yyyy hh:mi:ss') from dual;
+
+TO_CHAR(SYSDATE,'DD                                                                                                                                                                                     
+-------------------                                                                                                                                                                                     
+04-11-2020 05:25:31                                                                                                                                                                                     
+
+SQL> insert into login_lab_ubd values( 'Coman_DianaStefania', '343C5', 'Lab5', user, sysdate, null, null);
+
+1 row created.
+
+SQL> select * from login_lab_ubd;
+
+NUME_STUD                      GRUPA      LABORATOR  NUME_USER  DATA_IN   DATA_SF       DURATA                                                                                                          
+------------------------------ ---------- ---------- ---------- --------- --------- ----------                                                                                                          
+Coman_DianaStefania            343C5      Lab5       ABD1       04-NOV-20                                                                                                                               
+Coman_DianaStefania            343C5      Lab3       ABD1       21-OCT-20                                                                                                                               
+Coman_DianaStefania            343C5      Lab4       ABD1       04-NOV-20 04-NOV-20         15                                                                                                          
+
+SQL> desc v$logfile
+ Name                                                                                                              Null?    Type
+ ----------------------------------------------------------------------------------------------------------------- -------- ----------------------------------------------------------------------------
+ GROUP#                                                                                                                     NUMBER
+ STATUS                                                                                                                     VARCHAR2(7)
+ TYPE                                                                                                                       VARCHAR2(7)
+ MEMBER                                                                                                                     VARCHAR2(513)
+ IS_RECOVERY_DEST_FILE                                                                                                      VARCHAR2(3)
+ CON_ID                                                                                                                     NUMBER
+
+SQL> set linesize 120
+SQL> desc v$logfile
+ Name                                                              Null?    Type
+ ----------------------------------------------------------------- -------- --------------------------------------------
+ GROUP#                                                                     NUMBER
+ STATUS                                                                     VARCHAR2(7)
+ TYPE                                                                       VARCHAR2(7)
+ MEMBER                                                                     VARCHAR2(513)
+ IS_RECOVERY_DEST_FILE                                                      VARCHAR2(3)
+ CON_ID                                                                     NUMBER
+
+SQL> select * from v$logfile;
+
+    GROUP# STATUS  TYPE    MEMBER                         IS_     CON_ID                                                
+---------- ------- ------- ------------------------------ --- ----------                                                
+         3         ONLINE  D:\APP\DIANA_ORA\ORADATA\ORACL NO           0                                                
+                           E\REDO03.LOG                                                                                 
+                                                                                                                        
+         2         ONLINE  D:\APP\DIANA_ORA\ORADATA\ORACL NO           0                                                
+                           E\REDO02.LOG                                                                                 
+                                                                                                                        
+         1         ONLINE  D:\APP\DIANA_ORA\ORADATA\ORACL NO           0                                                
+                           E\REDO01.LOG                                                                                 
+                                                                                                                        
+
+SQL> desc v$database
+ Name                                                              Null?    Type
+ ----------------------------------------------------------------- -------- --------------------------------------------
+ DBID                                                                       NUMBER
+ NAME                                                                       VARCHAR2(9)
+ CREATED                                                                    DATE
+ RESETLOGS_CHANGE#                                                          NUMBER
+ RESETLOGS_TIME                                                             DATE
+ PRIOR_RESETLOGS_CHANGE#                                                    NUMBER
+ PRIOR_RESETLOGS_TIME                                                       DATE
+ LOG_MODE                                                                   VARCHAR2(12)
+ CHECKPOINT_CHANGE#                                                         NUMBER
+ ARCHIVE_CHANGE#                                                            NUMBER
+ CONTROLFILE_TYPE                                                           VARCHAR2(7)
+ CONTROLFILE_CREATED                                                        DATE
+ CONTROLFILE_SEQUENCE#                                                      NUMBER
+ CONTROLFILE_CHANGE#                                                        NUMBER
+ CONTROLFILE_TIME                                                           DATE
+ OPEN_RESETLOGS                                                             VARCHAR2(11)
+ VERSION_TIME                                                               DATE
+ OPEN_MODE                                                                  VARCHAR2(20)
+ PROTECTION_MODE                                                            VARCHAR2(20)
+ PROTECTION_LEVEL                                                           VARCHAR2(20)
+ REMOTE_ARCHIVE                                                             VARCHAR2(8)
+ ACTIVATION#                                                                NUMBER
+ SWITCHOVER#                                                                NUMBER
+ DATABASE_ROLE                                                              VARCHAR2(16)
+ ARCHIVELOG_CHANGE#                                                         NUMBER
+ ARCHIVELOG_COMPRESSION                                                     VARCHAR2(8)
+ SWITCHOVER_STATUS                                                          VARCHAR2(20)
+ DATAGUARD_BROKER                                                           VARCHAR2(8)
+ GUARD_STATUS                                                               VARCHAR2(7)
+ SUPPLEMENTAL_LOG_DATA_MIN                                                  VARCHAR2(8)
+ SUPPLEMENTAL_LOG_DATA_PK                                                   VARCHAR2(3)
+ SUPPLEMENTAL_LOG_DATA_UI                                                   VARCHAR2(3)
+ FORCE_LOGGING                                                              VARCHAR2(39)
+ PLATFORM_ID                                                                NUMBER
+ PLATFORM_NAME                                                              VARCHAR2(101)
+ RECOVERY_TARGET_INCARNATION#                                               NUMBER
+ LAST_OPEN_INCARNATION#                                                     NUMBER
+ CURRENT_SCN                                                                NUMBER
+ FLASHBACK_ON                                                               VARCHAR2(18)
+ SUPPLEMENTAL_LOG_DATA_FK                                                   VARCHAR2(3)
+ SUPPLEMENTAL_LOG_DATA_ALL                                                  VARCHAR2(3)
+ DB_UNIQUE_NAME                                                             VARCHAR2(30)
+ STANDBY_BECAME_PRIMARY_SCN                                                 NUMBER
+ FS_FAILOVER_STATUS                                                         VARCHAR2(22)
+ FS_FAILOVER_CURRENT_TARGET                                                 VARCHAR2(30)
+ FS_FAILOVER_THRESHOLD                                                      NUMBER
+ FS_FAILOVER_OBSERVER_PRESENT                                               VARCHAR2(7)
+ FS_FAILOVER_OBSERVER_HOST                                                  VARCHAR2(512)
+ CONTROLFILE_CONVERTED                                                      VARCHAR2(3)
+ PRIMARY_DB_UNIQUE_NAME                                                     VARCHAR2(30)
+ SUPPLEMENTAL_LOG_DATA_PL                                                   VARCHAR2(3)
+ MIN_REQUIRED_CAPTURE_CHANGE#                                               NUMBER
+ CDB                                                                        VARCHAR2(3)
+ CON_ID                                                                     NUMBER
+ PENDING_ROLE_CHANGE_TASKS                                                  VARCHAR2(512)
+ CON_DBID                                                                   NUMBER
+ FORCE_FULL_DB_CACHING                                                      VARCHAR2(3)
+
+SQL> select name, log_mode, resetlogs_time from v$database;
+
+NAME                           LOG_MODE     RESETLOGS                                                                   
+------------------------------ ------------ ---------                                                                   
+ORACLE                         NOARCHIVELOG 15-OCT-20                                                                   
+
+SQL>  desc v$thread
+ Name                                                              Null?    Type
+ ----------------------------------------------------------------- -------- --------------------------------------------
+ THREAD#                                                                    NUMBER
+ STATUS                                                                     VARCHAR2(6)
+ ENABLED                                                                    VARCHAR2(8)
+ GROUPS                                                                     NUMBER
+ INSTANCE                                                                   VARCHAR2(80)
+ OPEN_TIME                                                                  DATE
+ CURRENT_GROUP#                                                             NUMBER
+ SEQUENCE#                                                                  NUMBER
+ CHECKPOINT_CHANGE#                                                         NUMBER
+ CHECKPOINT_TIME                                                            DATE
+ ENABLE_CHANGE#                                                             NUMBER
+ ENABLE_TIME                                                                DATE
+ DISABLE_CHANGE#                                                            NUMBER
+ DISABLE_TIME                                                               DATE
+ LAST_REDO_SEQUENCE#                                                        NUMBER
+ LAST_REDO_BLOCK                                                            NUMBER
+ LAST_REDO_CHANGE#                                                          NUMBER
+ LAST_REDO_TIME                                                             DATE
+ CON_ID                                                                     NUMBER
+
+SQL> select groups, current_group#, sequence#, instance, status from v$thread;
+
+    GROUPS CURRENT_GROUP#  SEQUENCE# INSTANCE                       STATUS                                              
+---------- -------------- ---------- ------------------------------ ------                                              
+         3              3         21 oracle                         OPEN                                                
+
+SQL> select last_redo_type from v$thread;
+select last_redo_type from v$thread
+       *
+ERROR at line 1:
+ORA-00904: "LAST_REDO_TYPE": invalid identifier 
+
+
+SQL> select last_redo_time from v$thread;
+
+LAST_REDO                                                                                                               
+---------                                                                                                               
+04-NOV-20                                                                                                               
+
+SQL> desc v$log
+ Name                                                              Null?    Type
+ ----------------------------------------------------------------- -------- --------------------------------------------
+ GROUP#                                                                     NUMBER
+ THREAD#                                                                    NUMBER
+ SEQUENCE#                                                                  NUMBER
+ BYTES                                                                      NUMBER
+ BLOCKSIZE                                                                  NUMBER
+ MEMBERS                                                                    NUMBER
+ ARCHIVED                                                                   VARCHAR2(3)
+ STATUS                                                                     VARCHAR2(16)
+ FIRST_CHANGE#                                                              NUMBER
+ FIRST_TIME                                                                 DATE
+ NEXT_CHANGE#                                                               NUMBER
+ NEXT_TIME                                                                  DATE
+ CON_ID                                                                     NUMBER
+
+SQL> select group#, members, bytes, archived, status from v$log;
+
+    GROUP#    MEMBERS      BYTES ARC STATUS                                                                             
+---------- ---------- ---------- --- ----------------                                                                   
+         1          1  209715200 NO  INACTIVE                                                                           
+         2          1  209715200 NO  INACTIVE                                                                           
+         3          1  209715200 NO  CURRENT                                                                            
+
+SQL> select thread#, sequence# from v$log;
+
+   THREAD#  SEQUENCE#                                                                                                   
+---------- ----------                                                                                                   
+         1         19                                                                                                   
+         1         20                                                                                                   
+         1         21                                                                                                   
+
+SQL> alter database add logfile member 'D:\log2.rdo' to group 1;
+
+Database altered.
+
+SQL> alter database clear logfile group 2 ;
+
+Database altered.
+
+SQL>  alter database rename file 'D:\log2.rdo' to 'E:\llog2.rdo';
+ alter database rename file 'D:\log2.rdo' to 'E:\llog2.rdo'
+*
+ERROR at line 1:
+ORA-01511: error in renaming log/data files 
+ORA-01512: error renaming log file D:\LOG2.RDO - new file E:\llog2.rdo not found 
+ORA-27041: unable to open file 
+OSD-04001: invalid logical block size (OS 512) 
+
+
+SQL>  alter database rename file 'D:\log2.rdo' to 'D:\llog2.rdo';
+ alter database rename file 'D:\log2.rdo' to 'D:\llog2.rdo'
+*
+ERROR at line 1:
+ORA-01511: error in renaming log/data files 
+ORA-01512: error renaming log file D:\LOG2.RDO - new file D:\llog2.rdo not found 
+ORA-27041: unable to open file 
+OSD-04002: unable to open file 
+O/S-Error: (OS 2) The system cannot find the file specified. 
+
+
+SQL> alter database add logfile member 'D:\llog2.rdo' to group 1;
+
+Database altered.
+
+SQL>  alter database rename file 'D:\log2.rdo' to 'D:\llog2.rdo';
+ alter database rename file 'D:\log2.rdo' to 'D:\llog2.rdo'
+*
+ERROR at line 1:
+ORA-01511: error in renaming log/data files 
+ORA-01523: cannot rename data file to 'D:\llog2.rdo' - file already part of database 
+
+
+SQL> select * from v$logfile;
+
+    GROUP# STATUS  TYPE    MEMBER                         IS_     CON_ID                                                
+---------- ------- ------- ------------------------------ --- ----------                                                
+         3         ONLINE  D:\APP\DIANA_ORA\ORADATA\ORACL NO           0                                                
+                           E\REDO03.LOG                                                                                 
+                                                                                                                        
+         2         ONLINE  D:\APP\DIANA_ORA\ORADATA\ORACL NO           0                                                
+                           E\REDO02.LOG                                                                                 
+                                                                                                                        
+         1         ONLINE  D:\APP\DIANA_ORA\ORADATA\ORACL NO           0                                                
+                           E\REDO01.LOG                                                                                 
+                                                                                                                        
+         1 INVALID ONLINE  D:\LOG2.RDO                    NO           0                                                
+         1 INVALID ONLINE  D:\LLOG2.RDO                   NO           0                                                
+
+SQL>  alter database drop logfile member 'E:\TEMP1\LOG2.RDO';
+ alter database drop logfile member 'E:\TEMP1\LOG2.RDO'
+*
+ERROR at line 1:
+ORA-00360: not a logfile member: E:\TEMP1\LOG2.RDO 
+
+
+SQL>  alter database drop logfile member 'D:\LOG2.RDO';
+
+Database altered.
+
+SQL>  alter database drop logfile member 'D:\LLOG2.RDO';
+
+Database altered.
+
+SQL> select * from v$logfile;
+
+    GROUP# STATUS  TYPE    MEMBER                         IS_     CON_ID                                                
+---------- ------- ------- ------------------------------ --- ----------                                                
+         3         ONLINE  D:\APP\DIANA_ORA\ORADATA\ORACL NO           0                                                
+                           E\REDO03.LOG                                                                                 
+                                                                                                                        
+         2         ONLINE  D:\APP\DIANA_ORA\ORADATA\ORACL NO           0                                                
+                           E\REDO02.LOG                                                                                 
+                                                                                                                        
+         1         ONLINE  D:\APP\DIANA_ORA\ORADATA\ORACL NO           0                                                
+                           E\REDO01.LOG                                                                                 
+                                                                                                                        
+
+SQL> desc v$instance
+ Name                                                              Null?    Type
+ ----------------------------------------------------------------- -------- --------------------------------------------
+ INSTANCE_NUMBER                                                            NUMBER
+ INSTANCE_NAME                                                              VARCHAR2(16)
+ HOST_NAME                                                                  VARCHAR2(64)
+ VERSION                                                                    VARCHAR2(17)
+ STARTUP_TIME                                                               DATE
+ STATUS                                                                     VARCHAR2(12)
+ PARALLEL                                                                   VARCHAR2(3)
+ THREAD#                                                                    NUMBER
+ ARCHIVER                                                                   VARCHAR2(7)
+ LOG_SWITCH_WAIT                                                            VARCHAR2(15)
+ LOGINS                                                                     VARCHAR2(10)
+ SHUTDOWN_PENDING                                                           VARCHAR2(3)
+ DATABASE_STATUS                                                            VARCHAR2(17)
+ INSTANCE_ROLE                                                              VARCHAR2(18)
+ ACTIVE_STATE                                                               VARCHAR2(9)
+ BLOCKED                                                                    VARCHAR2(3)
+ CON_ID                                                                     NUMBER
+ INSTANCE_MODE                                                              VARCHAR2(11)
+ EDITION                                                                    VARCHAR2(7)
+ FAMILY                                                                     VARCHAR2(80)
+ DATABASE_TYPE                                                              VARCHAR2(15)
+
+SQL> select instance_name, status, archiver from v$instance;
+
+INSTANCE_NAME    STATUS       ARCHIVE                                                                                   
+---------------- ------------ -------                                                                                   
+oracle           OPEN         STOPPED                                                                                   
+
+SQL> desc v$loghist
+ Name                                                              Null?    Type
+ ----------------------------------------------------------------- -------- --------------------------------------------
+ THREAD#                                                                    NUMBER
+ SEQUENCE#                                                                  NUMBER
+ FIRST_CHANGE#                                                              NUMBER
+ FIRST_TIME                                                                 DATE
+ SWITCH_CHANGE#                                                             NUMBER
+ CON_ID                                                                     NUMBER
+
+SQL> select * from v$loghist;
+
+   THREAD#  SEQUENCE# FIRST_CHANGE# FIRST_TIM SWITCH_CHANGE#     CON_ID                                                 
+---------- ---------- ------------- --------- -------------- ----------                                                 
+         1          1       1490582 15-OCT-20        1517914          0                                                 
+         1          2       1517914 15-OCT-20        1627819          0                                                 
+         1          3       1627819 15-OCT-20        1683286          0                                                 
+         1          4       1683286 16-OCT-20        1760656          0                                                 
+         1          5       1760656 21-OCT-20        1817684          0                                                 
+         1          6       1817684 23-OCT-20        1857297          0                                                 
+         1          7       1857297 24-OCT-20        1894121          0                                                 
+         1          8       1894121 24-OCT-20        1928390          0                                                 
+         1          9       1928390 25-OCT-20        2040482          0                                                 
+         1         10       2040482 25-OCT-20        2158772          0                                                 
+         1         11       2158772 26-OCT-20        2261239          0                                                 
+         1         12       2261239 26-OCT-20        2377634          0                                                 
+         1         13       2377634 27-OCT-20        2442453          0                                                 
+         1         14       2442453 28-OCT-20        2482127          0                                                 
+         1         15       2482127 29-OCT-20        2534754          0                                                 
+         1         16       2534754 31-OCT-20        2577587          0                                                 
+         1         17       2577587 31-OCT-20        2612212          0                                                 
+         1         18       2612212 01-NOV-20        2653578          0                                                 
+         1         19       2653578 01-NOV-20        2705230          0                                                 
+         1         20       2705230 03-NOV-20        2747400          0                                                 
+
+20 rows selected.
+
+SQL> select b.name as database_name, a.name as controlfile_name, b.controlfile_created from v$controlfile a, v$database b;
+
+DATABASE_NAME                  CONTROLFILE_NAME               CONTROLFI                                                 
+------------------------------ ------------------------------ ---------                                                 
+ORACLE                         D:\APP\DIANA_ORA\ORADATA\ORACL 15-OCT-20                                                 
+                               E\CONTROL01.CTL                                                                          
+                                                                                                                        
+ORACLE                         D:\APP\DIANA_ORA\ORADATA\ORACL 15-OCT-20                                                 
+                               E\CONTROL02.CTL                                                                          
+                                                                                                                        
+
+SQL> select type, records_total, records_used from v$controlfile_record_section where type like 'DATAFILE' or type like 'TABLESPACE';
+
+TYPE                         RECORDS_TOTAL RECORDS_USED                                                                 
+---------------------------- ------------- ------------                                                                 
+DATAFILE                              1024           12                                                                 
+TABLESPACE                            1024           16                                                                 
+
+SQL> select a.group#, a.members, b.member, a.bytes/1024/1024 as MB from v$log a, v$logfile b where a.group#=b.group#;
+
+    GROUP#    MEMBERS MEMBER                                 MB                                                         
+---------- ---------- ------------------------------ ----------                                                         
+         3          1 D:\APP\DIANA_ORA\ORADATA\ORACL        200                                                         
+                      E\REDO03.LOG                                                                                      
+                                                                                                                        
+         2          1 D:\APP\DIANA_ORA\ORADATA\ORACL        200                                                         
+                      E\REDO02.LOG                                                                                      
+                                                                                                                        
+         1          1 D:\APP\DIANA_ORA\ORADATA\ORACL        200                                                         
+                      E\REDO01.LOG                                                                                      
+                                                                                                                        
+
+SQL> select instance, current_group# from v$thread where status like 'OPEN';
+
+INSTANCE                       CURRENT_GROUP#                                                                           
+------------------------------ --------------                                                                           
+oracle                                      3                                                                           
+
+SQL> select created, resetlogs_time from v$database;
+
+CREATED   RESETLOGS                                                                                                     
+--------- ---------                                                                                                     
+15-OCT-20 15-OCT-20                                                                                                     
+
+SQL> update login_lab_ubd set data_sf= sysdate where laborator='Lab5';
+
+1 row updated.
+
+SQL> update login_lab_ubd set durata= round((data_sf-data_in)*24*60) where laborator='Lab5';
+
+1 row updated.
+
+SQL> select instance_number,instance_name, to_char(startup_time, 'dd-mm-yyyy hh:mi:ss'), host_name from v$instance;
+
+INSTANCE_NUMBER INSTANCE_NAME    TO_CHAR(STARTUP_TIM HOST_NAME                                                          
+--------------- ---------------- ------------------- ----------------------------------------------------------------   
+              1 oracle           27-10-2020 09:29:29 DESKTOP-KIRQEDP                                                    
+
+SQL> select nume_stud, grupa, laborator, to_char(data_in, 'dd-mm-yyyy hh:mi:ss') data_inceput,
+  2  to_char(data_sf, 'dd-mm-yyyy hh:mi:ss') data_sfarsit, durata minute_lucrate from login_lab_ubd;
+
+NUME_STUD                      GRUPA      LABORATOR  DATA_INCEPUT        DATA_SFARSIT        MINUTE_LUCRATE             
+------------------------------ ---------- ---------- ------------------- ------------------- --------------             
+Coman_DianaStefania            343C5      Lab5       04-11-2020 05:26:17 04-11-2020 05:58:25             32             
+Coman_DianaStefania            343C5      Lab3       21-10-2020 05:49:36                                                
+Coman_DianaStefania            343C5      Lab4       04-11-2020 02:40:32 04-11-2020 02:55:43             15             
+
+SQL> spool off
